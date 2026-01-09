@@ -9,7 +9,7 @@ CGameManager& CGameManager::GetInstance(void)
 	return instance;
 }
 
-void CGameManager::Initiaize(void)
+void CGameManager::Initialize(void)
 {
 	//シーンマネージャー初期化
 	CSceneManager::GetInstance().Initialize();

@@ -47,7 +47,7 @@ WinMain( _In_ HINSTANCE hInst, _In_opt_ HINSTANCE hPrevInst, _In_ LPSTR lpCmdLin
     vivid::Initialize( hInst );
 
     //シーン初期化
-    CGameManager::GetInstance().Initiaize();
+    CGameManager::GetInstance().Initialize();
 
     // 更新/描画関数登録
     vivid::DisplayFunction( Display );

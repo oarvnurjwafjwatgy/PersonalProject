@@ -1,15 +1,15 @@
-//ゲーム管理
+//スコア管理
 #pragma once
 
-class CGameManager
+class CScoreManager
 {
 public:
 	/*!
 	 *  @brief      インスタンスの取得
 	 * 
-	 *	@return		インスタンス
+	  *	@return		インスタンス
 	 */
-	static CGameManager& GetInstance(void);
+	static CScoreManager& GetInstance(void);
 
 	/*!
 	 *  @brief      初期化
@@ -36,22 +36,22 @@ private:
 	/*!
 	 *  @brief      コンストラクタ
 	 */
-	CGameManager(void);
+	CScoreManager(void);
 
 	/*!
 	 *  @brief      コピーコンストラクタ
 	 */
-	CGameManager(const CGameManager& rhs);
+	CScoreManager(const CScoreManager& rhs);
 
 
 	/*!
 	 *  @brief      デストラクタ
 	 */
-	~CGameManager(void);
+	~CScoreManager(void);
 
 	/*!
 	 *  @brief      代入演算子
 	 */
-	CGameManager& operator= (const CGameManager& rhs);
+	CScoreManager& operator= (const CScoreManager& rhs);
 
 };

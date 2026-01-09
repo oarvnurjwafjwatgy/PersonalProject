@@ -1,15 +1,15 @@
-//ゲーム管理
+//UI管理
 #pragma once
 
-class CGameManager
+#include "vivid.h"
+
+class CUIManager
 {
 public:
 	/*!
 	 *  @brief      インスタンスの取得
-	 * 
-	 *	@return		インスタンス
 	 */
-	static CGameManager& GetInstance(void);
+	static CUIManager& GetInstance(void);
 
 	/*!
 	 *  @brief      初期化
@@ -36,22 +36,22 @@ private:
 	/*!
 	 *  @brief      コンストラクタ
 	 */
-	CGameManager(void);
+	CUIManager(void);
 
 	/*!
 	 *  @brief      コピーコンストラクタ
 	 */
-	CGameManager(const CGameManager& rhs);
+	CUIManager(const CUIManager& rhs);
 
 
 	/*!
 	 *  @brief      デストラクタ
 	 */
-	~CGameManager(void);
+	~CUIManager(void);
 
 	/*!
 	 *  @brief      代入演算子
 	 */
-	CGameManager& operator= (const CGameManager& rhs);
+	CUIManager& operator= (const CUIManager& rhs);
 
 };
