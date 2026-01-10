@@ -48,8 +48,11 @@ public:
 
 protected:
 
-	static const int m_block_height_count = 16; //!< 高さ
-	static const int m_block_width_count = 8;	//!< 幅
+	static const int m_block_max_height = 16;	//!< ブロックの最大詰める高さ
+	static const int m_block_max_width = 8;		//!< ブロックの最大詰める幅
+	static const int m_block_size;				//!< ブロックは正方形なので大きさ固定
+	static const float m_block_max_scale;			//!< ブロックの拡縮の最大値
+	static const int m_used_block_max_color;	//!< ブロックの色の種類
 
 
 	/*!
@@ -57,6 +60,8 @@ protected:
 	 */
 	enum class BLOCK_COLOR
 	{
+		EMPTY,	//!< 空の状態
+
 		RED,
 		GREEN,
 		BLUE,
@@ -85,7 +90,6 @@ protected:
 	{
 		BLOCK_COLOR color; //!< ブロックの色
 		BLOCK_STATE state; //!< ブロックの状態
-		vivid::Vector2 pos; //!< ブロックの位置
 		float scale;		//!< ブロックの大きさ
 	};
 
@@ -108,11 +112,11 @@ protected:
 	 */
 	void ShiftBlock(void);
 
-
-	BLOCK	m_Field[m_block_height_count][m_block_width_count];	//!< ブロックの二次元配列
-	BLOCK_STATE m_GameState = BLOCK_STATE::WAIT;				//!< ブロックの状態
+	vivid::Vector2	m_Position;								//!< ブロックの左上の位置
+	BLOCK	m_Field[m_block_max_height][m_block_max_width];	//!< ブロックの二次元配列
+	BLOCK_STATE m_GameState;				//!< ブロックの状態
 	FIELD_ID	 m_FieldID;										//!< フィールドのID
 	bool		 m_ActiveFlag;									//!< アクティブフラグ
-	vivid::Vector2	m_CursorPosition;							//!< カーソルの位置
+	CURSOR_POSITION	m_CursorPosition;							//!< カーソルの位置
 
 };
