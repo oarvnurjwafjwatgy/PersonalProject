@@ -3,6 +3,7 @@
 const int IField::m_block_size = 48;	
 const float IField::m_block_max_scale = 1.0f;	
 const int IField::m_used_block_max_color = 6;
+const int IField::m_block_vanish_count = 4;
 
 IField::IField(void)
 	:m_FieldID(FIELD_ID::DUMMY)
@@ -32,6 +33,7 @@ void IField::Initialize(const vivid::Vector2& position, FIELD_ID field_id)
 			m_Field[i][j].color = (BLOCK_COLOR)(1+rand() % (m_used_block_max_color));
 			m_Field[i][j].state = BLOCK_STATE::WAIT;
 			m_Field[i][j].scale = 1.0f;
+			m_Field[i][j].check_flag = false;
 		}
 	}
 }
@@ -40,6 +42,8 @@ void IField::Update(void)
 {
 	MoveCursor();
 	ShiftBlock();
+	BlockVanish();
+	Vanishing();
 	CheckFall();
 }
 
@@ -81,6 +85,7 @@ void IField::Draw(void)
 	vivid::DrawTexture("data\\block_choice_flame.png", pos);
 
 	/*vivid::DrawText(50, std::to_string(this->CheckStraight(DIRECTION::RIGHT, 0, 0, m_Field[0][0].color)),{0.0f,100.0f});*/
+	vivid::DrawText(50, std::to_string(m_CursorPosition.x) + " , " + std::to_string(m_CursorPosition.y), {0.0f,100.0f});
 }
 
 void IField::Finalize(void)
@@ -156,7 +161,7 @@ void IField::ShiftBlock(void)
 
 	if (vivid::keyboard::Trigger(vivid::keyboard::KEY_ID::W) && m_CursorPosition.y > 0)
 	{
-		m_Field[m_CursorPosition.y][m_CursorPosition.x] = m_Field[m_CursorPosition.y-1][m_CursorPosition.x];
+		m_Field[m_CursorPosition.y][m_CursorPosition.x] = m_Field[m_CursorPosition.y - 1][m_CursorPosition.x];
 		m_Field[m_CursorPosition.y - 1][m_CursorPosition.x] = tmp;
 		
 		m_CursorPosition.y--;
@@ -172,16 +177,16 @@ void IField::ShiftBlock(void)
 
 	if (vivid::keyboard::Trigger(vivid::keyboard::KEY_ID::D) && m_CursorPosition.x < m_block_max_width - 1)
 	{
-		m_Field[m_CursorPosition.y][m_CursorPosition.x] = m_Field[m_CursorPosition.y][m_CursorPosition.x+1 ];
-		m_Field[m_CursorPosition.y][m_CursorPosition.x+1] = tmp;
+		m_Field[m_CursorPosition.y][m_CursorPosition.x] = m_Field[m_CursorPosition.y][m_CursorPosition.x + 1 ];
+		m_Field[m_CursorPosition.y][m_CursorPosition.x + 1] = tmp;
 
 		m_CursorPosition.x++;
 	}
 
 	if (vivid::keyboard::Trigger(vivid::keyboard::KEY_ID::A) && m_CursorPosition.x > 0)
 	{
-		m_Field[m_CursorPosition.y][m_CursorPosition.x] = m_Field[m_CursorPosition.y][m_CursorPosition.x-1];
-		m_Field[m_CursorPosition.y][m_CursorPosition.x-1] = tmp;
+		m_Field[m_CursorPosition.y][m_CursorPosition.x] = m_Field[m_CursorPosition.y][m_CursorPosition.x -1 ];
+		m_Field[m_CursorPosition.y][m_CursorPosition.x - 1] = tmp;
 
 		m_CursorPosition.x--;
 	}
@@ -212,7 +217,20 @@ void IField::BlockVanish(void)
 	{
 		for (int x = 0; x < m_block_max_width; x++)
 		{
+			for (int i = 0; i < (int)DIRECTION::MAX; i++)
+			{
+				if (m_Field[y][x].color == BLOCK_COLOR::EMPTY)	continue;
 
+				// 消えることが確定している場合、スキップする
+				//if (m_Field[y][x].state == BLOCK_STATE::VANISH) continue;
+				
+				ResetCheckFlag();
+
+				if (m_block_vanish_count <= (this->CheckStraight((DIRECTION)i, x, y, m_Field[y][x].color)) + 1)
+				{
+					SetStateVanish((DIRECTION)i, x, y);
+				}
+			}
 		}
 	}
 }
@@ -222,27 +240,62 @@ int IField::CheckStraight(DIRECTION dir, int x, int y,  BLOCK_COLOR color)
 	int nx = x, ny = y;		//!< 次の座標
 	BLOCK_COLOR ncolor;		//!< 次の色
 
-	switch (dir)
-	{
-	case IField::DIRECTION::UP:
-		ny--;
-		break;
-	case IField::DIRECTION::DOWN:
-		ny++;
-		break;
-	case IField::DIRECTION::RIGHT:
-		nx++;
-		break;
-	case IField::DIRECTION::LEFT:
-		nx--;
-		break;
-	}
+	m_Field[y][x].check_flag = true;
+
+	if (dir == IField::DIRECTION::DOWN && ny + 1 < m_block_max_height)		ny++;
+	else if (dir == IField::DIRECTION::RIGHT && nx + 1 < m_block_max_width)	nx++;
+	else return 0;
 
 	ncolor = m_Field[ny][nx].color;
 
 	if (ncolor != color) return 0;
 
+	m_Field[ny][nx].check_flag = true;
+
 	// 再帰処理で連なっている時は+1され続ける、結果的に連結しているブロックの数が返される
-	return CheckStraight(dir, nx, ny, ncolor) +1;
+	return CheckStraight(dir, nx, ny, ncolor) + 1;
 	 
+}
+
+void IField::SetStateVanish(DIRECTION dir, int x, int y)
+{
+	if (!m_Field[y][x].check_flag)	return;
+
+	m_Field[y][x].state = BLOCK_STATE::VANISH;
+
+	int nx = x, ny = y;
+	switch (dir)
+	{
+	case IField::DIRECTION::DOWN:	ny++;	break;
+	case IField::DIRECTION::RIGHT:	nx++;	break;
+	}
+
+	this->SetStateVanish(dir, nx, ny);
+	return;
+}
+
+void IField::ResetCheckFlag(void)
+{
+	for (int y = 0; y < m_block_max_height; y++)
+	{
+		for (int x = 0; x < m_block_max_width; x++)
+		{
+			m_Field[y][x].check_flag = false;
+		}
+	}
+}
+
+void IField::Vanishing(void)
+{
+	for (int y = 0; y < m_block_max_height; y++)
+	{
+		for (int x = 0; x < m_block_max_width; x++)
+		{
+			if (m_Field[y][x].state == BLOCK_STATE::VANISH)
+			{
+				m_Field[y][x].color = BLOCK_COLOR::EMPTY;
+				m_Field[y][x].state = BLOCK_STATE::WAIT;
+			}
+		}
+	}
 }

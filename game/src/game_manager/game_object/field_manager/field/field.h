@@ -68,6 +68,7 @@ protected:
 	static const int m_block_size;				//!< ブロックは正方形なので大きさ固定
 	static const float m_block_max_scale;			//!< ブロックの拡縮の最大値
 	static const int m_used_block_max_color;	//!< ブロックの色の種類
+	static const int m_block_vanish_count;		//!< 何個連結していたら消えるのかの数
 
 
 	/*!
@@ -100,10 +101,10 @@ protected:
 
 	enum class DIRECTION
 	{
-		UP,
 		DOWN,
 		RIGHT,
-		LEFT
+
+		MAX,
 	};
 
 
@@ -115,6 +116,7 @@ protected:
 		BLOCK_COLOR color; //!< ブロックの色
 		BLOCK_STATE state; //!< ブロックの状態
 		float scale;		//!< ブロックの大きさ
+		bool check_flag;	//!< ブロック連結の確認フラグ
 	};
 
 	/*!
@@ -155,6 +157,25 @@ protected:
 	 */
 	int CheckStraight(DIRECTION dir,int x,int y, BLOCK_COLOR color);
 
+
+	/*!
+	 *	@brief		チェンジフラグが立っているブロックのステートを[Vanish]にする
+	 *  @pram[in]	dir	探索する向き
+	 *  @pram[in]	x,y	現在の座標
+	 */
+	void SetStateVanish(DIRECTION dir, int x, int y);
+
+	
+	/*!
+	 *	@brief		ブロック連結の確認フラグ(check_flag)のリセット
+	 */
+	void ResetCheckFlag(void);
+
+	/*!
+	 *	@brief		ブロックの状態が「Vanish」だったらemptyにする
+	 */
+	void Vanishing(void);
+
 	vivid::Vector2	m_Position;								//!< ブロックの左上の位置
 	BLOCK	m_Field[m_block_max_height][m_block_max_width];	//!< ブロックの二次元配列
 	BLOCK_STATE m_GameState;				//!< ブロックの状態
@@ -163,4 +184,5 @@ protected:
 	CURSOR_POSITION	m_CursorPosition;							//!< カーソルの位置
 	CURSOR_POSITION m_SelectPosition;							//!< 選択しているブロックの位置
 	bool m_SelectedFlag;
+	int test1;
 };
