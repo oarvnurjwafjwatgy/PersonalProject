@@ -27,7 +27,7 @@ void IField::Initialize(const vivid::Vector2& position, FIELD_ID field_id)
 	{
 		for (int j = 0; j < m_block_max_width; j++)
 		{
-			m_Field[i][j].color = (BLOCK_COLOR)(rand() % (m_used_block_max_color));
+			m_Field[i][j].color = (BLOCK_COLOR)(1+rand() % (m_used_block_max_color));
 			m_Field[i][j].state = BLOCK_STATE::WAIT;
 			m_Field[i][j].scale = 1.0f;
 		}
@@ -36,6 +36,7 @@ void IField::Initialize(const vivid::Vector2& position, FIELD_ID field_id)
 
 void IField::Update(void)
 {
+	MoveCursor();
 }
 
 void IField::Draw(void)
@@ -58,6 +59,10 @@ void IField::Draw(void)
 			vivid::DrawTexture("data\\block.png", m_Position + vivid::Vector2(j * m_block_size, i * m_block_size), 0xffffffff, rect, anchor, scale);
 		}
 	}
+
+	vivid::Vector2 pos = m_Position + vivid::Vector2((float)m_CursorPosition.x*(float)m_block_size, (float)m_CursorPosition.y * (float)m_block_size);
+
+	vivid::DrawTexture("data\\block_choice_flame.png", pos);
 }
 
 void IField::Finalize(void)
@@ -69,8 +74,42 @@ bool IField::GetActive(void)
 	return m_ActiveFlag;
 }
 
+int IField::GetBlockSizeConstant(void)
+{
+	return m_block_size;
+}
+
+int IField::GetBlockMaxHeightConstant(void)
+{
+	return m_block_max_height;
+}
+
+int IField::GetBlockMaxWidthConstant(void)
+{
+	return m_block_max_width;
+}
+
 void IField::MoveCursor(void)
 {
+	if(vivid::keyboard::Trigger(vivid::keyboard::KEY_ID::W) && m_CursorPosition.y>0)
+	{
+		m_CursorPosition.y--;
+	}
+	
+	if (vivid::keyboard::Trigger(vivid::keyboard::KEY_ID::S) && m_CursorPosition.y < m_block_max_height-1)
+	{
+		m_CursorPosition.y++;
+	}
+
+	if (vivid::keyboard::Trigger(vivid::keyboard::KEY_ID::D) && m_CursorPosition.x < m_block_max_width-1)
+	{
+		m_CursorPosition.x++;
+	}
+
+	if (vivid::keyboard::Trigger(vivid::keyboard::KEY_ID::A) && m_CursorPosition.x > 0)
+	{
+		m_CursorPosition.x--;
+	}
 }
 
 void IField::ShiftBlock(void)

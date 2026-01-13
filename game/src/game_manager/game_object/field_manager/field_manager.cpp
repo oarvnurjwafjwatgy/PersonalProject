@@ -82,6 +82,22 @@ void CFieldManager::Create(const vivid::Vector2& position, FIELD_ID field_id)
 	m_FieldList.emplace_back(field);
 }
 
+int CFieldManager::GetBlockSize(void) const
+{
+	return IField::GetBlockSizeConstant();
+}
+
+int CFieldManager::GetBlockMaxHeight(void) const
+{
+	return IField::GetBlockMaxHeightConstant();
+}
+
+int CFieldManager::GetBlockMaxWidth(void) const
+{
+	return IField::GetBlockMaxWidthConstant();
+}
+
+
 CFieldManager::CFieldManager(void)
 {
 }

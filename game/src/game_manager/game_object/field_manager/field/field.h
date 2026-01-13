@@ -46,6 +46,21 @@ public:
 	 */
 	bool GetActive(void);
 
+	/*!
+	 *	@brief		ブロックのサイズを取得するための関数
+	 */
+	static int GetBlockSizeConstant(void);
+
+	/*!
+	 *	@brief		ブロックが最大おける縦の数を取得するための関数
+	 */
+	static int GetBlockMaxHeightConstant(void);
+
+	/*!
+	 *	@brief		ブロックが最大おける横の数を取得するための関数
+	 */
+	static int GetBlockMaxWidthConstant(void);
+
 protected:
 
 	static const int m_block_max_height = 16;	//!< ブロックの最大詰める高さ
@@ -118,5 +133,6 @@ protected:
 	FIELD_ID	 m_FieldID;										//!< フィールドのID
 	bool		 m_ActiveFlag;									//!< アクティブフラグ
 	CURSOR_POSITION	m_CursorPosition;							//!< カーソルの位置
+	
 
 };

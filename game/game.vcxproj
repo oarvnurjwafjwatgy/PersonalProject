@@ -173,7 +173,7 @@
     <ClCompile Include="src\game_manager\game_object\scene_manager\scene\scene.cpp" />
     <ClCompile Include="src\game_manager\game_object\scene_manager\scene\title\title.cpp" />
     <ClCompile Include="src\game_manager\game_object\scene_manager\scene_manager.cpp" />
-    <ClCompile Include="src\game_manager\game_object\ui_manager\ui\score_manager\score_manager.cpp" />
+    <ClCompile Include="src\game_manager\game_object\score_manager\score_manager.cpp" />
     <ClCompile Include="src\game_manager\game_object\ui_manager\ui\ui.cpp" />
     <ClCompile Include="src\game_manager\game_object\ui_manager\ui_manager.cpp" />
     <ClCompile Include="src\main.cpp" />
@@ -193,7 +193,7 @@
     <ClInclude Include="src\game_manager\game_object\scene_manager\scene\scene_id.h" />
     <ClInclude Include="src\game_manager\game_object\scene_manager\scene\title\title.h" />
     <ClInclude Include="src\game_manager\game_object\scene_manager\scene_manager.h" />
-    <ClInclude Include="src\game_manager\game_object\ui_manager\ui\score_manager\score_manager.h" />
+    <ClInclude Include="src\game_manager\game_object\score_manager\score_manager.h" />
     <ClInclude Include="src\game_manager\game_object\ui_manager\ui\ui.h" />
     <ClInclude Include="src\game_manager\game_object\ui_manager\ui_manager.h" />
   </ItemGroup>

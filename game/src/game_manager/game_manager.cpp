@@ -11,26 +11,34 @@ CGameManager& CGameManager::GetInstance(void)
 
 void CGameManager::Initialize(void)
 {
+	auto& scene = CSceneManager::GetInstance();
+
 	//シーンマネージャー初期化
-	CSceneManager::GetInstance().Initialize();
+	scene.Initialize();
 }
 
 void CGameManager::Update(void)
 {
+	auto& scene = CSceneManager::GetInstance();
+
 	//シーンマネージャー初期化
-	CSceneManager::GetInstance().Update();
+	scene.Update();
 }
 
 void CGameManager::Draw(void)
 {
+	auto& scene = CSceneManager::GetInstance();
+
 	//シーンマネージャー初期化
-	CSceneManager::GetInstance().Draw();
+	scene.Draw();
 }
 
 void CGameManager::Finalize(void)
 {
+	auto& scene = CSceneManager::GetInstance();
+
 	//シーンマネージャー初期化
-	CSceneManager::GetInstance().Finalize();
+	scene.Finalize();
 }
 
 CGameManager::CGameManager(void)
