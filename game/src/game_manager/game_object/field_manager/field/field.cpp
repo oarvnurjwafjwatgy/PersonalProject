@@ -10,6 +10,8 @@ IField::IField(void)
 	, m_CursorPosition{ 0,0 }
 	, m_GameState(BLOCK_STATE::WAIT)
 	, m_Position(vivid::Vector2::ZERO)
+	, m_SelectPosition{0,0}
+	, m_SelectedFlag(false)
 {
 }
 
@@ -37,6 +39,8 @@ void IField::Initialize(const vivid::Vector2& position, FIELD_ID field_id)
 void IField::Update(void)
 {
 	MoveCursor();
+	ShiftBlock();
+	CheckFall();
 }
 
 void IField::Draw(void)
@@ -60,9 +64,23 @@ void IField::Draw(void)
 		}
 	}
 
+	if (m_SelectedFlag)
+	{
+		vivid::Vector2 selectPos = m_Position + vivid::Vector2(
+			(float)m_SelectPosition.x * (float)m_block_size,
+			(float)m_SelectPosition.y * (float)m_block_size
+		);
+
+		// 選択中を示す画像を上から描画
+		vivid::DrawTexture("data\\block_selected.png", selectPos, 0x90ffffff);
+	}
+
+
 	vivid::Vector2 pos = m_Position + vivid::Vector2((float)m_CursorPosition.x*(float)m_block_size, (float)m_CursorPosition.y * (float)m_block_size);
 
 	vivid::DrawTexture("data\\block_choice_flame.png", pos);
+
+	/*vivid::DrawText(50, std::to_string(this->CheckStraight(DIRECTION::RIGHT, 0, 0, m_Field[0][0].color)),{0.0f,100.0f});*/
 }
 
 void IField::Finalize(void)
@@ -91,6 +109,8 @@ int IField::GetBlockMaxWidthConstant(void)
 
 void IField::MoveCursor(void)
 {
+	if (m_SelectedFlag)	return;
+
 	if(vivid::keyboard::Trigger(vivid::keyboard::KEY_ID::W) && m_CursorPosition.y>0)
 	{
 		m_CursorPosition.y--;
@@ -110,8 +130,119 @@ void IField::MoveCursor(void)
 	{
 		m_CursorPosition.x--;
 	}
+
+	if (vivid::keyboard::Trigger(vivid::keyboard::KEY_ID::C))
+	{
+		m_Field[m_CursorPosition.y][m_CursorPosition.x].color = BLOCK_COLOR::EMPTY;
+	}
 }
 
 void IField::ShiftBlock(void)
 {
+	if (vivid::keyboard::Button(vivid::keyboard::KEY_ID::RETURN))
+	{
+		m_SelectPosition = m_CursorPosition;
+		m_SelectedFlag = true;
+	}
+	else
+	{
+		m_SelectedFlag = false;
+	}
+
+
+	if (!m_SelectedFlag)		return;
+
+	BLOCK tmp = m_Field[m_CursorPosition.y][m_CursorPosition.x];
+
+	if (vivid::keyboard::Trigger(vivid::keyboard::KEY_ID::W) && m_CursorPosition.y > 0)
+	{
+		m_Field[m_CursorPosition.y][m_CursorPosition.x] = m_Field[m_CursorPosition.y-1][m_CursorPosition.x];
+		m_Field[m_CursorPosition.y - 1][m_CursorPosition.x] = tmp;
+		
+		m_CursorPosition.y--;
+	}
+
+	if (vivid::keyboard::Trigger(vivid::keyboard::KEY_ID::S) && m_CursorPosition.y < m_block_max_height - 1)
+	{
+		m_Field[m_CursorPosition.y][m_CursorPosition.x] = m_Field[m_CursorPosition.y + 1][m_CursorPosition.x];
+		m_Field[m_CursorPosition.y + 1][m_CursorPosition.x] = tmp;
+		
+		m_CursorPosition.y++;
+	}
+
+	if (vivid::keyboard::Trigger(vivid::keyboard::KEY_ID::D) && m_CursorPosition.x < m_block_max_width - 1)
+	{
+		m_Field[m_CursorPosition.y][m_CursorPosition.x] = m_Field[m_CursorPosition.y][m_CursorPosition.x+1 ];
+		m_Field[m_CursorPosition.y][m_CursorPosition.x+1] = tmp;
+
+		m_CursorPosition.x++;
+	}
+
+	if (vivid::keyboard::Trigger(vivid::keyboard::KEY_ID::A) && m_CursorPosition.x > 0)
+	{
+		m_Field[m_CursorPosition.y][m_CursorPosition.x] = m_Field[m_CursorPosition.y][m_CursorPosition.x-1];
+		m_Field[m_CursorPosition.y][m_CursorPosition.x-1] = tmp;
+
+		m_CursorPosition.x--;
+	}
+
+}
+
+void IField::CheckFall(void)
+{
+	for (int y = 0; y < m_block_max_height - 1; y++)
+	{
+		for (int x = 0; x < m_block_max_width; x++)
+		{
+			if (m_Field[y][x].state != BLOCK_STATE::WAIT)  continue;
+
+			if (m_Field[y + 1][x].color == BLOCK_COLOR::EMPTY)
+			{
+				m_Field[y + 1][x].color = m_Field[y][x].color;
+				m_Field[y][x].color = BLOCK_COLOR::EMPTY;
+				
+			}
+		}
+	}
+}
+
+void IField::BlockVanish(void)
+{
+	for (int y = 0; y < m_block_max_height; y++)
+	{
+		for (int x = 0; x < m_block_max_width; x++)
+		{
+
+		}
+	}
+}
+
+int IField::CheckStraight(DIRECTION dir, int x, int y,  BLOCK_COLOR color)
+{
+	int nx = x, ny = y;		//!< 次の座標
+	BLOCK_COLOR ncolor;		//!< 次の色
+
+	switch (dir)
+	{
+	case IField::DIRECTION::UP:
+		ny--;
+		break;
+	case IField::DIRECTION::DOWN:
+		ny++;
+		break;
+	case IField::DIRECTION::RIGHT:
+		nx++;
+		break;
+	case IField::DIRECTION::LEFT:
+		nx--;
+		break;
+	}
+
+	ncolor = m_Field[ny][nx].color;
+
+	if (ncolor != color) return 0;
+
+	// 再帰処理で連なっている時は+1され続ける、結果的に連結しているブロックの数が返される
+	return CheckStraight(dir, nx, ny, ncolor) +1;
+	 
 }

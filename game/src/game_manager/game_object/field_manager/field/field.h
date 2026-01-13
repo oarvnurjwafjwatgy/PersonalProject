@@ -98,6 +98,15 @@ protected:
 		VANISH, //!< 消えるか
 	};
 
+	enum class DIRECTION
+	{
+		UP,
+		DOWN,
+		RIGHT,
+		LEFT
+	};
+
+
 	/*!
 	 *	@brief		ブロック一個に対する情報
 	 */
@@ -127,12 +136,31 @@ protected:
 	 */
 	void ShiftBlock(void);
 
+	/*!
+	 *	@brief		ブロックの落下
+	 */
+	void CheckFall(void);
+
+	/*!
+	 *	@brief		ブロック消去
+	 */
+	void BlockVanish(void);
+
+	/*!
+	 *	@brief		特定のブロックの直線並びのチェック
+	 *  @pram[in]	dir	探索する向き
+	 *  @pram[in]	x,y	現在の座標
+	 *  @pram[in]	color	現在の色
+	 *  @return		連結している数
+	 */
+	int CheckStraight(DIRECTION dir,int x,int y, BLOCK_COLOR color);
+
 	vivid::Vector2	m_Position;								//!< ブロックの左上の位置
 	BLOCK	m_Field[m_block_max_height][m_block_max_width];	//!< ブロックの二次元配列
 	BLOCK_STATE m_GameState;				//!< ブロックの状態
 	FIELD_ID	 m_FieldID;										//!< フィールドのID
 	bool		 m_ActiveFlag;									//!< アクティブフラグ
 	CURSOR_POSITION	m_CursorPosition;							//!< カーソルの位置
-	
-
+	CURSOR_POSITION m_SelectPosition;							//!< 選択しているブロックの位置
+	bool m_SelectedFlag;
 };

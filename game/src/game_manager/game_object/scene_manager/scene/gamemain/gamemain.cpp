@@ -25,7 +25,7 @@ void CGameMain::Update()
 
 	field.Update();
 
-	if (vivid::keyboard::Trigger(vivid::keyboard::KEY_ID::RETURN))
+	if (vivid::keyboard::Trigger(vivid::keyboard::KEY_ID::SPACE))
 		scene.ChangeScene(SCENE_ID::TITLE);
 }
 
