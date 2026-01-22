@@ -53,6 +53,9 @@ void IField::Initialize(const vivid::Vector2& position, FIELD_ID field_id)
 			m_Field[i][j].check_flag = false;
 		}
 	}
+
+	m_CursorPosition.x = m_block_max_width / 2;
+	m_CursorPosition.y = m_StartRowIndex;
 }
 
 void IField::Update(void)
@@ -133,7 +136,7 @@ void IField::MoveCursor(void)
 {
 	if (m_SelectedFlag)	return;
 
-	if(vivid::keyboard::Trigger(vivid::keyboard::KEY_ID::W) && m_CursorPosition.y>0)
+	if(vivid::keyboard::Trigger(vivid::keyboard::KEY_ID::W) && m_CursorPosition.y> m_StartRowIndex)
 	{
 		m_CursorPosition.y--;
 	}
