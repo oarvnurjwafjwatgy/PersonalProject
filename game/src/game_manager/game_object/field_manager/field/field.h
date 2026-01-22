@@ -176,6 +176,17 @@ protected:
 	 */
 	void Vanishing(void);
 
+	/*!
+	 *	@brief		新しい行を一番下に生成する
+	 */
+	void CreateNextLine(void);
+
+	/*!
+	 *	@brief		１段せりあがりを確定させ、配列を一行上にシフトする
+	 */
+	void PushUpField(void);
+
+
 	vivid::Vector2	m_Position;								//!< ブロックの左上の位置
 	BLOCK	m_Field[m_block_max_height][m_block_max_width];	//!< ブロックの二次元配列
 	BLOCK_STATE m_GameState;				//!< ブロックの状態
@@ -183,6 +194,11 @@ protected:
 	bool		 m_ActiveFlag;									//!< アクティブフラグ
 	CURSOR_POSITION	m_CursorPosition;							//!< カーソルの位置
 	CURSOR_POSITION m_SelectPosition;							//!< 選択しているブロックの位置
-	bool m_SelectedFlag;
+	bool m_SelectedFlag;										//!< 選択しているかのフラグ
 	int test1;
+	float m_RaiseOffset;										//!< 現在のせり上がり量
+	float m_RaiseSpeed;											//!< せりあがる速度
+	BLOCK m_NextLine[m_block_max_width];						//!< 次に出現する一番下の行
+	int m_StartRow;												//!< 最初に出現させる行
+	int m_StartRowIndex;										//!< 色が付き始める行のインデックス
 };

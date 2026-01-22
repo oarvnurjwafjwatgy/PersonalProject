@@ -13,6 +13,11 @@ IField::IField(void)
 	, m_Position(vivid::Vector2::ZERO)
 	, m_SelectPosition{0,0}
 	, m_SelectedFlag(false)
+	, m_RaiseOffset(0)
+	, m_RaiseSpeed(0)
+	, m_NextLine()
+	, m_StartRow(0)
+	, m_StartRowIndex(0)
 {
 }
 
@@ -24,13 +29,25 @@ void IField::Initialize(const vivid::Vector2& position, FIELD_ID field_id)
 {
 
 	m_Position = position;
+	
+	m_StartRow = 5;
+
+	m_StartRowIndex = m_block_max_height - m_StartRow;
 
 	// 盤面(フィールド)の初期化を行う
 	for (int i = 0; i < m_block_max_height; i++)
 	{
 		for (int j = 0; j < m_block_max_width; j++)
 		{
-			m_Field[i][j].color = (BLOCK_COLOR)(1+rand() % (m_used_block_max_color));
+			if (i >= m_StartRowIndex)
+			{
+				m_Field[i][j].color = (BLOCK_COLOR)(1+rand() % (m_used_block_max_color));
+			}
+			else
+			{
+				m_Field[i][j].color = BLOCK_COLOR::EMPTY;
+			}
+			
 			m_Field[i][j].state = BLOCK_STATE::WAIT;
 			m_Field[i][j].scale = 1.0f;
 			m_Field[i][j].check_flag = false;
