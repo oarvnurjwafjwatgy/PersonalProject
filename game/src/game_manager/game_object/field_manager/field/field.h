@@ -69,7 +69,7 @@ protected:
 	static const float m_block_max_scale;			//!< ブロックの拡縮の最大値
 	static const int m_used_block_max_color;	//!< ブロックの色の種類
 	static const int m_block_vanish_count;		//!< 何個連結していたら消えるのかの数
-
+	static const int m_block_start_row;			//!< 最初ブロックを表示する行
 
 	/*!
 	 *	@brief		ブロックの色
@@ -118,6 +118,7 @@ protected:
 		float scale;		//!< ブロックの大きさ
 		bool check_flag;	//!< ブロック連結の確認フラグ
 	};
+
 
 	/*!
 	 *	@brief		カーソルの位置
@@ -186,19 +187,23 @@ protected:
 	 */
 	void PushUpField(void);
 
+	/*!
+	 *	@brief		一番上の行にブロックがきているか
+	 */
+	bool CheckTopRowFull(void);
 
-	vivid::Vector2	m_Position;								//!< ブロックの左上の位置
-	BLOCK	m_Field[m_block_max_height][m_block_max_width];	//!< ブロックの二次元配列
-	BLOCK_STATE m_GameState;				//!< ブロックの状態
+
+	vivid::Vector2	m_Position;									//!< ブロックの左上の位置
+	BLOCK	m_Field[m_block_max_height][m_block_max_width];		//!< ブロックの二次元配列
+	BLOCK_STATE m_GameState;									//!< ブロックの状態
 	FIELD_ID	 m_FieldID;										//!< フィールドのID
 	bool		 m_ActiveFlag;									//!< アクティブフラグ
 	CURSOR_POSITION	m_CursorPosition;							//!< カーソルの位置
 	CURSOR_POSITION m_SelectPosition;							//!< 選択しているブロックの位置
 	bool m_SelectedFlag;										//!< 選択しているかのフラグ
-	int test1;
 	float m_RaiseOffset;										//!< 現在のせり上がり量
 	float m_RaiseSpeed;											//!< せりあがる速度
 	BLOCK m_NextLine[m_block_max_width];						//!< 次に出現する一番下の行
-	int m_StartRow;												//!< 最初に出現させる行
-	int m_StartRowIndex;										//!< 色が付き始める行のインデックス
+	int m_RowIndex;												//!< 色が付き始める行のインデックス
+	bool m_ShiftButtonFlag;										//!< 入れ替えボタンが押されているか
 };

@@ -4,6 +4,7 @@ const int IField::m_block_size = 48;
 const float IField::m_block_max_scale = 1.0f;	
 const int IField::m_used_block_max_color = 6;
 const int IField::m_block_vanish_count = 4;
+const int IField::m_block_start_row = 5;
 
 IField::IField(void)
 	:m_FieldID(FIELD_ID::DUMMY)
@@ -15,9 +16,8 @@ IField::IField(void)
 	, m_SelectedFlag(false)
 	, m_RaiseOffset(0)
 	, m_RaiseSpeed(0)
-	, m_NextLine()
-	, m_StartRow(0)
-	, m_StartRowIndex(0)
+	, m_RowIndex(0)
+	, m_ShiftButtonFlag(false)
 {
 }
 
@@ -29,37 +29,49 @@ void IField::Initialize(const vivid::Vector2& position, FIELD_ID field_id)
 {
 
 	m_Position = position;
-	
-	m_StartRow = 5;
 
-	m_StartRowIndex = m_block_max_height - m_StartRow;
+
+	m_RowIndex = m_block_max_height - m_block_start_row;
 
 	// 盤面(フィールド)の初期化を行う
-	for (int i = 0; i < m_block_max_height; i++)
+	for (int y = 0; y < m_block_max_height; y++)
 	{
-		for (int j = 0; j < m_block_max_width; j++)
+		for (int x = 0; x < m_block_max_width; x++)
 		{
-			if (i >= m_StartRowIndex)
+			if (y >= m_RowIndex)
 			{
-				m_Field[i][j].color = (BLOCK_COLOR)(1+rand() % (m_used_block_max_color));
+				m_Field[y][x].color = (BLOCK_COLOR)(1+rand() % (m_used_block_max_color));
 			}
 			else
 			{
-				m_Field[i][j].color = BLOCK_COLOR::EMPTY;
+				m_Field[y][x].color = BLOCK_COLOR::EMPTY;
 			}
 			
-			m_Field[i][j].state = BLOCK_STATE::WAIT;
-			m_Field[i][j].scale = 1.0f;
-			m_Field[i][j].check_flag = false;
+			m_Field[y][x].state = BLOCK_STATE::WAIT;
+			m_Field[y][x].scale = 1.0f;
+			m_Field[y][x].check_flag = false;
 		}
 	}
 
 	m_CursorPosition.x = m_block_max_width / 2;
-	m_CursorPosition.y = m_StartRowIndex;
+	m_CursorPosition.y = m_RowIndex;
 }
 
 void IField::Update(void)
 {
+	if (!CheckTopRowFull())
+	{
+		// せり上がり速度を加算
+		m_RaiseOffset += 0.5f;
+	}
+
+	// 1ブロック分せり上がったら、配列を更新
+	if (m_RaiseOffset >= (float)m_block_size)
+	{
+		PushUpField();
+		m_RaiseOffset = 0.0f; // リセット
+	}
+
 	MoveCursor();
 	ShiftBlock();
 	BlockVanish();
@@ -92,7 +104,7 @@ void IField::Draw(void)
 	{
 		vivid::Vector2 selectPos = m_Position + vivid::Vector2(
 			(float)m_SelectPosition.x * (float)m_block_size,
-			(float)m_SelectPosition.y * (float)m_block_size
+			(float)m_SelectPosition.y * (float)m_block_size - m_RaiseOffset
 		);
 
 		// 選択中を示す画像を上から描画
@@ -100,7 +112,7 @@ void IField::Draw(void)
 	}
 
 
-	vivid::Vector2 pos = m_Position + vivid::Vector2((float)m_CursorPosition.x*(float)m_block_size, (float)m_CursorPosition.y * (float)m_block_size);
+	vivid::Vector2 pos = m_Position + vivid::Vector2((float)m_CursorPosition.x*(float)m_block_size, (float)m_CursorPosition.y * (float)m_block_size - m_RaiseOffset);
 
 	vivid::DrawTexture("data\\block_choice_flame.png", pos);
 
@@ -136,7 +148,7 @@ void IField::MoveCursor(void)
 {
 	if (m_SelectedFlag)	return;
 
-	if(vivid::keyboard::Trigger(vivid::keyboard::KEY_ID::W) && m_CursorPosition.y> m_StartRowIndex)
+	if(vivid::keyboard::Trigger(vivid::keyboard::KEY_ID::W) && m_CursorPosition.y> 0)
 	{
 		m_CursorPosition.y--;
 	}
@@ -164,7 +176,7 @@ void IField::MoveCursor(void)
 
 void IField::ShiftBlock(void)
 {
-	if (vivid::keyboard::Button(vivid::keyboard::KEY_ID::RETURN))
+	if (vivid::keyboard::Button(vivid::keyboard::KEY_ID::RETURN) && m_Field[m_CursorPosition.y][m_CursorPosition.x].color != BLOCK_COLOR::EMPTY)
 	{
 		m_SelectPosition = m_CursorPosition;
 		m_SelectedFlag = true;
@@ -183,6 +195,7 @@ void IField::ShiftBlock(void)
 	{
 		m_Field[m_CursorPosition.y][m_CursorPosition.x] = m_Field[m_CursorPosition.y - 1][m_CursorPosition.x];
 		m_Field[m_CursorPosition.y - 1][m_CursorPosition.x] = tmp;
+
 		
 		m_CursorPosition.y--;
 	}
@@ -318,4 +331,66 @@ void IField::Vanishing(void)
 			}
 		}
 	}
+}
+
+void IField::CreateNextLine(void)
+{
+	for (int x = 0; x < m_block_max_width; x++)
+	{
+		m_NextLine[x].color = (BLOCK_COLOR)(1 + rand() % m_used_block_max_color);
+		m_NextLine[x].state = BLOCK_STATE::WAIT;
+		m_NextLine[x].scale = 1.0f;
+		m_NextLine[x].check_flag = false;
+	}
+
+
+}
+
+void IField::PushUpField(void)
+{
+	bool JustOnceFlag = false;
+
+	
+	// 全ての行を1段上にコピー（0行目は消滅する）
+	for (int y = 0; y < m_block_max_height - 1; y++)
+	{
+		for (int x = 0; x < m_block_max_width; x++)
+		{
+			m_Field[y][x] = m_Field[y + 1][x];
+		}
+	}
+
+	// 一番下の行に用意していた m_NextLine を流し込む
+	for (int x = 0; x < m_block_max_width; x++)
+	{
+		m_Field[m_block_max_height - 1][x] = m_NextLine[x];
+	}
+
+	// カーソルの位置も1段上げてあげる
+	if (m_CursorPosition.y > 0)
+	{
+		m_CursorPosition.y --;
+	}
+
+	
+	// ブロックがおける最大行じゃなければ次に控える行を新しく生成
+	if (!CheckTopRowFull())
+	{
+		CreateNextLine();
+	}
+}
+
+bool IField::CheckTopRowFull(void)
+{
+	for (int x = 0; x < m_block_max_width; x++)
+	{
+		// 0行目に一つでも空じゃないブロックがあれば true
+		if (m_Field[0][x].color != BLOCK_COLOR::EMPTY)
+		{
+			return true;
+			m_RaiseOffset = 0;
+			m_RaiseSpeed = 0;
+		}
+	}
+	return false;
 }
