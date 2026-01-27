@@ -36,22 +36,22 @@ private:
 	/*!
 	 *  @brief      コンストラクタ
 	 */
-	CGameManager(void);
+	CGameManager(void) = default;
 
 	/*!
 	 *  @brief      コピーコンストラクタ
 	 */
-	CGameManager(const CGameManager& rhs);
+	CGameManager(const CGameManager& rhs) = delete;
 
 
 	/*!
 	 *  @brief      デストラクタ
 	 */
-	~CGameManager(void);
+	~CGameManager(void) = default;
 
 	/*!
 	 *  @brief      代入演算子
 	 */
-	CGameManager& operator= (const CGameManager& rhs);
+	CGameManager& operator= (const CGameManager& ) = delete;
 
 };

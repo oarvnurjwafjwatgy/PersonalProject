@@ -40,21 +40,3 @@ void CGameManager::Finalize(void)
 	//シーンマネージャー初期化
 	scene.Finalize();
 }
-
-CGameManager::CGameManager(void)
-{
-}
-
-CGameManager::CGameManager(const CGameManager& rhs)
-{
-}
-
-CGameManager::~CGameManager(void)
-{
-}
-
-CGameManager& CGameManager::operator=(const CGameManager& rhs)
-{
-	(void)rhs;
-	return *this;
-}

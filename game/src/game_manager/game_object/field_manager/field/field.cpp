@@ -1,10 +1,12 @@
 #include "field.h"
+#include "../../score_manager/score_manager.h"
 
 const int IField::m_block_size = 48;	
 const float IField::m_block_max_scale = 1.0f;	
 const int IField::m_used_block_max_color = 6;
-const int IField::m_block_vanish_count = 4;
+const int IField::m_block_min_chains = 4;
 const int IField::m_block_start_row = 5;
+const float IField::m_combo_max_duration_time = 3.0f;
 
 IField::IField(void)
 	:m_FieldID(FIELD_ID::DUMMY)
@@ -18,6 +20,8 @@ IField::IField(void)
 	, m_RaiseSpeed(0)
 	, m_RowIndex(0)
 	, m_ShiftButtonFlag(false)
+	, m_ComboCounter(0)
+	, m_ComboDurationTimer(0.0f)
 {
 }
 
@@ -27,11 +31,15 @@ IField::~IField(void)
 
 void IField::Initialize(const vivid::Vector2& position, FIELD_ID field_id)
 {
+	CFieldManager::GetInstance().SetBlockMinChains(m_block_min_chains);
 
 	m_Position = position;
 
 
 	m_RowIndex = m_block_max_height - m_block_start_row;
+
+	m_ComboDurationTimer = 0.0f;
+	m_ComboDurationTimer = m_combo_max_duration_time;
 
 	// 盤面(フィールド)の初期化を行う
 	for (int y = 0; y < m_block_max_height; y++)
@@ -77,6 +85,7 @@ void IField::Update(void)
 	BlockVanish();
 	Vanishing();
 	CheckFall();
+	ComboDurationTimer();
 }
 
 void IField::Draw(void)
@@ -118,6 +127,13 @@ void IField::Draw(void)
 
 	/*vivid::DrawText(50, std::to_string(this->CheckStraight(DIRECTION::RIGHT, 0, 0, m_Field[0][0].color)),{0.0f,100.0f});*/
 	vivid::DrawText(50, std::to_string(m_CursorPosition.x) + " , " + std::to_string(m_CursorPosition.y), {0.0f,100.0f});
+
+#ifdef DEBUG
+	vivid::DrawText(50, std::to_string(CScoreManager::GetInstance().GetScore()), { 0,200 });
+	vivid::DrawText(50, std::to_string(m_ComboDurationTimer), { 0,400 });
+#endif // DEBUG
+
+	
 }
 
 void IField::Finalize(void)
@@ -259,8 +275,13 @@ void IField::BlockVanish(void)
 				
 				ResetCheckFlag();
 
-				if (m_block_vanish_count <= (this->CheckStraight((DIRECTION)i, x, y, m_Field[y][x].color)) + 1)
+				int check_straight = (CheckStraight((DIRECTION)i, x, y, m_Field[y][x].color)) + 1;
+
+				if (m_block_min_chains <= check_straight)
 				{
+					CScoreManager::GetInstance().AddScore(check_straight, m_ComboCounter);
+					m_ComboDurationTimer = m_combo_max_duration_time;
+					m_ComboCounter++;
 					SetStateVanish((DIRECTION)i, x, y);
 				}
 			}
@@ -328,6 +349,7 @@ void IField::Vanishing(void)
 			{
 				m_Field[y][x].color = BLOCK_COLOR::EMPTY;
 				m_Field[y][x].state = BLOCK_STATE::WAIT;
+
 			}
 		}
 	}
@@ -393,4 +415,21 @@ bool IField::CheckTopRowFull(void)
 		}
 	}
 	return false;
+}
+
+void IField::ComboDurationTimer(void)
+{
+	// コンボがないなら処理をやめる
+	if (m_ComboCounter <= 0) return;
+
+	// 継続し終わってるから処理をやめる
+	if (m_ComboDurationTimer < 0) return;
+
+	m_ComboDurationTimer -= vivid::GetDeltaTime();
+
+	if (m_ComboDurationTimer <= 0)
+	{
+		// 時間切れ
+		m_ComboCounter = 0;
+	}
 }

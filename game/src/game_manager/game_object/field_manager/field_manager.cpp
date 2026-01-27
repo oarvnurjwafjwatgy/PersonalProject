@@ -82,7 +82,7 @@ void CFieldManager::Create(const vivid::Vector2& position, FIELD_ID field_id)
 	m_FieldList.emplace_back(field);
 }
 
-int CFieldManager::GetBlockSize(void) const
+int CFieldManager::GetBlockSize(void)
 {
 	return IField::GetBlockSizeConstant();
 }
@@ -97,22 +97,12 @@ int CFieldManager::GetBlockMaxWidth(void) const
 	return IField::GetBlockMaxWidthConstant();
 }
 
-
-CFieldManager::CFieldManager(void)
+int CFieldManager::GetBlockMinChains(void) 
 {
+	return m_BlockMinChains;
 }
 
-CFieldManager::CFieldManager(const CFieldManager& rhs)
+void CFieldManager::SetBlockMinChains(int chains)
 {
-}
-
-CFieldManager::~CFieldManager(void)
-{
-}
-
-CFieldManager& CFieldManager::operator=(const CFieldManager& rhs)
-{
-	(void)rhs;
-
-	return *this;
+	m_BlockMinChains = chains;
 }

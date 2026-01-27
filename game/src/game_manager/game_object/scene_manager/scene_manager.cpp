@@ -107,20 +107,6 @@ CSceneManager::CSceneManager(void)
 {
 }
 
-CSceneManager::CSceneManager(const CSceneManager& rhs)
-{
-}
-
-CSceneManager::~CSceneManager(void)
-{
-}
-
-CSceneManager& CSceneManager::operator=(const CSceneManager& rhs)
-{
-	(void)rhs;
-
-	return *this;
-}
 
 std::shared_ptr<IScene> CSceneManager::CreateScene(SCENE_ID id)
 {

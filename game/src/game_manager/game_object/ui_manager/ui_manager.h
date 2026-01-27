@@ -36,22 +36,22 @@ private:
 	/*!
 	 *  @brief      コンストラクタ
 	 */
-	CUIManager(void);
+	CUIManager(void) = default;
 
 	/*!
 	 *  @brief      コピーコンストラクタ
 	 */
-	CUIManager(const CUIManager& rhs);
+	CUIManager(const CUIManager& ) = delete;
 
 
 	/*!
 	 *  @brief      デストラクタ
 	 */
-	~CUIManager(void);
+	~CUIManager(void) = default;
 
 	/*!
 	 *  @brief      代入演算子
 	 */
-	CUIManager& operator= (const CUIManager& rhs);
+	CUIManager& operator= (const CUIManager& ) = delete;
 
 };

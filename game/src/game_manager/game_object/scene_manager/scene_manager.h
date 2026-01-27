@@ -60,12 +60,12 @@ private:
 	/*!
 	 *	@brief		コピーコンストラクタ
 	 */
-	CSceneManager(const CSceneManager& rhs);
+	CSceneManager(const CSceneManager& ) = delete;
 
 	/*!
 	 *	@brief		デストラクタ
 	 */
-	~CSceneManager(void);
+	~CSceneManager(void) = default;
 
 	/*!
 	 *	@brief		代入演算子
@@ -74,7 +74,7 @@ private:
 	 * 
 	 *	@return		自身のオブジェクト
 	 */
-	CSceneManager& operator=(const CSceneManager& rhs);
+	CSceneManager& operator=(const CSceneManager& ) = delete;
 
 	/*!
 	 *	@brief		シーン生成
@@ -83,8 +83,10 @@ private:
 	 */
 	std::shared_ptr<IScene>		CreateScene(SCENE_ID id);
 
-
-	void SceneChange();
+	/*!
+	 *	@brief		シーンの変更
+	 */
+	void SceneChange(void);
 
 
 	SCENE_ID				m_CurrentSceneID;		//!< 現在のシーン

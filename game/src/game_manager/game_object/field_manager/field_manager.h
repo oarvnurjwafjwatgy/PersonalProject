@@ -48,44 +48,63 @@
 
 		/*!
 		 *  @brief      ブロックのサイズを取得
+		 * 
+		 *	@return		サイズ
 		 */
-		int GetBlockSize(void) const;
+		int GetBlockSize(void);
 
 		/*!
-		 *  @brief      ブロックがおける最大の縦の数を取得
+		 *  @brief      ブロックがおける最大の行の数を取得
+		 * 
+		 *  @return		最大の縦の数
 		 */
 		int GetBlockMaxHeight(void) const;
 
 		/*!
-		 *  @brief      ブロックがおける最大の横の数を取得
+		 *  @brief      ブロックがおける最大のの数を取得
+		 * 
+		 *	@return     最大の横の数
 		 */
 		int GetBlockMaxWidth(void) const;
+
+
+		/*!
+		 *  @brief      ブロックが消える最低値の取得
+		 *  @return      ブロックが消える最低値
+		 */
+		int GetBlockMinChains(void);
+
+		/*!
+		 *  @brief					ブロックが消える最低値の設定
+		 *  @param[in]      chains ブロックが消える最低値
+		 */
+		void SetBlockMinChains(int chains);
 
 	private:
 
 		/*!
 		 *  @brief      コンストラクタ
 		 */
-		CFieldManager(void);
+		CFieldManager(void) = default;
 
 		/*!
 		 *  @brief      コピーコンストラクタ
 		 */
-		CFieldManager(const CFieldManager& rhs);
-
+		CFieldManager(const CFieldManager& rhs) = delete;
 
 		/*!
 		 *  @brief      デストラクタ
 		 */
-		~CFieldManager(void);
+		~CFieldManager(void) = default;
 
 		/*!
 		 *  @brief      代入演算子
 		 */
-		CFieldManager& operator= (const CFieldManager& rhs);
+		CFieldManager& operator= (const CFieldManager&) = delete;
 
 	
 		using FIELD_LIST = std::list<std::shared_ptr<IField>>;	// 名前空間の省略を行う
 		FIELD_LIST m_FieldList;									//!<  フィールドオブジェクトを入れるリスト(カーソル、ブロック等)
 		int m_BlockSize;											//!< ブロックのサイズ
+		int m_BlockMinChains;									//!< ブロックが消える最低値
 	};

@@ -4,6 +4,8 @@
 
 #include "vivid.h"
 #include "field_id.h"
+#include "../field_manager.h"
+#include <vector>
 
 class IField
 {
@@ -68,8 +70,9 @@ protected:
 	static const int m_block_size;				//!< ブロックは正方形なので大きさ固定
 	static const float m_block_max_scale;			//!< ブロックの拡縮の最大値
 	static const int m_used_block_max_color;	//!< ブロックの色の種類
-	static const int m_block_vanish_count;		//!< 何個連結していたら消えるのかの数
+	static const int m_block_min_chains;		//!< 何個連結していたら消えるのかの数
 	static const int m_block_start_row;			//!< 最初ブロックを表示する行
+	static const float m_combo_max_duration_time; //!< コンボ最大継続時間
 
 	/*!
 	 *	@brief		ブロックの色
@@ -192,6 +195,10 @@ protected:
 	 */
 	bool CheckTopRowFull(void);
 
+	/*!
+	 *	@brief		コンボ持続時間を減らす
+	 */
+	void ComboDurationTimer(void);
 
 	vivid::Vector2	m_Position;									//!< ブロックの左上の位置
 	BLOCK	m_Field[m_block_max_height][m_block_max_width];		//!< ブロックの二次元配列
@@ -206,4 +213,7 @@ protected:
 	BLOCK m_NextLine[m_block_max_width];						//!< 次に出現する一番下の行
 	int m_RowIndex;												//!< 色が付き始める行のインデックス
 	bool m_ShiftButtonFlag;										//!< 入れ替えボタンが押されているか
+	int m_ComboCounter;											//!< コンボの回数を数える
+
+	float m_ComboDurationTimer;									//!< コンボ持続時間
 };
