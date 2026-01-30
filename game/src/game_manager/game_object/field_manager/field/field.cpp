@@ -31,7 +31,9 @@ IField::~IField(void)
 
 void IField::Initialize(const vivid::Vector2& position, FIELD_ID field_id)
 {
-	CFieldManager::GetInstance().SetBlockMinChains(m_block_min_chains);
+	auto& field = CFieldManager::GetInstance();
+	
+	field.SetBlockMinChains(m_block_min_chains);
 
 	m_Position = position;
 
@@ -93,6 +95,11 @@ void IField::Draw(void)
 	vivid::Rect rect = { 0,0,m_block_size,m_block_size };
 	vivid::Vector2 anchor = { (float)m_block_size / 2.0f,(float)m_block_size / 2.0f };
 	vivid::Vector2 scale = { m_block_max_scale,m_block_max_scale };
+
+	vivid::Vector2 field_back_graund = m_Position - vivid::Vector2(3.0f, 4.0f);
+
+	vivid::DrawTexture("data\\field.png", field_back_graund);
+
 
 	// ÉuÉçÉbÉNÇÃï`âÊ
 	for (int i = 0; i < m_block_max_height; i++)

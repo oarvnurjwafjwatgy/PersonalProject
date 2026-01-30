@@ -26,15 +26,19 @@ void CGameMain::Update()
 	field.Update();
 
 	if (vivid::keyboard::Trigger(vivid::keyboard::KEY_ID::SPACE))
-		scene.ChangeScene(SCENE_ID::TITLE);
+		scene.ChangeScene(SCENE_ID::RESULT);
 }
 
 void CGameMain::Draw()
 {
+	vivid::DrawTexture("data\\backGraund.png", { 0,0 });
 	auto& field = CFieldManager::GetInstance();
 
 	field.Draw();
 	vivid::DrawText(30, "ÉÅÉCÉìâÊñ ", vivid::Vector2::ZERO);
+
+	vivid::DrawTexture("data\\bar.png", { 10,500 });
+
 }
 
 void CGameMain::Finalize()

@@ -2,6 +2,8 @@
 #include "scene/scene_id.h"
 #include "scene/gamemain/gamemain.h"
 #include "scene/title/title.h"
+#include "scene/result/result.h"
+
 
 CSceneManager& CSceneManager::GetInstance(void)
 {
@@ -120,7 +122,7 @@ std::shared_ptr<IScene> CSceneManager::CreateScene(SCENE_ID id)
 		break;
 	case SCENE_ID::TITLE: scene = std::make_shared<CTitle>();
 		break;
-	default:
+	case SCENE_ID::RESULT: scene = std::make_shared<CResult>();
 		break;
 	}
 	m_SceneList.emplace_back(scene);

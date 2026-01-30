@@ -1,6 +1,7 @@
 #pragma once
 
 #include "vivid.h"
+#include "ui_id.h"
 
 
 class IUI
@@ -19,7 +20,7 @@ public:
 	/*!
 	 *	@brief		‰Šú‰»
 	 */
-	virtual void  Initialize(const vivid::Vector2& position);
+	virtual void  Initialize(const vivid::Vector2& position,UI_ID ui_id);
 
 	/*!
 	 *	@brief		XV

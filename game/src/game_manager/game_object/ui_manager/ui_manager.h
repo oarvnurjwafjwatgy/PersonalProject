@@ -2,6 +2,11 @@
 #pragma once
 
 #include "vivid.h"
+#include "ui/ui_id.h"
+#include <list>
+#include <memory>
+
+class IUI;
 
 class CUIManager
 {
@@ -31,6 +36,11 @@ public:
 	 */
 	void Finalize(void);
 
+	/*!
+	 *  @brief      UI生成
+	 */
+	void Create(const vivid::Vector2& position , UI_ID ui_id);
+
 private:
 
 	/*!
@@ -54,4 +64,7 @@ private:
 	 */
 	CUIManager& operator= (const CUIManager& ) = delete;
 
+
+	using UI_LIST = std::list<std::shared_ptr<IUI>>;	// 名前空間の省略を行う
+	UI_LIST m_UIList;									//!<  フィールドオブジェクトを入れるリスト(カーソル、ブロック等)
 };
