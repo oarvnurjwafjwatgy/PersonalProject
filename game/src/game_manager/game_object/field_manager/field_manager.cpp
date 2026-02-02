@@ -59,7 +59,10 @@ void CFieldManager::Finalize(void)
 	while (it != m_FieldList.end())
 	{
 		(*it)->Finalize();
-		++it;
+
+		it = m_FieldList.erase(it);
+
+		continue;
 	}
 
 	m_FieldList.clear();
@@ -106,3 +109,14 @@ void CFieldManager::SetBlockMinChains(int chains)
 {
 	m_BlockMinChains = chains;
 }
+
+bool CFieldManager::GetFinishFlag(void)
+{
+	return m_FinishFlag;
+}
+
+void CFieldManager::SetFinishFlag(bool finish)
+{
+	m_FinishFlag = finish;
+}
+

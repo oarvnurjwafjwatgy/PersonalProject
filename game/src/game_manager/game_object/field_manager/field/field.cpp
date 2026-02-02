@@ -7,6 +7,7 @@ const int IField::m_used_block_max_color = 6;
 const int IField::m_block_min_chains = 4;
 const int IField::m_block_start_row = 5;
 const float IField::m_combo_max_duration_time = 3.0f;
+const int IField::m_finish_max_time = 30;
 
 IField::IField(void)
 	:m_FieldID(FIELD_ID::DUMMY)
@@ -34,6 +35,7 @@ void IField::Initialize(const vivid::Vector2& position, FIELD_ID field_id)
 	auto& field = CFieldManager::GetInstance();
 	
 	field.SetBlockMinChains(m_block_min_chains);
+	field.SetFinishFlag(false);
 
 	m_Position = position;
 
@@ -63,12 +65,18 @@ void IField::Initialize(const vivid::Vector2& position, FIELD_ID field_id)
 		}
 	}
 
+	CreateNextLine();
+
 	m_CursorPosition.x = m_block_max_width / 2;
 	m_CursorPosition.y = m_RowIndex;
+
+	m_FinishTimer = m_finish_max_time;
 }
 
 void IField::Update(void)
 {
+	auto& field = CFieldManager::GetInstance();
+
 	if (!CheckTopRowFull())
 	{
 		// せり上がり速度を加算
@@ -88,6 +96,7 @@ void IField::Update(void)
 	Vanishing();
 	CheckFall();
 	ComboDurationTimer();
+	FinishTimer();
 }
 
 void IField::Draw(void)
@@ -438,5 +447,19 @@ void IField::ComboDurationTimer(void)
 	{
 		// 時間切れ
 		m_ComboCounter = 0;
+	}
+}
+
+void IField::FinishTimer(void)
+{
+	if (!CheckTopRowFull()) return;
+
+	m_FinishTimer--;
+
+	if (m_FinishTimer <= 0)
+	{
+		// ゲームオーバーなのでFinishFlagをtrueにする
+		CFieldManager::GetInstance().SetFinishFlag(true);
+
 	}
 }

@@ -73,6 +73,7 @@ protected:
 	static const int m_block_min_chains;		//!< 何個連結していたら消えるのかの数
 	static const int m_block_start_row;			//!< 最初ブロックを表示する行
 	static const float m_combo_max_duration_time; //!< コンボ最大継続時間
+	static const int m_finish_max_time;			//!< 終了判定後の最大猶予時間
 
 	/*!
 	 *	@brief		ブロックの色
@@ -200,6 +201,11 @@ protected:
 	 */
 	void ComboDurationTimer(void);
 
+	/*!
+	 *	@brief		終了猶予タイマーを減らす
+	 */
+	void FinishTimer(void);
+
 	vivid::Vector2	m_Position;									//!< ブロックの左上の位置
 	BLOCK	m_Field[m_block_max_height][m_block_max_width];		//!< ブロックの二次元配列
 	BLOCK_STATE m_GameState;									//!< ブロックの状態
@@ -214,6 +220,6 @@ protected:
 	int m_RowIndex;												//!< 色が付き始める行のインデックス
 	bool m_ShiftButtonFlag;										//!< 入れ替えボタンが押されているか
 	int m_ComboCounter;											//!< コンボの回数を数える
-
 	float m_ComboDurationTimer;									//!< コンボ持続時間
+	int m_FinishTimer;											//!< 終了タイマー
 };

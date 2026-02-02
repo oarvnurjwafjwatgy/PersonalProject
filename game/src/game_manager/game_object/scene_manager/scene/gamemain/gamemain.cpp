@@ -27,6 +27,11 @@ void CGameMain::Update()
 
 	if (vivid::keyboard::Trigger(vivid::keyboard::KEY_ID::SPACE))
 		scene.ChangeScene(SCENE_ID::RESULT);
+
+	if (field.GetFinishFlag())
+	{
+		scene.ChangeScene(SCENE_ID::RESULT);
+	}
 }
 
 void CGameMain::Draw()

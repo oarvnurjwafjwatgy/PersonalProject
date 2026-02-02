@@ -80,6 +80,18 @@
 		 */
 		void SetBlockMinChains(int chains);
 
+		/*!
+		 *  @brief					終了フラグ取得
+		 *  @return					終了フラグ
+		 */
+		bool GetFinishFlag(void);
+
+		/*!
+		 *  @brief					終了フラグ設定
+		 *  @param[in]					終了フラグ
+		 */
+		void SetFinishFlag(bool finish);
+
 	private:
 
 		/*!
@@ -107,4 +119,5 @@
 		FIELD_LIST m_FieldList;									//!<  フィールドオブジェクトを入れるリスト(カーソル、ブロック等)
 		int m_BlockSize;											//!< ブロックのサイズ
 		int m_BlockMinChains;									//!< ブロックが消える最低値
+		bool m_FinishFlag;										//!< 終了フラグ
 	};
