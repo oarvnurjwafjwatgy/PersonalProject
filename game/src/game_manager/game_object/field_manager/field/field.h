@@ -6,6 +6,10 @@
 #include "field_id.h"
 #include "../field_manager.h"
 #include <vector>
+#include "../../ui_manager/ui/combo_gauge/combo_gauge.h"
+#include <memory>
+#include "../../input_manager/input_manager.h"
+#include "../../ui_manager/ui/combo_count/combo_count.h"
 
 class IField
 {
@@ -63,6 +67,8 @@ public:
 	 */
 	static int GetBlockMaxWidthConstant(void);
 
+
+
 protected:
 
 	static const int m_block_max_height = 16;	//!< ブロックの最大詰める高さ
@@ -72,7 +78,7 @@ protected:
 	static const int m_used_block_max_color;	//!< ブロックの色の種類
 	static const int m_block_min_chains;		//!< 何個連結していたら消えるのかの数
 	static const int m_block_start_row;			//!< 最初ブロックを表示する行
-	static const float m_combo_max_duration_time; //!< コンボ最大継続時間
+	static const int m_combo_max_duration_time; //!< コンボ最大継続時間
 	static const int m_finish_max_time;			//!< 終了判定後の最大猶予時間
 
 	/*!
@@ -103,7 +109,7 @@ protected:
 		VANISH, //!< 消えるか
 	};
 
-	enum class DIRECTION
+	enum class BLOCK_DIRECTION
 	{
 		DOWN,
 		RIGHT,
@@ -160,7 +166,7 @@ protected:
 	 *  @pram[in]	color	現在の色
 	 *  @return		連結している数
 	 */
-	int CheckStraight(DIRECTION dir,int x,int y, BLOCK_COLOR color);
+	int CheckStraight(BLOCK_DIRECTION dir,int x,int y, BLOCK_COLOR color);
 
 
 	/*!
@@ -168,7 +174,7 @@ protected:
 	 *  @pram[in]	dir	探索する向き
 	 *  @pram[in]	x,y	現在の座標
 	 */
-	void SetStateVanish(DIRECTION dir, int x, int y);
+	void SetStateVanish(BLOCK_DIRECTION dir, int x, int y);
 
 	
 	/*!
@@ -220,6 +226,9 @@ protected:
 	int m_RowIndex;												//!< 色が付き始める行のインデックス
 	bool m_ShiftButtonFlag;										//!< 入れ替えボタンが押されているか
 	int m_ComboCounter;											//!< コンボの回数を数える
-	float m_ComboDurationTimer;									//!< コンボ持続時間
+	int m_ComboDurationTimer;									//!< コンボ持続時間
 	int m_FinishTimer;											//!< 終了タイマー
+
+	std::weak_ptr<CComboGauge>		m_ComboGaugeUI;				//!< ゲージ
+	std::weak_ptr<CComboCount>		m_ComboCountUI;				//!< コンボ数
 };

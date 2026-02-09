@@ -1,6 +1,8 @@
 #include "ui_manager.h"
 #include "ui/ui.h"
+#include "ui/combo_gauge/combo_gauge.h"
 #include <memory>
+#include "../ui_manager/ui/combo_count/combo_count.h"
 
 CUIManager& CUIManager::GetInstance(void)
 {
@@ -58,30 +60,55 @@ void CUIManager::Finalize(void)
 
 	while (it != m_UIList.end())
 	{
-		std::shared_ptr<IUI> ui = *it;
+		(*it)->Finalize();
 
-		ui->Finalize();
+		++it;
+	}
+
+	m_UIList.clear();
+}
+
+std::shared_ptr<IUI> CUIManager::Create(UI_ID ui_id, const vivid::Vector2& position)
+{
+	std::shared_ptr<IUI> ui = CreateClass(ui_id);
+
+	if (!ui) return nullptr;
+
+	ui->Initialize(position);
+	m_UIList.emplace_back(ui);
+
+	return ui;
+}
+
+void CUIManager::Delete(UI_ID id)
+{
+	if (m_UIList.empty()) return;
+	
+	UI_LIST::iterator it = m_UIList.begin();
+
+	while (it != m_UIList.end())
+	{
+		std::shared_ptr<IUI> ui = (*it);
+
+		if (ui->GetUI_ID() == id)
+		{
+			ui->Delete();
+		}
 
 		++it;
 	}
 }
-
-void CUIManager::Create(const vivid::Vector2& position, UI_ID ui_id)
+ 
+std::shared_ptr<IUI> CUIManager::CreateClass(UI_ID id)
 {
 	std::shared_ptr<IUI> ui = nullptr;
 
-	//ID
-	switch (ui_id)
+	switch (id)
 	{
-	/*case UI_ID::SCORE:	ui = std::make_shared <CScore>(); break;
+	case UI_ID::SCORE_TEXT:
+		break;
 	case UI_ID::COMBO_GAUGE: ui = std::make_shared<CComboGauge>(); break;
-	case UI_ID::COMBO_COUNT: ui = std::make_shared<CComboCount>(); break;*/
-	default: break;
+	case UI_ID::COMBO_COUNT: ui = std::make_shared<CComboCount>(); break;
 	}
-
-	if (!ui) return;
-
-	ui->Initialize(position, ui_id);
-
-	m_UIList.emplace_back(ui);
+	return ui;
 }

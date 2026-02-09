@@ -1,13 +1,14 @@
 #include "field.h"
 #include "../../score_manager/score_manager.h"
+#include "../../ui_manager/ui_manager.h"
 
-const int IField::m_block_size = 48;	
-const float IField::m_block_max_scale = 1.0f;	
-const int IField::m_used_block_max_color = 6;
-const int IField::m_block_min_chains = 4;
-const int IField::m_block_start_row = 5;
-const float IField::m_combo_max_duration_time = 3.0f;
-const int IField::m_finish_max_time = 30;
+const int IField::m_block_size = 48;				//!< ブロックのサイズ
+const float IField::m_block_max_scale = 1.0f;		//!< ブロックの最大の拡大値
+const int IField::m_used_block_max_color = 5	;		//!< ブロックの色の種類の数
+const int IField::m_block_min_chains = 4;			//!< ブロックの最小消せる連結数
+const int IField::m_block_start_row = 5;			//!< ゲーム開始の初期表示列
+const int IField::m_combo_max_duration_time = 3*60;	//!< コンボ最大継続時間
+const int IField::m_finish_max_time = 30;			//!< 終了判定後の最大猶予時間
 
 IField::IField(void)
 	:m_FieldID(FIELD_ID::DUMMY)
@@ -39,11 +40,17 @@ void IField::Initialize(const vivid::Vector2& position, FIELD_ID field_id)
 
 	m_Position = position;
 
+	auto combo_gauge_ui = CUIManager::GetInstance().Create(UI_ID::COMBO_GAUGE, vivid::Vector2{30,600});
+	auto combo_count_ui = CUIManager::GetInstance().Create(UI_ID::COMBO_COUNT, vivid::Vector2{30,500});
+
+	m_ComboGaugeUI = std::dynamic_pointer_cast<CComboGauge>(combo_gauge_ui);
+	m_ComboCountUI = std::dynamic_pointer_cast<CComboCount>(combo_count_ui);
+
 
 	m_RowIndex = m_block_max_height - m_block_start_row;
 
 	m_ComboDurationTimer = 0.0f;
-	m_ComboDurationTimer = m_combo_max_duration_time;
+	m_ComboDurationTimer = 0;
 
 	// 盤面(フィールド)の初期化を行う
 	for (int y = 0; y < m_block_max_height; y++)
@@ -80,7 +87,7 @@ void IField::Update(void)
 	if (!CheckTopRowFull())
 	{
 		// せり上がり速度を加算
-		m_RaiseOffset += 0.5f;
+		m_RaiseOffset += 0.2f;
 	}
 
 	// 1ブロック分せり上がったら、配列を更新
@@ -90,10 +97,19 @@ void IField::Update(void)
 		m_RaiseOffset = 0.0f; // リセット
 	}
 
+
+	if (!m_ComboGaugeUI.expired())
+		m_ComboGaugeUI.lock()->SetValue(m_combo_max_duration_time, m_ComboDurationTimer);
+
+	if (!m_ComboCountUI.expired())
+		m_ComboCountUI.lock()->SetCount(m_ComboCounter);
+	
+
 	MoveCursor();
 	ShiftBlock();
 	BlockVanish();
 	Vanishing();
+
 	CheckFall();
 	ComboDurationTimer();
 	FinishTimer();
@@ -129,7 +145,7 @@ void IField::Draw(void)
 	{
 		vivid::Vector2 selectPos = m_Position + vivid::Vector2(
 			(float)m_SelectPosition.x * (float)m_block_size,
-			(float)m_SelectPosition.y * (float)m_block_size - m_RaiseOffset
+			(float)m_SelectPosition.y * (float)m_block_size
 		);
 
 		// 選択中を示す画像を上から描画
@@ -137,7 +153,7 @@ void IField::Draw(void)
 	}
 
 
-	vivid::Vector2 pos = m_Position + vivid::Vector2((float)m_CursorPosition.x*(float)m_block_size, (float)m_CursorPosition.y * (float)m_block_size - m_RaiseOffset);
+	vivid::Vector2 pos = m_Position + vivid::Vector2((float)m_CursorPosition.x*(float)m_block_size, (float)m_CursorPosition.y * (float)m_block_size);
 
 	vivid::DrawTexture("data\\block_choice_flame.png", pos);
 
@@ -147,9 +163,7 @@ void IField::Draw(void)
 #ifdef DEBUG
 	vivid::DrawText(50, std::to_string(CScoreManager::GetInstance().GetScore()), { 0,200 });
 	vivid::DrawText(50, std::to_string(m_ComboDurationTimer), { 0,400 });
-#endif // DEBUG
-
-	
+#endif // DEBUG	
 }
 
 void IField::Finalize(void)
@@ -176,39 +190,39 @@ int IField::GetBlockMaxWidthConstant(void)
 	return m_block_max_width;
 }
 
+
 void IField::MoveCursor(void)
 {
+	auto& input = CInputManager::GetInstance();
+
 	if (m_SelectedFlag)	return;
 
-	if(vivid::keyboard::Trigger(vivid::keyboard::KEY_ID::W) && m_CursorPosition.y> 0)
+	if((vivid::keyboard::Trigger(vivid::keyboard::KEY_ID::W)|| input.GetStickOnce(PLAYER_ID::PLAYER1,LR_ID::LEFT,DIRECTION::UP)) && m_CursorPosition.y> 0)
 	{
 		m_CursorPosition.y--;
 	}
 	
-	if (vivid::keyboard::Trigger(vivid::keyboard::KEY_ID::S) && m_CursorPosition.y < m_block_max_height-1)
+	if ((vivid::keyboard::Trigger(vivid::keyboard::KEY_ID::S) || input.GetStickOnce(PLAYER_ID::PLAYER1, LR_ID::LEFT, DIRECTION::DOWN))&& m_CursorPosition.y < m_block_max_height-1)
 	{
 		m_CursorPosition.y++;
 	}
 
-	if (vivid::keyboard::Trigger(vivid::keyboard::KEY_ID::D) && m_CursorPosition.x < m_block_max_width-1)
+	if ((vivid::keyboard::Trigger(vivid::keyboard::KEY_ID::D) || input.GetStickOnce(PLAYER_ID::PLAYER1, LR_ID::LEFT, DIRECTION::RIGHT)) && m_CursorPosition.x < m_block_max_width-1)
 	{
 		m_CursorPosition.x++;
 	}
 
-	if (vivid::keyboard::Trigger(vivid::keyboard::KEY_ID::A) && m_CursorPosition.x > 0)
+	if ((vivid::keyboard::Trigger(vivid::keyboard::KEY_ID::A) || input.GetStickOnce(PLAYER_ID::PLAYER1, LR_ID::LEFT, DIRECTION::LEFT)) && m_CursorPosition.x > 0)
 	{
 		m_CursorPosition.x--;
-	}
-
-	if (vivid::keyboard::Trigger(vivid::keyboard::KEY_ID::C))
-	{
-		m_Field[m_CursorPosition.y][m_CursorPosition.x].color = BLOCK_COLOR::EMPTY;
 	}
 }
 
 void IField::ShiftBlock(void)
 {
-	if (vivid::keyboard::Button(vivid::keyboard::KEY_ID::RETURN) && m_Field[m_CursorPosition.y][m_CursorPosition.x].color != BLOCK_COLOR::EMPTY)
+	auto& input = CInputManager::GetInstance();
+
+	if ((vivid::keyboard::Button(vivid::keyboard::KEY_ID::RETURN)|| input.GetKey(PLAYER_ID::PLAYER1,BUTTON_ID::A,GET_KEY_MODE::BUTTON))&& m_Field[m_CursorPosition.y][m_CursorPosition.x].color != BLOCK_COLOR::EMPTY)
 	{
 		m_SelectPosition = m_CursorPosition;
 		m_SelectedFlag = true;
@@ -223,7 +237,7 @@ void IField::ShiftBlock(void)
 
 	BLOCK tmp = m_Field[m_CursorPosition.y][m_CursorPosition.x];
 
-	if (vivid::keyboard::Trigger(vivid::keyboard::KEY_ID::W) && m_CursorPosition.y > 0)
+	if ((vivid::keyboard::Trigger(vivid::keyboard::KEY_ID::W) || input.GetStickOnce(PLAYER_ID::PLAYER1, LR_ID::LEFT, DIRECTION::UP)) && m_CursorPosition.y > 0)
 	{
 		m_Field[m_CursorPosition.y][m_CursorPosition.x] = m_Field[m_CursorPosition.y - 1][m_CursorPosition.x];
 		m_Field[m_CursorPosition.y - 1][m_CursorPosition.x] = tmp;
@@ -232,7 +246,7 @@ void IField::ShiftBlock(void)
 		m_CursorPosition.y--;
 	}
 
-	if (vivid::keyboard::Trigger(vivid::keyboard::KEY_ID::S) && m_CursorPosition.y < m_block_max_height - 1)
+	if ((vivid::keyboard::Trigger(vivid::keyboard::KEY_ID::S) || input.GetStickOnce(PLAYER_ID::PLAYER1, LR_ID::LEFT, DIRECTION::DOWN)) && m_CursorPosition.y < m_block_max_height - 1)
 	{
 		m_Field[m_CursorPosition.y][m_CursorPosition.x] = m_Field[m_CursorPosition.y + 1][m_CursorPosition.x];
 		m_Field[m_CursorPosition.y + 1][m_CursorPosition.x] = tmp;
@@ -240,7 +254,7 @@ void IField::ShiftBlock(void)
 		m_CursorPosition.y++;
 	}
 
-	if (vivid::keyboard::Trigger(vivid::keyboard::KEY_ID::D) && m_CursorPosition.x < m_block_max_width - 1)
+	if ((vivid::keyboard::Trigger(vivid::keyboard::KEY_ID::D) || input.GetStickOnce(PLAYER_ID::PLAYER1, LR_ID::LEFT, DIRECTION::RIGHT)) && m_CursorPosition.x < m_block_max_width - 1)
 	{
 		m_Field[m_CursorPosition.y][m_CursorPosition.x] = m_Field[m_CursorPosition.y][m_CursorPosition.x + 1 ];
 		m_Field[m_CursorPosition.y][m_CursorPosition.x + 1] = tmp;
@@ -248,7 +262,7 @@ void IField::ShiftBlock(void)
 		m_CursorPosition.x++;
 	}
 
-	if (vivid::keyboard::Trigger(vivid::keyboard::KEY_ID::A) && m_CursorPosition.x > 0)
+	if ((vivid::keyboard::Trigger(vivid::keyboard::KEY_ID::A) || input.GetStickOnce(PLAYER_ID::PLAYER1, LR_ID::LEFT, DIRECTION::LEFT)) && m_CursorPosition.x > 0)
 	{
 		m_Field[m_CursorPosition.y][m_CursorPosition.x] = m_Field[m_CursorPosition.y][m_CursorPosition.x -1 ];
 		m_Field[m_CursorPosition.y][m_CursorPosition.x - 1] = tmp;
@@ -282,7 +296,7 @@ void IField::BlockVanish(void)
 	{
 		for (int x = 0; x < m_block_max_width; x++)
 		{
-			for (int i = 0; i < (int)DIRECTION::MAX; i++)
+			for (int i = 0; i < (int)BLOCK_DIRECTION::MAX; i++)
 			{
 				if (m_Field[y][x].color == BLOCK_COLOR::EMPTY)	continue;
 
@@ -291,29 +305,30 @@ void IField::BlockVanish(void)
 				
 				ResetCheckFlag();
 
-				int check_straight = (CheckStraight((DIRECTION)i, x, y, m_Field[y][x].color)) + 1;
+				int check_straight = (CheckStraight((BLOCK_DIRECTION)i, x, y, m_Field[y][x].color)) + 1;
 
 				if (m_block_min_chains <= check_straight)
 				{
+					// コンボ開始
 					CScoreManager::GetInstance().AddScore(check_straight, m_ComboCounter);
 					m_ComboDurationTimer = m_combo_max_duration_time;
 					m_ComboCounter++;
-					SetStateVanish((DIRECTION)i, x, y);
+					SetStateVanish((BLOCK_DIRECTION)i, x, y);
 				}
 			}
 		}
 	}
 }
 
-int IField::CheckStraight(DIRECTION dir, int x, int y,  BLOCK_COLOR color)
+int IField::CheckStraight(BLOCK_DIRECTION dir, int x, int y,  BLOCK_COLOR color)
 {
 	int nx = x, ny = y;		//!< 次の座標
 	BLOCK_COLOR ncolor;		//!< 次の色
 
 	m_Field[y][x].check_flag = true;
 
-	if (dir == IField::DIRECTION::DOWN && ny + 1 < m_block_max_height)		ny++;
-	else if (dir == IField::DIRECTION::RIGHT && nx + 1 < m_block_max_width)	nx++;
+	if (dir == IField::BLOCK_DIRECTION::DOWN && ny + 1 < m_block_max_height)		ny++;
+	else if (dir == IField::BLOCK_DIRECTION::RIGHT && nx + 1 < m_block_max_width)	nx++;
 	else return 0;
 
 	ncolor = m_Field[ny][nx].color;
@@ -327,7 +342,7 @@ int IField::CheckStraight(DIRECTION dir, int x, int y,  BLOCK_COLOR color)
 	 
 }
 
-void IField::SetStateVanish(DIRECTION dir, int x, int y)
+void IField::SetStateVanish(BLOCK_DIRECTION dir, int x, int y)
 {
 	if (!m_Field[y][x].check_flag)	return;
 
@@ -336,8 +351,8 @@ void IField::SetStateVanish(DIRECTION dir, int x, int y)
 	int nx = x, ny = y;
 	switch (dir)
 	{
-	case IField::DIRECTION::DOWN:	ny++;	break;
-	case IField::DIRECTION::RIGHT:	nx++;	break;
+	case IField::BLOCK_DIRECTION::DOWN:	ny++;	break;
+	case IField::BLOCK_DIRECTION::RIGHT:	nx++;	break;
 	}
 
 	this->SetStateVanish(dir, nx, ny);

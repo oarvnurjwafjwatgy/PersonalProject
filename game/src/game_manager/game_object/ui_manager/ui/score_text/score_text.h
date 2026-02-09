@@ -21,7 +21,7 @@ public:
 	/*
 	 *	@brief		‰Šú‰»
 	 */
-	void Initialize(const vivid::Vector2& position, UI_ID ui_id) override;
+	void Initialize(const vivid::Vector2& position) override;
 
 	/*
 	 *	@brief		XV

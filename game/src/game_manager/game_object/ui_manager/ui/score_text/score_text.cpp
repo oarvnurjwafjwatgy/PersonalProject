@@ -8,7 +8,7 @@ CScoreText::~CScoreText(void)
 {
 }
 
-void CScoreText::Initialize(const vivid::Vector2& position, UI_ID ui_id)
+void CScoreText::Initialize(const vivid::Vector2& position)
 {
 }
 

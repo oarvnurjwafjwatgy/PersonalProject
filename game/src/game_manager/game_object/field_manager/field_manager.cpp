@@ -60,9 +60,7 @@ void CFieldManager::Finalize(void)
 	{
 		(*it)->Finalize();
 
-		it = m_FieldList.erase(it);
-
-		continue;
+		++it;
 	}
 
 	m_FieldList.clear();

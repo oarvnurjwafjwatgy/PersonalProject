@@ -38,10 +38,29 @@ public:
 
 	/*!
 	 *  @brief      UI生成
+	 * 
+	 *  @param[in] id UIのID
+	 *  @param[in] position UIの位置
 	 */
-	void Create(const vivid::Vector2& position , UI_ID ui_id);
+	std::shared_ptr<IUI>  Create( UI_ID ui_id, const vivid::Vector2& position);
+
+	/*!
+	 *  @brief      UIの削除
+	 *
+	 *  @param[in] id UIのID
+	 */
+	void	Delete(UI_ID id);
+
 
 private:
+
+	/*!
+	 *  @brief      UIのクラスを制作
+	 * 
+	 *  @param[in] id UIのID
+	 */
+	std::shared_ptr<IUI>  CreateClass(UI_ID id);
+
 
 	/*!
 	 *  @brief      コンストラクタ

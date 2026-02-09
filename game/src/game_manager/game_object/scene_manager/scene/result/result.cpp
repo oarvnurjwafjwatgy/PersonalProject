@@ -1,4 +1,5 @@
 #include "result.h"
+#include "../../../input_manager/input_manager.h"
 
 
 
@@ -13,8 +14,9 @@ void CResult::Initialize(SCENE_ID scene_id)
 void CResult::Update()
 {
 	auto& scene = CSceneManager::GetInstance();
+	auto& input = CInputManager::GetInstance();
 
-	if (vivid::keyboard::Trigger(vivid::keyboard::KEY_ID::SPACE))
+	if (vivid::keyboard::Trigger(vivid::keyboard::KEY_ID::SPACE) || input.InputAnyKey(PLAYER_ID::PLAYER1))
 		scene.ChangeScene(SCENE_ID::TITLE);
 }
 

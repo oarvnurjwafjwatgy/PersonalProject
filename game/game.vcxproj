@@ -169,12 +169,15 @@
     <ClCompile Include="src\game_manager\game_object\field_manager\field\normal_field\normal_field.cpp" />
     <ClCompile Include="src\game_manager\game_object\field_manager\field_manager.cpp" />
     <ClCompile Include="src\game_manager\game_object\field_manager\field\field.cpp" />
+    <ClCompile Include="src\game_manager\game_object\input_manager\input_manager.cpp" />
     <ClCompile Include="src\game_manager\game_object\scene_manager\scene\gamemain\gamemain.cpp" />
     <ClCompile Include="src\game_manager\game_object\scene_manager\scene\result\result.cpp" />
     <ClCompile Include="src\game_manager\game_object\scene_manager\scene\scene.cpp" />
     <ClCompile Include="src\game_manager\game_object\scene_manager\scene\title\title.cpp" />
     <ClCompile Include="src\game_manager\game_object\scene_manager\scene_manager.cpp" />
     <ClCompile Include="src\game_manager\game_object\score_manager\score_manager.cpp" />
+    <ClCompile Include="src\game_manager\game_object\ui_manager\ui\combo_count\combo_count.cpp" />
+    <ClCompile Include="src\game_manager\game_object\ui_manager\ui\combo_gauge\combo_gauge.cpp" />
     <ClCompile Include="src\game_manager\game_object\ui_manager\ui\score_text\score_text.cpp" />
     <ClCompile Include="src\game_manager\game_object\ui_manager\ui\ui.cpp" />
     <ClCompile Include="src\game_manager\game_object\ui_manager\ui_manager.cpp" />
@@ -190,6 +193,8 @@
     <ClInclude Include="src\game_manager\game_object\field_manager\field\field.h" />
     <ClInclude Include="src\game_manager\game_object\field_manager\field\normal_field\normal_field.h" />
     <ClInclude Include="src\game_manager\game_object\field_manager\field_manager.h" />
+    <ClInclude Include="src\game_manager\game_object\input_manager\input_id.h" />
+    <ClInclude Include="src\game_manager\game_object\input_manager\input_manager.h" />
     <ClInclude Include="src\game_manager\game_object\scene_manager\scene\gamemain\gamemain.h" />
     <ClInclude Include="src\game_manager\game_object\scene_manager\scene\result\result.h" />
     <ClInclude Include="src\game_manager\game_object\scene_manager\scene\scene.h" />
@@ -197,6 +202,8 @@
     <ClInclude Include="src\game_manager\game_object\scene_manager\scene\title\title.h" />
     <ClInclude Include="src\game_manager\game_object\scene_manager\scene_manager.h" />
     <ClInclude Include="src\game_manager\game_object\score_manager\score_manager.h" />
+    <ClInclude Include="src\game_manager\game_object\ui_manager\ui\combo_count\combo_count.h" />
+    <ClInclude Include="src\game_manager\game_object\ui_manager\ui\combo_gauge\combo_gauge.h" />
     <ClInclude Include="src\game_manager\game_object\ui_manager\ui\score_text\score_text.h" />
     <ClInclude Include="src\game_manager\game_object\ui_manager\ui\ui.h" />
     <ClInclude Include="src\game_manager\game_object\ui_manager\ui\ui_id.h" />
