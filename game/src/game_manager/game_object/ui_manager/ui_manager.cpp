@@ -3,6 +3,7 @@
 #include "ui/combo_gauge/combo_gauge.h"
 #include <memory>
 #include "../ui_manager/ui/combo_count/combo_count.h"
+#include "../ui_manager/ui/score_text/score_text.h"
 
 CUIManager& CUIManager::GetInstance(void)
 {
@@ -105,10 +106,9 @@ std::shared_ptr<IUI> CUIManager::CreateClass(UI_ID id)
 
 	switch (id)
 	{
-	case UI_ID::SCORE_TEXT:
-		break;
 	case UI_ID::COMBO_GAUGE: ui = std::make_shared<CComboGauge>(); break;
 	case UI_ID::COMBO_COUNT: ui = std::make_shared<CComboCount>(); break;
+	case UI_ID::SCORE_TEXT:  ui = std::make_shared<CScoreText>();  break;
 	}
 	return ui;
 }

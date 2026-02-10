@@ -6,6 +6,7 @@ const int CScoreManager:: m_base_score = 25;
 const float CScoreManager::m_base_multiplier = 1.0f;
 const float CScoreManager::m_half = 0.5f;
 const float CScoreManager::m_one_tenth = 0.1f;
+const int CScoreManager::m_max_score = 99999999;
 
 
 CScoreManager& CScoreManager::GetInstance(void)
@@ -42,4 +43,11 @@ void CScoreManager::AddScore( int chains, int combo)
 	float combo_bonus = (float)combo * m_one_tenth;
 	
 	m_Score += m_base_score * chains * (chain_bonus + m_base_multiplier + combo_bonus);
+	
+	// // Å‘å‚É‚È‚ç‚È‚¢‚æ‚¤‚É§ŒÀ
+	//if (m_Score > m_base_score)
+	//{
+	//	m_Score = m_max_score;
+	//}
+
 }

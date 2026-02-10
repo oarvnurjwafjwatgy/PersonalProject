@@ -10,6 +10,7 @@
 #include <memory>
 #include "../../input_manager/input_manager.h"
 #include "../../ui_manager/ui/combo_count/combo_count.h"
+#include "../../ui_manager/ui/score_text/score_text.h"
 
 class IField
 {
@@ -231,4 +232,5 @@ protected:
 
 	std::weak_ptr<CComboGauge>		m_ComboGaugeUI;				//!< ゲージ
 	std::weak_ptr<CComboCount>		m_ComboCountUI;				//!< コンボ数
+	std::weak_ptr<CScoreText>		m_ScoreTextUI;				//!< スコアテキストUI
 };

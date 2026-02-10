@@ -65,6 +65,7 @@ private:
 	static const float m_base_multiplier;	//!< 基本倍率
 	static const float m_half;	//!< 2分の1（連結ボーナスの計算に使用）
 	static const float m_one_tenth;		//!< 10分の1
+	static const int m_max_score;		//!< 最大のスコア
 
 
 	int m_Score;					//!< 現在のスコア

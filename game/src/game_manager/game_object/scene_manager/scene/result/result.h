@@ -3,6 +3,7 @@
 #include "vivid.h"
 #include "../scene.h"
 #include "../../scene_manager.h"
+#include "../../../ui_manager/ui/score_text/score_text.h"
 
 class CResult : public IScene
 {
@@ -38,8 +39,16 @@ public:
 	 */
 	void Finalize() override;
 
+	/*
+	 *	@brief		スコア取得
+	 */
+	void GetResultScore(int score);
+
 
 private:
 
+	int m_ResultScore;			//!< スコアの結果
+
+	std::weak_ptr<CScoreText>		m_ScoreTextUI;				//!< スコアテキストUI
 };
 

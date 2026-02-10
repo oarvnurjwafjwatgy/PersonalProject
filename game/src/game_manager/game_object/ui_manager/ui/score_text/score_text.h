@@ -38,4 +38,19 @@ public:
 	 */
 	void Finalize() override;
 
+	/*!
+	 *  @brief      現在のスコアの設定
+	 */
+	void SetCurrentScore(int current_score);
+
+	/*!
+	 *  @brief      現在のスコアの取得
+	 */
+	int GetCurrentScore();
+
+private:
+
+	int m_CurrentScore;			//!< 今のスコア
+	vivid::Vector2 m_position;   //!< 位置
+
 };

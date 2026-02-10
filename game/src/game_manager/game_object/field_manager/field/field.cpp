@@ -42,9 +42,11 @@ void IField::Initialize(const vivid::Vector2& position, FIELD_ID field_id)
 
 	auto combo_gauge_ui = CUIManager::GetInstance().Create(UI_ID::COMBO_GAUGE, vivid::Vector2{30,600});
 	auto combo_count_ui = CUIManager::GetInstance().Create(UI_ID::COMBO_COUNT, vivid::Vector2{30,500});
+	auto score_text_ui = CUIManager::GetInstance().Create(UI_ID::SCORE_TEXT, vivid::Vector2{30,200});
 
 	m_ComboGaugeUI = std::dynamic_pointer_cast<CComboGauge>(combo_gauge_ui);
 	m_ComboCountUI = std::dynamic_pointer_cast<CComboCount>(combo_count_ui);
+	m_ScoreTextUI = std::dynamic_pointer_cast<CScoreText>(score_text_ui);
 
 
 	m_RowIndex = m_block_max_height - m_block_start_row;
@@ -83,6 +85,7 @@ void IField::Initialize(const vivid::Vector2& position, FIELD_ID field_id)
 void IField::Update(void)
 {
 	auto& field = CFieldManager::GetInstance();
+	auto& score = CScoreManager::GetInstance();
 
 	if (!CheckTopRowFull())
 	{
@@ -103,6 +106,9 @@ void IField::Update(void)
 
 	if (!m_ComboCountUI.expired())
 		m_ComboCountUI.lock()->SetCount(m_ComboCounter);
+
+	if (!m_ScoreTextUI.expired())
+		m_ScoreTextUI.lock()->SetCurrentScore(score.GetScore());
 	
 
 	MoveCursor();
@@ -300,9 +306,6 @@ void IField::BlockVanish(void)
 			{
 				if (m_Field[y][x].color == BLOCK_COLOR::EMPTY)	continue;
 
-				// 消えることが確定している場合、スキップする
-				//if (m_Field[y][x].state == BLOCK_STATE::VANISH) continue;
-				
 				ResetCheckFlag();
 
 				int check_straight = (CheckStraight((BLOCK_DIRECTION)i, x, y, m_Field[y][x].color)) + 1;
