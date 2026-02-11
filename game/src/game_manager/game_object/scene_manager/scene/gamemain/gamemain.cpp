@@ -4,9 +4,11 @@
 #include "../../../ui_manager/ui_manager.h"
 #include "../../../effect_manager/effect_manager.h"
 
-
+const int CGameMain::m_start_wait_time = 5.0f*60;
 
 CGameMain::CGameMain(void)
+	: m_GameState(GAME_STATE::DUMMY)
+	, m_State_Wait_Timer(0)
 {
 }
 
@@ -26,24 +28,30 @@ void CGameMain::Initialize(SCENE_ID scene_id)
 	vivid::Vector2 combogauge_pos = { 50,300 };
 	vivid::Vector2 combocount_pos = { 50,250 };
 
-	//std::shared_ptr<IUI> ComboGaugeUI = ui.Create(UI_ID::COMBO_GAUGE,combogauge_pos);
-	//std::shared_ptr<IUI> ComboCountUI = ui.Create(UI_ID::COMBO_COUNT, combocount_pos);
+	m_State_Wait_Timer = m_start_wait_time;
+	m_GameState = GAME_STATE::START;
 }
 
 void CGameMain::Update()
 {
-	auto& field = CFieldManager::GetInstance(); 
+	
 	auto& scene = CSceneManager::GetInstance();
 
-	field.Update();
+
+	switch (m_GameState)
+	{
+	case CGameMain::GAME_STATE::START: Start();		break;
+	case CGameMain::GAME_STATE::PLAY: Play(); break;
+	case CGameMain::GAME_STATE::FINISH: Finish(); break;
+	}
+
+
+	
 
 	if (vivid::keyboard::Trigger(vivid::keyboard::KEY_ID::SPACE))
 		scene.ChangeScene(SCENE_ID::RESULT);
 
-	if (field.GetFinishFlag())
-	{
-		scene.ChangeScene(SCENE_ID::RESULT);
-	}
+	
 }
 
 void CGameMain::Draw()
@@ -72,4 +80,62 @@ void CGameMain::Finalize()
 
 	field.Finalize();
 	ui.Finalize();
+}
+
+void CGameMain::Start(void)
+{
+	auto& ui = CUIManager::GetInstance();
+	auto& gamestart	=ui.Create(UI_ID::GAME_START, { 500,500 });
+
+
+	if (m_State_Wait_Timer-- <= 0)
+	{
+		/*gamestart->Delete();
+		ui.Delete(gamestart->GetUI_ID());*/
+
+		gamestart->Finalize();
+		m_GameState = GAME_STATE::PLAY;
+
+		printfDx("Play‚É‚È‚Á‚½‚æ\n");
+	}
+
+
+}
+
+
+void CGameMain::Play(void)
+{
+	auto& field = CFieldManager::GetInstance();
+
+	field.Update();
+
+
+	if (field.GetFinishFlag())
+	{
+		m_State_Wait_Timer = m_start_wait_time;
+		m_GameState = GAME_STATE::FINISH;
+
+		printfDx("Finish‚É‚È‚Á‚½‚æ\n");
+	}
+
+	if (vivid::keyboard::Trigger(vivid::keyboard::KEY_ID::K))
+	{
+		m_GameState = GAME_STATE::FINISH;
+		m_State_Wait_Timer = m_start_wait_time;
+		printfDx("Finish‚É‚È‚Á‚½‚æ\n");
+	}
+}
+
+void CGameMain::Finish(void)
+{
+	auto& scene = CSceneManager::GetInstance();
+	auto& ui = CUIManager::GetInstance();
+	ui.Create(UI_ID::FINISH, { 500,500 });
+	
+	if (m_State_Wait_Timer-- <= 0)
+	{
+		scene.ChangeScene(SCENE_ID::RESULT);
+	}
+	
+	
 }

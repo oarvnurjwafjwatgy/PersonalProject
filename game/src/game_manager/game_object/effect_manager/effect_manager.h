@@ -45,7 +45,14 @@ public:
 	 */
 	std::shared_ptr<IEffect>  Create(EFFECT_ID effect_id, const vivid::Vector2& position);
 
-
+	/*!
+	 *  @brief      エフェクト生成
+	 *
+	 *  @param[in] id エフェクトのID
+	 *  @param[in] position エフェクトの位置
+	 *  @param[in] position エフェクトの色
+	 */
+	std::shared_ptr<IEffect> Create(EFFECT_ID effect_id, const vivid::Vector2& position, unsigned int color);
 
 
 

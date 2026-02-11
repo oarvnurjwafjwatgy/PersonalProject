@@ -11,13 +11,15 @@ CResult::CResult(void)
 
 void CResult::Initialize(SCENE_ID scene_id)
 {
+	auto& ui = CUIManager::GetInstance();
 
-	auto score_text_ui = CUIManager::GetInstance().Create(UI_ID::SCORE_TEXT, vivid::Vector2{ 300,200 });
+	auto score_text_ui = ui.Create(UI_ID::SCORE_TEXT, vivid::Vector2{ 300,200 });
 
 	m_ScoreTextUI = std::dynamic_pointer_cast<CScoreText>(score_text_ui);
 
 	m_ResultScore = CScoreManager::GetInstance().GetScore();
 
+	ui.Create(UI_ID::RESULT_TEXT, { 500,100 });
 
 	if (!m_ScoreTextUI.expired())
 		m_ScoreTextUI.lock()->SetCurrentScore(m_ResultScore);
@@ -43,10 +45,16 @@ void CResult::Draw()
 {
 	vivid::DrawText(30, "ƒŠƒUƒ‹ƒg", vivid::Vector2::ZERO);
 
+	vivid::DrawTexture("data\\titleback.png", { 0.0f,0.0f });
+
+
 }
 
 void CResult::Finalize()
 {
+	auto& ui = CUIManager::GetInstance();
+
+	ui.Finalize();
 }
 
 void CResult::GetResultScore(int score)

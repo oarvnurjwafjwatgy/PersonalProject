@@ -197,6 +197,18 @@ int IField::GetBlockMaxWidthConstant(void)
 	return m_block_max_width;
 }
 
+unsigned int IField::ConvertBlockColor(BLOCK_COLOR color)
+{
+	switch (color) {
+	case BLOCK_COLOR::RED:     return 0xFFFF3333; // 鮮やかな赤
+	case BLOCK_COLOR::GREEN:   return 0xFF33FF33; // 鮮やかな緑
+	case BLOCK_COLOR::BLUE:    return 0xFF3333FF; // 鮮やかな青
+	case BLOCK_COLOR::CYAN:    return 0xFF33FFFF; // 水色
+	case BLOCK_COLOR::YELLOW:  return 0xFFFFFF33; // 黄色
+	case BLOCK_COLOR::MAGENTA: return 0xFFFF33FF; // 紫・ピンク
+	}
+}
+
 
 void IField::MoveCursor(void)
 {
@@ -374,18 +386,33 @@ void IField::ResetCheckFlag(void)
 	}
 }
 
+
+
 void IField::Vanishing(void)
 {
+
+
 	for (int y = 0; y < m_block_max_height; y++)
 	{
 		for (int x = 0; x < m_block_max_width; x++)
 		{
 			if (m_Field[y][x].state == BLOCK_STATE::VANISH)
 			{
+				// フィールドの左上座標 + (列番 * サイズ, 行番 * サイズ)
+				vivid::Vector2 blockPos = m_Position + vivid::Vector2(
+					(float)x * m_block_size,
+					(float)y * m_block_size
+				);
+
+				// ブロックの中心を狙い、サイズの半分を足す
+				vivid::Vector2 centerPos = blockPos + vivid::Vector2(m_block_size / 2.0f, m_block_size / 2.0f);
+
+				unsigned int colorCode = ConvertBlockColor(m_Field[y][x].color);
+				CEffectManager::GetInstance().Create(EFFECT_ID::VANISH, centerPos, colorCode);
+
+				// ブロックを消す処理
 				m_Field[y][x].color = BLOCK_COLOR::EMPTY;
 				m_Field[y][x].state = BLOCK_STATE::WAIT;
-
-				CEffectManager::GetInstance().Create(EFFECT_ID::VANISH, m_Position);
 
 			}
 		}

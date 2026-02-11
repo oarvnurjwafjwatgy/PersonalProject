@@ -19,8 +19,7 @@ void CGameManager::Initialize(void)
 	auto& input = CInputManager::GetInstance();
 	auto& effect = CEffectManager::GetInstance();
 
-	// シーンマネージャー初期化
-	scene.Initialize();
+	
 
 	// UIマネージャー初期化
 	ui.Initialize();
@@ -33,6 +32,9 @@ void CGameManager::Initialize(void)
 
 	// 1Pしかないのでここで登録
 	input.EntryDevice(PLAYER_ID::PLAYER1, PLAYER_ID::PLAYER1);
+
+	// シーンマネージャー初期化
+	scene.Initialize();
 }
 
 void CGameManager::Update(void)
@@ -57,7 +59,6 @@ void CGameManager::Draw(void)
 {
 	auto& scene = CSceneManager::GetInstance();
 	auto& ui = CUIManager::GetInstance();
-	auto& effect = CEffectManager::GetInstance();
 
 	//シーンマネージャー描画
 	scene.Draw();
@@ -65,8 +66,6 @@ void CGameManager::Draw(void)
 	// UIマネージャー描画
 	ui.Draw();
 
-	// エフェクトマネージャー描画
-	effect.Draw();
 	
 }
 

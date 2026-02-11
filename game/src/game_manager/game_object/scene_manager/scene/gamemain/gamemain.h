@@ -38,7 +38,28 @@ public:
 	 */
 	void Finalize() override;
 
+	
+
 
 private:
 
+	void Start(void);
+
+	void Play(void);
+
+	void Finish(void);
+
+	static const int m_start_wait_time;	//!< 始まるまでの時間
+
+	enum class GAME_STATE
+	{
+		DUMMY,	//!< ダミー
+		START, //!< 開始
+		PLAY,  //!< メイン
+		FINISH, //!< 終了
+	};
+
+	GAME_STATE	m_GameState;		//!< ゲームの状態
+
+	int m_State_Wait_Timer;
 };

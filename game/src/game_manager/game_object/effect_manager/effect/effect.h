@@ -62,7 +62,12 @@ public:
 	 */
 	EFFECT_ID	GetEffect_ID();
 
-
+	/*!
+	 *	@brief		色の設定
+	 *
+	 *   @param[in] ブロックの色
+	 */
+	void SetColor(unsigned int color);
 
 protected:
 	bool				m_ActiveFlag;	//!< アクティブフラグ

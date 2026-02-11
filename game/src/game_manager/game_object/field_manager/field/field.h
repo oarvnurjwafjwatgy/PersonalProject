@@ -70,6 +70,8 @@ public:
 
 
 
+	
+
 protected:
 
 	static const int m_block_max_height = 16;	//!< ブロックの最大詰める高さ
@@ -93,11 +95,13 @@ protected:
 		GREEN,
 		BLUE,
 		CYAN,
-		MAGENTA,
 		YELLOW,
+		MAGENTA,
 
 		MAX,
 	};
+
+	unsigned int ConvertBlockColor(BLOCK_COLOR color);
 
 	/*!
 	 *	@brief		ブロックの状態

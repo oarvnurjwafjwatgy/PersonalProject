@@ -39,5 +39,12 @@ private:
 	static const int m_max_color_table;		//!< カラーテーブル
 	
 	vivid::Vector2 m_Velocity;		//!< 加速度
-	unsigned	int m_Color;		//!< 色
+
+	struct Particle {
+		vivid::Vector2 position;
+		vivid::Vector2 velocity;
+	};
+
+	std::vector<Particle> m_Particles; // 複数の粒子を格納するリスト
+	float m_AlphaValue;                // 透明度管理用 (0.0f ～ 1.0f)
 };

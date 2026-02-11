@@ -2,12 +2,10 @@
 
 const float CVanish::m_speed = 10.0f;
 const float CVanish::m_max_fade = 0.1f;
-const int CVanish::m_max_color_table = 6;
-unsigned int g_color = 0xffff8888;
 
 CVanish::CVanish(void)
 	:m_Velocity(vivid::Vector2::ZERO)
-	,m_Color(0)
+	, m_AlphaValue(1.0f)
 {
 }
 
@@ -18,36 +16,52 @@ CVanish::~CVanish(void)
 void CVanish::Initialize(const vivid::Vector2& position)
 {
 	m_Position = position;
-	vivid::LoadTexture("data\\particle.png");
 
-	float angle = (float)(rand() % 360) * 3.14f / 180.0f;
-	m_Velocity.x = cos(angle) * m_speed;
-	m_Velocity.y = sin(angle) * m_speed;
+	m_Particles.clear();
 
-	m_Color = g_color;
+	// 8方向ベクトル
+	float s = 0.707f; // 斜めの補正値
+	vivid::Vector2 directions[] = {
+		{ 0, -1 }, { 0, 1 }, { -1, 0 }, { 1, 0 },
+		{ s, -s }, { s, s }, { -s, -s }, { -s, s }
+	};
+
+	for (const auto& dir : directions) {
+		Particle p;
+		// 中心(position)から少しだけ外側(dir * 10.0f)にずらして発生させる
+		p.position = position + (dir * 16.0f);
+		p.velocity = dir * m_speed;
+		m_Particles.push_back(p);
+	}
 }
 
 void CVanish::Update(void)
 {
-	m_Position += m_Velocity;
-
-	int alpha = (m_Color & 0xff000000) >> 24;
-
-	alpha -= m_max_fade;
-
-	if (alpha < 0)
-	{
-		alpha = 0;
-
-		m_Color = 0x00000000;
+	// 全ての粒を移動させる
+	for (auto& p : m_Particles) {
+		p.position += p.velocity;
 	}
 
-	m_Color = (alpha << 24) | (m_Color & 0x00ffffff);
+	// 透明度を減らす
+	m_AlphaValue -= m_max_fade;
+
+	if (m_AlphaValue <= 0.0f) {
+		m_AlphaValue = 0.0f;
+		m_ActiveFlag = false; // エフェクト終了
+	}
 }
 
 void CVanish::Draw(void)
 {
-	vivid::DrawTexture("data\\particle.png", m_Position, m_Color);
-	m_Position.x + (3.14f * 180.0f);
-	m_Position.y + (3.14f * 180.0f);
+
+	// 1. 透明度を計算
+	unsigned int alpha = (unsigned int)(m_AlphaValue * 255);
+	unsigned int drawColor = (alpha << 24) | (m_Color & 0x00FFFFFF);
+
+	// 2. 粒（m_Particles）だけを描画する
+	for (const auto& p : m_Particles) {
+		// 元の画像サイズが大きい場合は、ここでサイズを指定して小さく描画します
+		// 第4引数にスケール（0.2fなど）を指定できるか確認してください
+		vivid::DrawTexture("data\\particle.png", p.position, drawColor);
+	}
 }

@@ -59,3 +59,8 @@ EFFECT_ID IEffect::GetEffect_ID()
 {
 	return m_Effect_ID;
 }
+
+void IEffect::SetColor(unsigned int color)
+{
+	 m_Color = color; 
+}
