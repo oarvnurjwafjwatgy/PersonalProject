@@ -1,13 +1,14 @@
 #include "field.h"
 #include "../../score_manager/score_manager.h"
 #include "../../ui_manager/ui_manager.h"
+#include "../../effect_manager/effect_manager.h"
 
 const int IField::m_block_size = 48;				//!< ブロックのサイズ
 const float IField::m_block_max_scale = 1.0f;		//!< ブロックの最大の拡大値
 const int IField::m_used_block_max_color = 5	;		//!< ブロックの色の種類の数
 const int IField::m_block_min_chains = 4;			//!< ブロックの最小消せる連結数
 const int IField::m_block_start_row = 5;			//!< ゲーム開始の初期表示列
-const int IField::m_combo_max_duration_time = 3*60;	//!< コンボ最大継続時間
+const int IField::m_combo_max_duration_time = 4*60;	//!< コンボ最大継続時間
 const int IField::m_finish_max_time = 30;			//!< 終了判定後の最大猶予時間
 
 IField::IField(void)
@@ -384,6 +385,8 @@ void IField::Vanishing(void)
 				m_Field[y][x].color = BLOCK_COLOR::EMPTY;
 				m_Field[y][x].state = BLOCK_STATE::WAIT;
 
+				CEffectManager::GetInstance().Create(EFFECT_ID::VANISH, m_Position);
+
 			}
 		}
 	}
@@ -395,7 +398,7 @@ void IField::CreateNextLine(void)
 	{
 		m_NextLine[x].color = (BLOCK_COLOR)(1 + rand() % m_used_block_max_color);
 		m_NextLine[x].state = BLOCK_STATE::WAIT;
-		m_NextLine[x].scale = 1.0f;
+		m_NextLine[x].scale = 1.3f;
 		m_NextLine[x].check_flag = false;
 	}
 

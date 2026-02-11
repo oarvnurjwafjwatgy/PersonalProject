@@ -2,6 +2,7 @@
 #include "../../../field_manager/field_manager.h"
 #include "../../../field_manager/field/field.h"
 #include "../../../ui_manager/ui_manager.h"
+#include "../../../effect_manager/effect_manager.h"
 
 
 
@@ -51,9 +52,12 @@ void CGameMain::Draw()
 
 	auto& field = CFieldManager::GetInstance();
 	auto& ui = CUIManager::GetInstance();
+	auto& effect = CEffectManager::GetInstance();
 
 	field.Draw();
 	ui.Draw();
+	effect.Draw();
+	
 
 	vivid::DrawText(30, "ƒƒCƒ“‰æ–Ê", vivid::Vector2::ZERO);
 
