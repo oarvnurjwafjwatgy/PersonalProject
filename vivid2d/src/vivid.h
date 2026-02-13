@@ -5,10 +5,10 @@
  *  @author     Kazuya Maruyama
  *              Shinya Kosugi
  *              Toshihito Ohashi
- *  @date       2023/03/01
- *  @version    2.7
+ *  @date       2023/06/10
+ *  @version    2.8
  *
- *  Copyright (c) 2013-2023, Kazuya Maruyama. Shinya Kosugi. Toshihito Ohashi. All rights reserved.
+ *  Copyright (c) 2013-2023, Kazuya Maruyama. Shinya Kosugi. Toshihito ohashi. All rights reserved.
  */
 
 #pragma once
@@ -19,120 +19,121 @@
 #include <ctime>
 #include <tuple>
 
-/*!
- *  @brief  WindowsAPIで定義されているマクロを無効化
- */
+
+ /*!
+  *  @brief  WindowsAPIで定義されているマクロを無効化
+  */
 #undef CreateFont
 #undef DrawText
 #undef PlaySound
 
 #ifdef  _DEBUG
-/*!
- *  @brief  デバッグ実行時マクロ<br>
- *          このマクロが有効な時、Debug用プロセスでプログラムを実行します。
- */
+  /*!
+   *  @brief  デバッグ実行時マクロ<br>
+   *          このマクロが有効な時、Debug用プロセスでプログラムを実行します。
+   */
 #define VIVID_DEBUG
 #else
-/*!
- *  @brief  リリリース実行時マクロ<br>
- *          このマクロが有効な時、Release用プロセスでプログラムを実行します。
- */
+  /*!
+   *  @brief  リリリース実行時マクロ<br>
+   *          このマクロが有効な時、Release用プロセスでプログラムを実行します。
+   */
 #define VIVID_RELEASE
 #endif
 
-/*!
- *  @brief      ポインタ変数解放し、NULLを設定
- *
- *  @param[in]  p   解放するポインタ
- */
+   /*!
+    *  @brief      ポインタ変数解放し、NULLを設定
+    *
+    *  @param[in]  p   解放するポインタ
+    */
 #define VIVID_SAFE_DELETE( p )          if( ( p ) ) { delete ( p ); ( p ) = nullptr; }
 
-/*!
- *  @brief      ポインタ変数解放し、NULLを設定
- *
- *  @param[in]  p   解放するポインタ
- */
+    /*!
+     *  @brief      ポインタ変数解放し、NULLを設定
+     *
+     *  @param[in]  p   解放するポインタ
+     */
 #define VIVID_SAFE_DELETE_ARRAY( p )    if( ( p ) ) { delete[] ( p ); ( p ) = nullptr; }
 
-/*!
- *  @brief      インターフェースクラスを解放し、NULLを設定
- *
- *  @param[in]  p   解放するインターフェースポインタ
- */
+     /*!
+      *  @brief      インターフェースクラスを解放し、NULLを設定
+      *
+      *  @param[in]  p   解放するインターフェースポインタ
+      */
 #define VIVID_SAFE_RELEASE( p )         if( ( p ) ) { ( p )->Release( ); ( p ) = nullptr; }
 
-/*!
- *  @brief      DXLibエラー値
- */
+      /*!
+       *  @brief      DXLibエラー値
+       */
 #define VIVID_DX_ERROR          ( -1 )
 
-/*!
- *  @brief      使用していないハンドル値
- */
+       /*!
+        *  @brief      使用していないハンドル値
+        */
 #define VIVID_UNUSED_HANDLE     ( -1 )
 
 #ifdef  VIVID_DEBUG
-/*!
- *  @brief      コンソールに文字や値を出力する<br>
- *              C言語におけるprintf関数と同様の使い方。
- *
- *  @param[in]  format  書式指定文字列
- *  @param[in]  ...     文字列や変数など
- */
+        /*!
+         *  @brief      コンソールに文字や値を出力する<br>
+         *              C言語におけるprintf関数と同様の使い方。
+         *
+         *  @param[in]  format  書式指定文字列
+         *  @param[in]  ...     文字列や変数など
+         */
 #define dprintf( format, ... )          printf( format, __VA_ARGS__ )
 
-/*!
- *  @brief      コンソールに現在のコードラインを表示する。
- */
+         /*!
+          *  @brief      コンソールに現在のコードラインを表示する。
+          */
 #define dprint_line                     dprintf( "Line - %d\n", __LINE__ )
 
-/*!
- *  @brief      コンソールに現在のファイル名を表示する。
- */
+          /*!
+           *  @brief      コンソールに現在のファイル名を表示する。
+           */
 #define dprint_file                     dprintf( "File - %s\n", __FILE__ )
 
-/*!
- *  @brief      コンソールに文字列を表示する。
- *
- *  @param[in]  x   文字列
- */
+           /*!
+            *  @brief      コンソールに文字列を表示する。
+            *
+            *  @param[in]  x   文字列
+            */
 #define VIVID_OUT_MESSAGE( x )          dprintf( x )
 
-/*!
- *  @brief      コンソールに文字や値を出力する<br>
- *              C言語におけるprintf関数と同様の使い方。
- *
- *  @param[in]  format  書式指定文字列
- *  @param[in]  ...     文字列や変数など
- */
+            /*!
+             *  @brief      コンソールに文字や値を出力する<br>
+             *              C言語におけるprintf関数と同様の使い方。
+             *
+             *  @param[in]  format  書式指定文字列
+             *  @param[in]  ...     文字列や変数など
+             */
 #define VIVID_TRACE( format, ... )      dprintf( format, __VA_ARGS__ )
 
-/*!
- *  @brief      アサート処理
- *              ゲーム画面出力用
- *
- *  @param[in]  x       条件式
- *  @param[in]  message エラーメッセージ
- */
+             /*!
+              *  @brief      アサート処理
+              *              ゲーム画面出力用
+              *
+              *  @param[in]  x       条件式
+              *  @param[in]  message エラーメッセージ
+              */
 #define VIVID_ASSERT( x, message )      Assert( ( x ), ( message ), __FILE__, __LINE__ )
 
-/*!
- *  @brief      アサート処理
- *              ゲーム画面出力用
- *
- *  @param[in]  x       条件式
- *  @param[in]  message エラーメッセージ
- */
+              /*!
+               *  @brief      アサート処理
+               *              ゲーム画面出力用
+               *
+               *  @param[in]  x       条件式
+               *  @param[in]  message エラーメッセージ
+               */
 #define VIVID_DX_ASSERT( x, message )   Assert( ( x ) != VIVID_DX_ERROR, ( message ), __FILE__, __LINE__ )
 
-/*!
- *  @brief      メモリリークチェック
- */
+               /*!
+                *  @brief      メモリリークチェック
+                */
 #define VIVID_CHECK_MEMORY_LEAK         _CrtSetDbgFlag( _CRTDBG_LEAK_CHECK_DF | _CRTDBG_ALLOC_MEM_DF )
 
-/*!
- *  @brief      メモリリーク時にファイル名と行番号を表示する
- */
+                /*!
+                 *  @brief      メモリリーク時にファイル名と行番号を表示する
+                 */
 #define VIVID_NEW                       new( _NORMAL_BLOCK, __FILE__, __LINE__ )
 #else
 #define dprintf( format, ... )
@@ -146,12 +147,12 @@
 #define VIVID_NEW                   new
 #endif
 
-/*!
- *  @brief      vivid名前空間
- */
+        /*!
+         *  @brief      vivid名前空間
+         */
 namespace vivid
 {
-    const int WINDOW_WIDTH  = 1920;     //! ウィンドウの幅
+    const int WINDOW_WIDTH = 1920;     //! ウィンドウの幅
     const int WINDOW_HEIGHT = 1080;      //! ウィンドウの高さ
 
     /*!
@@ -165,95 +166,95 @@ namespace vivid
          */
         enum class KEY_ID
         {
-              DUMMY         = 0x00  //! Dummy
-            , ESCAPE        = 0x01  //! Escape
-            , ONE           = 0x02  //! 1
-            , TWO           = 0x03  //! 2
-            , THREE         = 0x04  //! 3
-            , FOUR          = 0x05  //! 4
-            , FIVE          = 0x06  //! 5
-            , SIX           = 0x07  //! 6
-            , SEVEN         = 0x08  //! 7
-            , EIGHT         = 0x09  //! 8
-            , NINE          = 0x0A  //! 9
-            , ZERO          = 0x0B  //! 0
+            WAIT = 0x00  //! Dummy
+            , ESCAPE = 0x01  //! Escape
+            , ONE = 0x02  //! 1
+            , TWO = 0x03  //! 2
+            , THREE = 0x04  //! 3
+            , FOUR = 0x05  //! 4
+            , FIVE = 0x06  //! 5
+            , SIX = 0x07  //! 6
+            , SEVEN = 0x08  //! 7
+            , EIGHT = 0x09  //! 8
+            , NINE = 0x0A  //! 9
+            , ZERO = 0x0B  //! 0
             //, MINUS         = 0x0C  //! -
             //, EQUALS        = 0x0D  //! =
-            , BACK          = 0x0E  //! BackSpace
-            , TAB           = 0x0F  //! Tab
-            , Q             = 0x10  //! Q
-            , W             = 0x11  //! W
-            , E             = 0x12  //! E
-            , R             = 0x13  //! R
-            , T             = 0x14  //! T
-            , Y             = 0x15  //! Y
-            , U             = 0x16  //! U
-            , I             = 0x17  //! I
-            , O             = 0x18  //! O
-            , P             = 0x19  //! P
+            , BACK = 0x0E  //! BackSpace
+            , TAB = 0x0F  //! Tab
+            , Q = 0x10  //! Q
+            , W = 0x11  //! W
+            , E = 0x12  //! E
+            , R = 0x13  //! R
+            , T = 0x14  //! T
+            , Y = 0x15  //! Y
+            , U = 0x16  //! U
+            , I = 0x17  //! I
+            , O = 0x18  //! O
+            , P = 0x19  //! P
             //, LBRACKET      = 0x1A  //! [
             //, RBRACKET      = 0x1B  //! ]
-            , RETURN        = 0x1C  //! Enter
-            , LCONTROL      = 0x1D  //! Ctrl(左側)
-            , A             = 0x1E  //! A
-            , S             = 0x1F  //! S
-            , D             = 0x20  //! D
-            , F             = 0x21  //! F
-            , G             = 0x22  //! G
-            , H             = 0x23  //! H
-            , J             = 0x24  //! J
-            , K             = 0x25  //! K
-            , L             = 0x26  //! L
+            , RETURN = 0x1C  //! Enter
+            , LCONTROL = 0x1D  //! Ctrl(左側)
+            , A = 0x1E  //! A
+            , S = 0x1F  //! S
+            , D = 0x20  //! D
+            , F = 0x21  //! F
+            , G = 0x22  //! G
+            , H = 0x23  //! H
+            , J = 0x24  //! J
+            , K = 0x25  //! K
+            , L = 0x26  //! L
             //, SEMICOLON     = 0x27  //! ;(セミコロン)
             //, APOSTROPHE    = 0x28  //! '(シングルクォーテーション)
             //, GRAVE         = 0x29  //! `
-            , LSHIFT        = 0x2A  //! Shift(左側)
-            , BACKSLASH     = 0x2B  //! '\'(バックスラッシュまたは円マーク)
-            , Z             = 0x2C  //! Z
-            , X             = 0x2D  //! X
-            , C             = 0x2E  //! C
-            , V             = 0x2F  //! V
-            , B             = 0x30  //! B
-            , N             = 0x31  //! N
-            , M             = 0x32  //! M
+            , LSHIFT = 0x2A  //! Shift(左側)
+            , BACKSLASH = 0x2B  //! '\'(バックスラッシュまたは円マーク)
+            , Z = 0x2C  //! Z
+            , X = 0x2D  //! X
+            , C = 0x2E  //! C
+            , V = 0x2F  //! V
+            , B = 0x30  //! B
+            , N = 0x31  //! N
+            , M = 0x32  //! M
             //, COMMA         = 0x33  //! ,(カンマ)
             //, PERILD        = 0x34  //! .(ピリオド)
             //, SLASH         = 0x35  //! '/'(スラッシュ)
-            //, RSHIFT        = 0x36  //! シフト(右側)
+            , RSHIFT = 0x36  //! シフト(右側)
             //, MULTIPLY      = 0x37  //! *(NumPad)
             //, LMENU         = 0x38  //! Alt(左側)
-            , SPACE         = 0x39  //! Space
+            , SPACE = 0x39  //! Space
             //, CAPIRAL       = 0x3A  //! CapsLock
-            , F1            = 0x3B  //! F1
-            , F2            = 0x3C  //! F2
-            , F3            = 0x3D  //! F3
-            , F4            = 0x3E  //! F4
-            , F5            = 0x3F  //! F5
-            , F6            = 0x40  //! F6
-            , F7            = 0x41  //! F7
-            , F8            = 0x42  //! F8
-            , F9            = 0x43  //! F9
-            , F10           = 0x44  //! F10
+            , F1 = 0x3B  //! F1
+            , F2 = 0x3C  //! F2
+            , F3 = 0x3D  //! F3
+            , F4 = 0x3E  //! F4
+            , F5 = 0x3F  //! F5
+            , F6 = 0x40  //! F6
+            , F7 = 0x41  //! F7
+            , F8 = 0x42  //! F8
+            , F9 = 0x43  //! F9
+            , F10 = 0x44  //! F10
             //, NUMLOCK       = 0x45  //! NumLock
             //, SCROLL        = 0x46  //! ScrollLock
-            , NUMPAD7       = 0x47  //! 7(NumPad)
-            , NUMPAD8       = 0x48  //! 8(NumPad)
-            , NUMPAD9       = 0x49  //! 9(NumPad)
-            , SUBTRACT      = 0x4A  //! -(NumPad)
-            , NUMPAD4       = 0x4B  //! 4(NumPad)
-            , NUMPAD5       = 0x4C  //! 5(NumPad)
-            , NUMPAD6       = 0x4D  //! 6(NumPad)
-            , ADD           = 0x4E  //! +(NumPad)
-            , NUMPAD1       = 0x4F  //! 1(NumPad)
-            , NUMPAD2       = 0x50  //! 2(NumPad)
-            , NUMPAD3       = 0x51  //! 3(NumPad)
-            , NUMPAD0       = 0x52  //! 0(NumPad)
+            , NUMPAD7 = 0x47  //! 7(NumPad)
+            , NUMPAD8 = 0x48  //! 8(NumPad)
+            , NUMPAD9 = 0x49  //! 9(NumPad)
+            , SUBTRACT = 0x4A  //! -(NumPad)
+            , NUMPAD4 = 0x4B  //! 4(NumPad)
+            , NUMPAD5 = 0x4C  //! 5(NumPad)
+            , NUMPAD6 = 0x4D  //! 6(NumPad)
+            , ADD = 0x4E  //! +(NumPad)
+            , NUMPAD1 = 0x4F  //! 1(NumPad)
+            , NUMPAD2 = 0x50  //! 2(NumPad)
+            , NUMPAD3 = 0x51  //! 3(NumPad)
+            , NUMPAD0 = 0x52  //! 0(NumPad)
             , NUMPADDECIMAL = 0x53  //! .(NumPad)
-            , F11           = 0x57  //! F11
-            , F12           = 0x58  //! F12
-            , F13           = 0x64  //! F13
-            , F14           = 0x65  //! F14
-            , F15           = 0x66  //! F15
+            , F11 = 0x57  //! F11
+            , F12 = 0x58  //! F12
+            , F13 = 0x64  //! F13
+            , F14 = 0x65  //! F14
+            , F15 = 0x66  //! F15
             //, KANA          = 0x70  //! カナ
             //, CONVERT       = 0x79  //! 変換
             //, NOCONVERT     = 0x7B  //! 無変換
@@ -267,20 +268,20 @@ namespace vivid
             //, STOP          = 0x95  //! Stop
             //, AX            = 0x96  //! JapanAX
             //, UNLABELED     = 0x97  //! J3100
-            , NUMPADENTER   = 0x9C  //! Enter(NumPad)
-            , RCONTROL      = 0x9D  //! Ctrl(右側)
+            , NUMPADENTER = 0x9C  //! Enter(NumPad)
+            , RCONTROL = 0x9D  //! Ctrl(右側)
             //, NUMPADCOMMA   = 0xB3  //! ,(NumPad)
             //, DIVIDE        = 0xB5  //! /(NumPad)
             //, SYSRQ         = 0xB7  //! SysRq
             //, RMENU         = 0xB8  //! Alt(右側)
             //, PAUSE         = 0xC5  //! Pause
             //, HOME          = 0xC7  //! Home
-            , UP            = 0xC8  //! ↑
+            , UP = 0xC8  //! ↑
             //, PRIOR         = 0xC9  //! PageUp
-            , LEFT          = 0xCB  //! ←
-            , RIGHT         = 0xCD  //! →
+            , LEFT = 0xCB  //! ←
+            , RIGHT = 0xCD  //! →
             //, END           = 0xCF  //! End
-            , DOWN          = 0xD0  //! ↓
+            , DOWN = 0xD0  //! ↓
             //, NEXT          = 0xD1  //! PageDown
             //, INSERT        = 0xD2  //! Insert
             //, DELETE        = 0xD3  //! Delete
@@ -303,9 +304,9 @@ namespace vivid
          */
         enum class BUTTON_ID
         {
-              LEFT    = MOUSE_INPUT_LEFT      //! 左ボタン
-            , RIGHT   = MOUSE_INPUT_RIGHT     //! 右ボタン
-            , MIDDLE  = MOUSE_INPUT_MIDDLE    //! 中ボタン
+            LEFT = MOUSE_INPUT_LEFT      //! 左ボタン
+            , RIGHT = MOUSE_INPUT_RIGHT     //! 右ボタン
+            , MIDDLE = MOUSE_INPUT_MIDDLE    //! 中ボタン
         };
     }
 
@@ -319,7 +320,7 @@ namespace vivid
          */
         enum class DEVICE_ID
         {
-              PLAYER1       //! 1Pジョイパッド
+            PLAYER1       //! 1Pジョイパッド
             , PLAYER2       //! 2Pジョイパッド
             , PLAYER3       //! 3Pジョイパッド
             , PLAYER4       //! 4Pジョイパッド
@@ -331,20 +332,20 @@ namespace vivid
          */
         enum class BUTTON_ID
         {
-              UP              = XINPUT_BUTTON_DPAD_UP         //! ボタン上
-            , DOWN            = XINPUT_BUTTON_DPAD_DOWN       //! ボタン下
-            , LEFT            = XINPUT_BUTTON_DPAD_LEFT       //! ボタン左
-            , RIGHT           = XINPUT_BUTTON_DPAD_RIGHT      //! ボタン右
-            , START           = XINPUT_BUTTON_START           //! STARTボタン
-            , BACK            = XINPUT_BUTTON_BACK            //! BACKボタン
-            , LEFT_THUMB      = XINPUT_BUTTON_LEFT_THUMB      //! 左スティック押し込み
-            , RIGHT_THUMB     = XINPUT_BUTTON_RIGHT_THUMB     //! 右スティック押し込み
-            , LEFT_SHOULDER   = XINPUT_BUTTON_LEFT_SHOULDER   //! LBボタン
-            , RIGHT_SHOULDER  = XINPUT_BUTTON_RIGHT_SHOULDER  //! RBボタン
-            , A               = XINPUT_BUTTON_A               //! Aボタン
-            , B               = XINPUT_BUTTON_B               //! Bボタン
-            , X               = XINPUT_BUTTON_X               //! Xボタン
-            , Y               = XINPUT_BUTTON_Y               //! Yボタン
+            UP = XINPUT_BUTTON_DPAD_UP         //! ボタン上
+            , DOWN = XINPUT_BUTTON_DPAD_DOWN       //! ボタン下
+            , LEFT = XINPUT_BUTTON_DPAD_LEFT       //! ボタン左
+            , RIGHT = XINPUT_BUTTON_DPAD_RIGHT      //! ボタン右
+            , START = XINPUT_BUTTON_START           //! STARTボタン
+            , BACK = XINPUT_BUTTON_BACK            //! BACKボタン
+            , LEFT_THUMB = XINPUT_BUTTON_LEFT_THUMB      //! 左スティック押し込み
+            , RIGHT_THUMB = XINPUT_BUTTON_RIGHT_THUMB     //! 右スティック押し込み
+            , LEFT_SHOULDER = XINPUT_BUTTON_LEFT_SHOULDER   //! LBボタン
+            , RIGHT_SHOULDER = XINPUT_BUTTON_RIGHT_SHOULDER  //! RBボタン
+            , A = XINPUT_BUTTON_A               //! Aボタン
+            , B = XINPUT_BUTTON_B               //! Bボタン
+            , X = XINPUT_BUTTON_X               //! Xボタン
+            , Y = XINPUT_BUTTON_Y               //! Yボタン
         };
     }
     /*!
@@ -353,16 +354,24 @@ namespace vivid
     enum class ALPHABLEND
     {
         NOBELEND = DX_BLENDMODE_NOBLEND,     //! ブレンドなし
-        ALPHA    = DX_BLENDMODE_ALPHA,       //! 半透明
-        ADD      = DX_BLENDMODE_ADD,         //! 加算合成
-        SUB      = DX_BLENDMODE_SUB,         //! 減算合成
-        INVSRC   = DX_BLENDMODE_INVSRC,      //! 反転合成
+        ALPHA = DX_BLENDMODE_ALPHA,       //! 半透明
+        ADD = DX_BLENDMODE_ADD,         //! 加算合成
+        SUB = DX_BLENDMODE_SUB,         //! 減算合成
+        INVSRC = DX_BLENDMODE_INVSRC,      //! 反転合成
+    };
+
+    enum class ADDRESS_MODE
+    {
+        WRAP = DX_TEXADDRESS_WRAP,
+        MIRROR = DX_TEXADDRESS_MIRROR,
+        CLAMP = DX_TEXADDRESS_CLAMP,
+        BORDER = DX_TEXADDRESS_BORDER,
     };
 
     /*!
      *  @brief      描画用関数ポインタ型
      */
-//    typedef void(*DISPLAY_FUNC)(void);
+     //    typedef void(*DISPLAY_FUNC)(void);
     using DISPLAY_FUNC = void (*)(void);
 
     /*!
@@ -455,13 +464,23 @@ namespace vivid
         static float        Cross(const Vector2& vA, const Vector2& vB);
 
         /*!
+         *  @brief      ベクトルの回転（Z軸、転置
+         *
+         *  @param[in]  v       ベクトルクラス
+         *  @param[in]  angle   回転角（ラジアン）
+         *
+         *  @return     ベクトルクラス
+         */
+        static Vector2      Rotate(const Vector2& v, float angle);
+
+        /*!
          *  @brief      代入演算子のオーバーロード
          *
          *  @param[in]  v   ベクトルクラス
          *
          *  @return     ベクトルクラス
          */
-        Vector2&           operator=(const Vector2& v);
+        Vector2& operator=(const Vector2& v);
 
         /*!
          *  @brief      加算演算子のオーバーロード
@@ -470,7 +489,7 @@ namespace vivid
          *
          *  @return     ベクトルクラス
          */
-        Vector2&           operator+=(const Vector2& v);
+        Vector2& operator+=(const Vector2& v);
 
         /*!
          *  @brief      減算演算子のオーバーロード
@@ -479,7 +498,7 @@ namespace vivid
          *
          *  @return     ベクトルクラス
          */
-        Vector2&           operator-=(const Vector2& v);
+        Vector2& operator-=(const Vector2& v);
 
         /*!
          *  @brief      乗算演算子のオーバーロード
@@ -488,7 +507,7 @@ namespace vivid
          *
          *  @return     ベクトルクラス
          */
-        Vector2&           operator*=(float scalar);
+        Vector2& operator*=(float scalar);
 
         /*!
          *  @brief      等価演算子のオーバーロード
@@ -652,6 +671,8 @@ namespace vivid
      */
     Vector2     operator*(float scalar, const Vector2& v);
 
+
+
     /*!
      *  @brief      ポイント構造体
      */
@@ -670,19 +691,6 @@ namespace vivid
         int top;        //! 上端
         int right;      //! 右端
         int bottom;     //! 下端
-    };
-    /*!
-     *  @brief      再生エフェクト構造体 s.kosugi
-     */
-    struct PLAYEFFECT_DATA
-    {
-        int handle;             //! 再生ハンドル
-        vivid::Vector2 pos;     //! エフェクト位置
-
-        /*!
-         *  @brief  コンストラクタ
-         */
-        PLAYEFFECT_DATA(void);
     };
 
     /*!
@@ -850,7 +858,7 @@ namespace vivid
      *  @param[in]  rotation    回転値(ラジアン)
      *  @param[in]  blend_mode  アルファブレンドモード
      */
-    void    DrawTexture(const std::string& file_name, const Vector2& position, unsigned int color, const Rect& rect, const Vector2& anchor, const Vector2& scale, float rotation, ALPHABLEND blend_mode);
+    void    DrawTexture(const std::string& file_name, const Vector2& position, unsigned int color, const Rect& rect, const Vector2& anchor, const Vector2& scale, float rotation, ALPHABLEND blend_mode, ADDRESS_MODE address_mode = ADDRESS_MODE::CLAMP);
 
     /*!
      *  @brief      テクスチャの幅を取得
@@ -943,6 +951,17 @@ namespace vivid
     int     GetTextWidth(int size, const std::string& text);
 
     /*!
+     *  @brief      ライン描画
+     *
+     *  @param[in]  start_pos   始点位置
+     *  @param[in]  end_pos     終点位置
+     *  @param[in]  color       文字色
+     *  @param[in]  thickness   幅
+     *  @param[in]  blend_mode  アルファブレンドモード
+     */
+    void DrawLine(const Vector2& start_pos, const Vector2& end_pos, unsigned int color, float thickness = 1.0f, ALPHABLEND blend_mode = ALPHABLEND::NOBELEND);
+
+    /*!
      *  @brief      vivid::keyboard名前空間
      */
     namespace keyboard
@@ -973,6 +992,15 @@ namespace vivid
          *  @return     離された瞬間だけtrueを返す
          */
         bool    Released(KEY_ID key);
+
+        /*!
+         *  @brief      キー入力ハンドルの入力が終了しているか取得
+         *
+         *  @param[in]  keyHandle  キーハンドル
+         *
+         *  @return     入力が終了していればtrueを返す
+         */
+        bool    CheckKeyInput(int keyHandle);
     }
 
     /*!
@@ -1038,7 +1066,7 @@ namespace vivid
          *
          *  @return     押されている間trueを返す
          */
-        bool    Button(DEVICE_ID device, BUTTON_ID button );
+        bool    Button(DEVICE_ID device, BUTTON_ID button);
 
         /*!
          *  @brief      トリガー入力判定
@@ -1136,6 +1164,14 @@ namespace vivid
     void    StopSound(const std::string& file_name);
 
     /*!
+     *  @brief      サウンドのボリューム設定
+     *
+     *  @param[in]  file_name   ファイル名
+     *  @param[in]  volume      ボリューム 0 ～ 10000
+     */
+    void    SetSoundVolume(const std::string& file_name, int volume);
+
+    /*!
      *  @brief      vivid::core名前空間
      */
     namespace core
@@ -1181,11 +1217,28 @@ namespace vivid
         int     FindLoadedSound(const std::string& file_name);
 
         /*!
+         *  @brief      読み込み済みのモデル検索
+         *
+         *  @param[in]  file_name   ファイル名
+         */
+        int     FindLoadedModel(const std::string& file_name);
+
+        /*!
          *  @brief      生成済みのフォント検索
          *
          *  @param[in]  size        フォントサイズ
          */
         int     FindCreatedFont(int size);
+
+        /*!
+         *  @brief      vivid::model名前空間
+         */
+        namespace model
+        {
+
+
+        }
+
     }
 
     /*!
@@ -1203,35 +1256,13 @@ namespace vivid
 
         /*!
          *  @brief      エフェクトファイル読み込み
+         *              成功するとエフェクトハンドルが返る
          *
          *  @param[in]  file_name   ファイル名
          *
-         *  @return     正常終了:0  エラー:-1
+         *  @return     エラー:-1   正常終了:それ以外
          */
         int LoadEffect(const std::string& file_name);
-
-        /*!
-         *  @brief      エフェクトの再生開始
-         *              成功するとエフェクトハンドルが返る
-         *
-         *  @param[in]  file_name   ファイル名
-         *  @param[in]  pos         再生位置
-         *
-         *  @return     エラー:-1   正常終了:それ以外
-         */
-        int StartEffect(const std::string& file_name, const vivid::Vector2& pos);
-
-        /*!
-         *  @brief      エフェクトの再生開始
-         *              成功するとエフェクトハンドルが返る
-         *
-         *  @param[in]  file_name   ファイル名
-         *  @param[in]  pos         再生位置
-         *  @param[in]  scale       拡大率
-         *
-         *  @return     エラー:-1   正常終了:それ以外
-         */
-        int StartEffect(const std::string& file_name, const vivid::Vector2& pos,float scale);
 
         /*!
          *  @brief      エフェクトの描画
@@ -1241,7 +1272,7 @@ namespace vivid
          *
          *  @return     描画成功:true  再生終了済:false
          */
-        bool DrawEffect(const int handle, const vivid::Vector2& pos);
+        bool DrawEffect2D(const int handle, const vivid::Vector2& pos);
 
         /*!
          *  @brief      エフェクトの再生終了チェック
@@ -1251,6 +1282,15 @@ namespace vivid
          *  @return     再生中:true  再生終了:false
          */
         bool IsEffectPlaying(const int handle);
+
+        /*!
+         *  @brief      エフェクトの再生終了チェック
+         *
+         *  @param[in]  handle      エフェクトの再生ハンドル
+         *
+         *  @return     再生中:true  再生終了:false
+         */
+        bool IsEffectPlaying2D(const int handle);
 
         /*!
          *  @brief      再生リストからエフェクト全描画
@@ -1265,5 +1305,96 @@ namespace vivid
          *
          */
         void SetUseEffectListFlag(bool flag);
+
+        /*!
+         *  @brief      エフェクトハンドル削除
+         *
+         *  @param[in]  handle   ハンドル
+         *
+         *  @return     エラー:-1   正常終了:それ以外
+         */
+        int UnLoadEffect(int handle);
+
+        /*!
+         *  @brief      エフェクトハンドル削除
+         *
+         *  @param[in]  handle   ハンドル
+         *
+         *  @return     エラー:-1   正常終了:それ以外
+         */
+        int UnLoadEffect(const std::string& file_name);
+
+		void UnloadAllEffects(void);
+
+		void Restart();
+        /*!
+         *  @brief      エフェクト停止
+         *
+         *  @param[in]  handle   ハンドル
+         *
+         *  @return     エラー:-1   正常終了:それ以外
+         */
+        int StopEffect(int handle);
+
+		void StopAllEffekseer3DEffects(void);
+        /*!
+         *  @brief      エフェクト停止
+         *
+         *  @param[in]  handle   ハンドル
+         *
+         *  @return     エラー:-1   正常終了:それ以外
+         */
+        int StopEffect2D(int handle);
+
+        /*!
+         *  @brief      エフェクトの再生速度の設定
+         *
+         *  @param[in]  handle  ハンドル
+         *  @param[in]  speed   再生速度
+         *
+         */
+        void SetEffectSpeed(int handle, float speed);
+        /*!
+         *  @brief      エフェクトの再生速度の設定
+         *
+         *  @param[in]  handle  ハンドル
+         *  @param[in]  speed   再生速度
+         *
+         */
+        void SetEffectSpeed2D(int handle, float speed);
+
+		/*!
+		 *  @brief      エフェクトのルートの停止
+		 *
+		 *  @param[in]  playHandle  プレイハンドル
+		 */
+		void StopLoot(int playHandle);
+    }
+    /*!
+     *  @brief      vivid::model名前空間
+     */
+    namespace model
+    {
+        /*!
+         *  @brief      モデル読み込み
+         *              成功するとモデルハンドルが返る
+         *
+         *  @param[in]  file_name   ファイル名
+         *
+         *  @return     エラー:-1   正常終了:それ以外
+         */
+        int LoadModel(const std::string& file_name);
+    }
+
+    namespace alpha
+    {
+        /*!
+         *  @brief      アルファ値を取得
+         *
+         *  @param[in]  color   カラー
+         *
+         *  @return     アルファ値
+         */
+        unsigned int    GetAlpha(unsigned int color);
     }
 }

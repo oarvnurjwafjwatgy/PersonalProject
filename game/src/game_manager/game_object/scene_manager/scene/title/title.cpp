@@ -2,6 +2,10 @@
 #include "../../scene_manager.h"
 #include "../../../input_manager/input_manager.h"
 #include "../../../effect_manager/effect_manager.h"
+#include "../../../sound_manager/sound_manager.h"
+
+auto& TitleSound = CSoundManager::GetInstance();
+
 
 CTitle::CTitle(void)
 {
@@ -13,6 +17,8 @@ CTitle::~CTitle(void)
 
 void CTitle::Initialize(SCENE_ID scene_id)
 {
+    TitleSound.Load(BGMSOUND_ID::TITLE);
+    TitleSound.Play(BGMSOUND_ID::TITLE);
 }
 
 void CTitle::Update()
@@ -20,8 +26,11 @@ void CTitle::Update()
 	auto& input = CInputManager::GetInstance();
 	auto& scene = CSceneManager::GetInstance();
 
-	if (vivid::keyboard::Trigger(vivid::keyboard::KEY_ID::SPACE)|| input.InputAnyKey(PLAYER_ID::PLAYER1))
+    if (vivid::keyboard::Trigger(vivid::keyboard::KEY_ID::SPACE) || input.InputAnyKey(PLAYER_ID::PLAYER1))
+    {
+        TitleSound.Play(SESOUND_ID::GAMESTART);
 		scene.ChangeScene(SCENE_ID::GAME_MAIN);
+    }
 }
 
 void CTitle::Draw()

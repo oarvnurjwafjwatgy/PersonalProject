@@ -33,11 +33,11 @@ void CSoundManager::Load(BGMSOUND_ID id)
 	vivid::LoadSound(m_bgm_fill_name[(int)id]);
 }
 
-void CSoundManager::Load(SESOUND_ID id)
+void CSoundManager::Load()
 {
 	for (int i = 0; i < (int)SESOUND_ID::SEMAX; i++)
 	{
-		vivid::LoadSound(m_se_fill_name[(int)id]);
+		vivid::LoadSound(m_se_fill_name[i]);
 	}
 }
 

@@ -3,6 +3,11 @@
 #include "../../../field_manager/field/field.h"
 #include "../../../ui_manager/ui_manager.h"
 #include "../../../effect_manager/effect_manager.h"
+#include "../../../sound_manager/sound_manager.h"
+#include "../../../score_manager/score_manager.h"
+
+auto& GameMainSound = CSoundManager::GetInstance();
+
 
 const int CGameMain::m_start_wait_time = 5*60;
 
@@ -20,8 +25,15 @@ void CGameMain::Initialize(SCENE_ID scene_id)
 {
 	auto& field = CFieldManager::GetInstance();
 	auto& ui = CUIManager::GetInstance();
+	auto& score = CScoreManager::GetInstance();
+
+
+	GameMainSound.Load(BGMSOUND_ID::TITLE);
+	GameMainSound.Play(BGMSOUND_ID::TITLE);
+	GameMainSound.Play(SESOUND_ID::GAMESTART);
 
 	field.Initialize();
+	score.Initialize();
 
 	field.Create(vivid::Vector2((float)vivid::WINDOW_WIDTH / 2.0f - field.GetBlockSize() * field.GetBlockMaxWidth() / 2.0f, 200.0f), FIELD_ID::NORMAL);
 

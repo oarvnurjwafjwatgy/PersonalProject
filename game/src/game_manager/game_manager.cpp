@@ -3,6 +3,7 @@
 #include "game_object/ui_manager/ui_manager.h"
 #include "game_object/input_manager/input_manager.h"
 #include "game_object/effect_manager/effect_manager.h"
+#include "game_object/sound_manager/sound_manager.h"
 
 
 CGameManager& CGameManager::GetInstance(void)
@@ -18,6 +19,7 @@ void CGameManager::Initialize(void)
 	auto& ui = CUIManager::GetInstance();
 	auto& input = CInputManager::GetInstance();
 	auto& effect = CEffectManager::GetInstance();
+	auto& sound = CSoundManager::GetInstance();
 
 	
 
@@ -32,6 +34,9 @@ void CGameManager::Initialize(void)
 
 	// 1Pしかないのでここで登録
 	input.EntryDevice(PLAYER_ID::PLAYER1, PLAYER_ID::PLAYER1);
+
+	// サウンドマネージャー初期化
+	sound.Load();
 
 	// シーンマネージャー初期化
 	scene.Initialize();

@@ -32,7 +32,7 @@ public:
 	void Load(BGMSOUND_ID id);
 
 	// SEÇÃì«Ç›çûÇ›
-	void Load(SESOUND_ID id);
+	void Load();
 
 	// BGMÇÃçƒê∂
 	void Play(BGMSOUND_ID id, bool loop = true);

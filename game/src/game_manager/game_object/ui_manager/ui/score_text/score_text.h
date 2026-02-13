@@ -50,7 +50,17 @@ public:
 
 private:
 
-	int m_CurrentScore;			//!< 今のスコア
-	vivid::Vector2 m_position;   //!< 位置
+	static const int m_number_digit_width;		//!< 数字一桁の横幅
+	static const int m_number_digit_height;		//!< 数字一桁の高さ
+	static const unsigned int m_number_color;	//!< 初期数字の色
+	static const int m_digit_max = 6;
+
+	unsigned int m_Color;					//!< 数字の色
+
+	int m_CurrentScore;				//!< 今のスコア
+	vivid::Vector2 m_position;		//!< 位置
+
+	vivid::Rect	m_Rect[m_digit_max];
+	 
 
 };

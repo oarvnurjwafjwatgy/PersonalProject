@@ -36,6 +36,7 @@ void IField::Initialize(const vivid::Vector2& position, FIELD_ID field_id)
 {
 	auto& field = CFieldManager::GetInstance();
 	
+	
 	field.SetBlockMinChains(m_block_min_chains);
 	field.SetFinishFlag(false);
 

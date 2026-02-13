@@ -3,10 +3,12 @@
  *  @file       vivid.cpp
  *  @brief      Vivid2D Library
  *  @author     Kazuya Maruyama
- *  @date       2021/06/18
- *  @version    2.7
+ *              Shinya Kosugi
+ *              Toshihito Ohashi
+ *  @date       2023/06/10
+ *  @version    2.8
  *
- *  Copyright (c) 2013-2021, Kazuya Maruyama. Shinya Kosugi. All rights reserved.
+ *  Copyright (c) 2013-2023, Kazuya Maruyama. Shinya Kosugi. Toshihito Ohashi. All rights reserved.
  */
 
 #pragma comment( lib, "imm32.lib" )
@@ -19,7 +21,8 @@
 #include <list>
 #include <iomanip>
 #include <sstream>
-
+#include <algorithm>
+#include <cstdint>
 #pragma warning(disable: 4100)      // effekseer.hの警告回避 s.kosugi
 #include <EffekseerForDXLib.h>      // effekseerライブラリの読み込み s.kosugi
 
@@ -35,7 +38,7 @@ namespace vivid
     {
         static const int            g_window_width                  = WINDOW_WIDTH;                         //!< ウィンドウの横幅
         static const int            g_window_height                 = WINDOW_HEIGHT;                        //!< ウィンドウの縦幅
-        static const char*          g_class_name                    = "vivid2D 2.7 with Effekseer";         //!< クラスネーム
+        static const char*          g_class_name                    = "vivid2D 2.8 with Effekseer";         //!< クラスネーム
         static const int            g_color_bit                     = 32;                                   //!< カラービット
         static const unsigned int   g_button_state_num              = 9;                                    //!< 入力判定用ボタン数
         static const unsigned int   g_max_key_count                 = 256;                                  //!< ボタンの最大数
@@ -58,14 +61,13 @@ namespace vivid
         float                       g_DeltaTimeScale                = g_default_delta_time_scale;           //!< デルタタイム倍率
         std::map<std::string, int>  g_TextureList;                                                          //!< テクスチャリスト
         std::map<std::string, int>  g_SoundList;                                                            //!< サウンドリスト
+        std::map<std::string, int>  g_ModelList;                                                            //!< サウンドリスト
         std::map<int, int>          g_FontList;                                                             //!< フォントリスト
         char                        g_KeyState[g_max_key_count]     = { 0 };                                //!< 入力データ
         char                        g_PrevKeyState[g_max_key_count] = { 0 };                                //!< 前回の入力データ
         int                         g_MouseState                    = 0;                                    //!< マウスの入力状態
         int                         g_PrevMouseState                = 0;                                    //!< 前のマウスの入力状態
-        std::map<std::string, int>  g_EffekseerList;                                                        //!< エフェクト読み込みリスト s.kosugi
-        std::list<PLAYEFFECT_DATA>  g_EffectPlayList;                                                       //!< エフェクト全再生リスト s.kosugi
-        bool                        g_UseEffectListFlag             = true;                                 //!< エフェクトリストの全再生を行うかどうか s.kosugi
+        std::map<std::string, int>  g_EffekseerList;                                                        //!< エフェクト読み込みリスト 
         XINPUT_STATE                g_ControllerState[static_cast<int>(controller::DEVICE_ID::MAX)];        //!< コントローラーの入力状態
         XINPUT_STATE                g_PrevControllerState[static_cast<int>(controller::DEVICE_ID::MAX)];    //!< 1フレーム前の入力状態
 
@@ -178,6 +180,23 @@ vivid::Vector2::
 Cross(const Vector2& vA, const Vector2& vB)
 {
     return (vA.x * vB.y) - (vA.y * vB.x);
+}
+
+/*
+ *  ベクトルの回転
+ */
+vivid::Vector2
+vivid::Vector2::
+Rotate(const Vector2& v, float angle)
+{
+    Vector2 result;
+    const float _cos = cos(angle);
+    const float _sin = sin(angle);
+
+    result.x = v.x * _cos + v.y * -_sin;
+    result.y = v.x * _sin + v.y *  _cos;
+
+    return result;
 }
 
 /*
@@ -315,15 +334,6 @@ vivid::operator*(float scalar, const vivid::Vector2& v)
     return vivid::Vector2(v.x * scalar, v.y * scalar);
 }
 
-/*
- *  コンストラクタ
- */
-vivid::PLAYEFFECT_DATA::
-PLAYEFFECT_DATA(void)
-    : handle(0)
-{
-}
-
 using namespace vivid::core;
 
 /*
@@ -371,10 +381,18 @@ Initialize(HINSTANCE hInst)
     // DirectX11のバージョンを指定する
     if (SetUseDirect3DVersion(DX_DIRECT3D_11) == VIVID_DX_ERROR)
         return;
-
     // DXライブラリ初期化
     if (DxLib_Init() == VIVID_DX_ERROR)
         return;
+
+    //ライトの計算をする
+    SetUsePixelLighting(TRUE);
+
+    // Zバッファの有効化
+    SetUseZBuffer3D(TRUE);
+
+    // Zバッファへの書き込みを有効化
+    SetWriteZBuffer3D(TRUE);
 
     // バックバッファに書き込む
     SetDrawScreen(DX_SCREEN_BACK);
@@ -406,7 +424,9 @@ Initialize(HINSTANCE hInst)
 
     // エフェクトリストをクリア s.kosugi
     g_EffekseerList.clear();
-    g_EffectPlayList.clear();
+
+    // 画面の背景色を設定(何故かMainLoopのほうで毎フレーム呼ばれていたので移しました)
+    SetBackgroundColor(0x80, 0x80, 0x80);
 }
 
 /*
@@ -456,20 +476,14 @@ MainLoop(void)
             GetJoypadXInputState(i + DX_INPUT_PAD1, &g_ControllerState[i]);
         }
 
-        // 画面の背景色を設定
-        SetBackgroundColor(0x80, 0x80, 0x80);
-
         // 画面のクリア
         ClearDrawScreen();
 
         // 更新/描画
         g_DisplayFunction();
 
-        // effekseerライブラリの更新  s.kosugi
-        UpdateEffekseer2D();
-        // エフェクトの描画  s.kosugi
-        if (g_UseEffectListFlag)
-            effekseer::DrawEffectList();
+        // effekseerライブラリの更新  
+        UpdateEffekseer3D();
 
         // スクリーンショットの撮影
         if (keyboard::Trigger(vivid::keyboard::KEY_ID::F9))
@@ -501,6 +515,7 @@ MainLoop(void)
         if (keyboard::Trigger(vivid::keyboard::KEY_ID::ESCAPE))
             break;
     }
+
 }
 
 /*
@@ -511,6 +526,7 @@ vivid::
 Finalize(void)
 {
     // すべてのグラフィックスを解放
+
     InitGraph();
 
     // すべてのフォントを解放する
@@ -718,7 +734,7 @@ DrawTexture(const std::string& file_name, const Vector2& position, unsigned int 
  */
 void
 vivid::
-DrawTexture(const std::string& file_name, const Vector2& position, unsigned int color, const Rect& rect, const Vector2& anchor, const Vector2& scale, float rotation, ALPHABLEND blend_mode)
+DrawTexture(const std::string& file_name, const Vector2& position, unsigned int color, const Rect& rect, const Vector2& anchor, const Vector2& scale, float rotation, ALPHABLEND blend_mode, ADDRESS_MODE address_mode)
 {
     // ロード済みのテクスチャを検索
     int texture = FindLoadedTexture(file_name);
@@ -737,6 +753,8 @@ DrawTexture(const std::string& file_name, const Vector2& position, unsigned int 
     // アルファブレンド設定
     SetDrawBlendMode(static_cast<int>(blend_mode), ((color & 0xff000000) >> 24));
 
+    SetTextureAddressMode(static_cast<int>(address_mode));
+
     // 輝度設定
     SetDrawBright(((color & 0x00ff0000) >> 16), ((color & 0x0000ff00) >> 8), (color & 0x000000ff));
 
@@ -748,6 +766,8 @@ DrawTexture(const std::string& file_name, const Vector2& position, unsigned int 
 
     // アルファブレンドモードをデフォルトに戻す
     SetDrawBlendMode(static_cast<int>(vivid::ALPHABLEND::ALPHA), 0xff);
+
+//    SetTextureAddressMode(static_cast<int>(ADDRESS_MODE::CLAMP));
 }
 
 /*
@@ -916,6 +936,22 @@ GetTextWidth(int size, const std::string& text)
 }
 
 /*
+ *  ラインの描画
+ */
+void
+vivid::
+DrawLine(const Vector2& start_pos, const Vector2& end_pos, unsigned int color, float thickness, ALPHABLEND blend_mode)
+{
+    // アルファブレンド設定
+    SetDrawBlendMode(static_cast<int>(blend_mode), (color & 0xff000000) >> 24);
+
+    DxLib::DrawLineAA(start_pos.x, start_pos.y, end_pos.x, end_pos.y, color, thickness);
+
+    // アルファブレンドモードをデフォルトに戻す
+    SetDrawBlendMode(static_cast<int>(ALPHABLEND::ALPHA), 0xff);
+}
+
+/*
  *  ボタン判定
  */
 bool
@@ -943,6 +979,11 @@ vivid::keyboard::
 Released(vivid::keyboard::KEY_ID key)
 {
     return (!g_KeyState[static_cast<int>(key)] && g_PrevKeyState[static_cast<int>(key)]);
+}
+
+bool vivid::keyboard::CheckKeyInput(int keyHandle)
+{
+    return CheckKeyInput(keyHandle);
 }
 
 /*
@@ -1159,7 +1200,6 @@ PlaySound(const std::string& file_name, bool loop)
 
     if (sound == VIVID_DX_ERROR)
         return;
-
     PlaySoundMem(sound, (loop ? DX_PLAYTYPE_LOOP : DX_PLAYTYPE_BACK));
 }
 
@@ -1177,6 +1217,22 @@ StopSound(const std::string& file_name)
         return;
 
     StopSoundMem(sound);
+}
+
+/*
+ *  サウンドのボリューム設定
+ */
+void
+vivid::
+SetSoundVolume(const std::string& file_name, int volume)
+{
+    // ロード済みのサウンド検索
+    int sound = FindLoadedSound(file_name);
+
+    if (sound == VIVID_DX_ERROR)
+        return;
+
+    SetVolumeSoundMem(volume, sound);
 }
 
 /*
@@ -1373,6 +1429,37 @@ FindLoadedSound(const std::string& file_name)
 }
 
 /*
+ *  ロード済みのサウンド検索
+ */
+int
+vivid::core::
+FindLoadedModel(const std::string& file_name)
+{
+    int model = VIVID_UNUSED_HANDLE;
+
+    // サウンドリストが空でない
+    if (!g_ModelList.empty())
+    {
+        std::map<std::string, int>::iterator it = g_ModelList.begin();
+        std::map<std::string, int>::iterator end = g_ModelList.end();
+
+        for (; it != end; ++it)
+        {
+            // 一致するファイル名があるか検索
+            if (it->first == file_name)
+            {
+                // 同じものがあれば読み込み済みのサウンドを登録
+                model = it->second;
+
+                break;
+            }
+        }
+    }
+
+    return model;
+}
+
+/*
  *  生成済みのフォント検索
  */
 int
@@ -1458,10 +1545,13 @@ int vivid::effekseer::InitEffekseer(void)
 int vivid::effekseer::LoadEffect(const std::string& file_name)
 {
     // 読み込み済み
-    if (g_EffekseerList.end() != g_EffekseerList.find(file_name))
-        return 0;
+    std::map<std::string, int>::iterator it = g_EffekseerList.find(file_name);
 
-    int handle = LoadEffekseerEffect(file_name.c_str());
+    if (g_EffekseerList.end() != it)
+        return 0;
+    int handle = 0;
+
+     handle = LoadEffekseerEffect(file_name.c_str());
 
     // 読み込み失敗
     if (-1 == handle) return -1;
@@ -1469,49 +1559,19 @@ int vivid::effekseer::LoadEffect(const std::string& file_name)
     // 読み込み済みリストに追加
     g_EffekseerList[file_name] = handle;
 
-    return 0;
+    return handle;
 }
 
-/*
- *  エフェクト再生開始
- *  s.kosugi
- */
-int vivid::effekseer::StartEffect(const std::string& file_name, const vivid::Vector2& pos)
-{
-    return StartEffect(file_name,pos, g_DefaultEffectScale);
-}
-/*
- *  エフェクト再生開始
- *  s.kosugi
- */
-int vivid::effekseer::StartEffect(const std::string& file_name, const vivid::Vector2& pos,const float scale)
-{
-    // エフェクト読み込み
-    if (-1 == LoadEffect(file_name))
-        return -1;
-    int PlayHandle = PlayEffekseer2DEffect(g_EffekseerList[file_name]);
-
-    // エフェクトの拡大率を指定
-    SetScalePlayingEffekseer2DEffect(PlayHandle, scale, scale, scale);
-
-    PLAYEFFECT_DATA effect;
-    effect.handle = PlayHandle;
-    effect.pos = pos;
-    // エフェクト再生リストに追加
-    g_EffectPlayList.push_back(effect);
-
-    return PlayHandle;
-}
 /*
  *  エフェクト描画
  *  s.kosugi
  */
-bool vivid::effekseer::DrawEffect(const int handle, const vivid::Vector2& pos)
+bool vivid::effekseer::DrawEffect2D(const int handle, const vivid::Vector2& pos)
 {
     if (IsEffekseer2DEffectPlaying(handle)) return false;
 
     // エフェクトの位置を変更する
-    SetPosPlayingEffekseer2DEffect(handle, pos.x, pos.y, 0.0f);
+    SetPosPlayingEffekseer2DEffect(handle, pos.x, pos.y, 0);
     // エフェクトを描画する
     DrawEffekseer2D_Begin();
     DrawEffekseer2D_Draw(handle);
@@ -1519,41 +1579,140 @@ bool vivid::effekseer::DrawEffect(const int handle, const vivid::Vector2& pos)
 
     return true;
 }
+
 /*
  *  エフェクト再生終了チェック
  *  s.kosugi
  */
 bool vivid::effekseer::IsEffectPlaying(const int handle)
 {
+    if (IsEffekseer3DEffectPlaying(handle)) return false;
+    return true;
+}
+
+/*
+ *  エフェクト再生終了チェック
+ *  s.kosugi
+ */
+bool vivid::effekseer::IsEffectPlaying2D(const int handle)
+{
     if (IsEffekseer2DEffectPlaying(handle)) return false;
     return true;
 }
-/*
- *  再生リストからエフェクト全描画
- *  s.kosugi
- */
-void vivid::effekseer::DrawEffectList(void)
-{
-    if (g_EffectPlayList.empty()) return;
 
-    auto it = g_EffectPlayList.begin();
-    while (it != g_EffectPlayList.end())
+/*
+ *  エフェクトリソース削除
+*/
+int vivid::effekseer::UnLoadEffect(int handle)
+{
+    return DeleteEffekseerEffect(handle);
+}
+
+/*
+ * エフェクトリソース削除（管理リストからも削除）
+ */
+int vivid::effekseer::UnLoadEffect(const std::string& file_name)
+{
+    // 1. 管理リストからファイル名を探す
+    auto it = g_EffekseerList.find(file_name);
+
+    // リストに見つからなかったら何もしない
+    if (it == g_EffekseerList.end())
     {
-        PLAYEFFECT_DATA effect = (PLAYEFFECT_DATA)(*it);
-        if (!DrawEffect(effect.handle, effect.pos))
-        {
-            // エフェクト再生終了済みのため削除
-            it = g_EffectPlayList.erase(it);
-            continue;
-        }
-        it++;
+        return -1; // エラー
     }
+
+    // 2. 見つかったハンドルを取得
+    int handle = it->second;
+
+    // 3. Effekseerのメモリからエフェクトを削除
+    DeleteEffekseerEffect(handle);
+
+    // 4. 管理リストからエフェクトの情報を削除
+    g_EffekseerList.erase(it);
+
+    return 0; // 成功
+}
+
+/*
+ * 読み込み済みの全てのエフェクトリソースを解放する
+ */
+void vivid::effekseer::UnloadAllEffects()
+{
+    for (auto const& pair : g_EffekseerList)
+    {
+        // ペアの最初の要素（キー）をfileNameに取り出す
+        const std::string& fileName = pair.first;
+
+        // ペアの2番目の要素（値）をhandleに取り出す
+        int handle = pair.second;
+
+        // 取り出したhandleを使って、リソースを削除
+        DeleteEffekseerEffect(handle);
+    }
+    // リスト自体もクリアする
+    g_EffekseerList.clear();
+}
+
+/*
+ * Effekseerエンジンを完全にリセットする
+ */
+void vivid::effekseer::Restart()
+{
+    // 1. 読み込み済みのエフェクトリソースを全て解放
+    UnloadAllEffects();
+
+    // 2. 再生中のエフェクトインスタンスを全て停止
+    StopAllEffekseer3DEffects();
+
+    // 3. Effekseerエンジン自体を一度完全に終了させる
+    Effkseer_End();
+
+    // 4. もう一度、初期化処理を呼び出して起動し直す
+    InitEffekseer();
 }
 /*
-*  エフェクトリストから全描画をするかどうか
-*  s.kosugi
+ *  エフェクト停止
 */
-void vivid::effekseer::SetUseEffectListFlag(bool flag)
+int vivid::effekseer::StopEffect(int handle)
 {
-    g_UseEffectListFlag = flag;
+    return StopEffekseer3DEffect(handle);
+}
+
+
+void vivid::effekseer::StopAllEffekseer3DEffects()
+{
+	auto em = GetEffekseer3DManager();
+	em->StopAllEffects();
+}
+/*
+ *  エフェクト停止
+*/
+int vivid::effekseer::StopEffect2D(int handle)
+{
+    return StopEffekseer2DEffect(handle);
+}
+
+void vivid::effekseer::SetEffectSpeed(int handle, float speed)
+{
+    SetSpeedPlayingEffekseer3DEffect(handle, speed);
+}
+void vivid::effekseer::SetEffectSpeed2D(int handle, float speed)
+{
+    SetSpeedPlayingEffekseer2DEffect(handle, speed);
+}
+
+void vivid::effekseer::StopLoot(int playHandle)
+{
+    auto em = GetEffekseer3DManager();
+	em->StopRoot(playHandle);
+}
+
+int vivid::model::LoadModel(const std::string& file_name)
+{
+    return 0;
+}
+unsigned int vivid::alpha::GetAlpha(unsigned int color)
+{
+    return (color >> 24) & 0xff;
 }
