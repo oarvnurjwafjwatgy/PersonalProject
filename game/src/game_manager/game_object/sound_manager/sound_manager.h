@@ -12,9 +12,12 @@ enum class BGMSOUND_ID
 
 enum class SESOUND_ID
 {
-	SELECT,		//!< 選択
-	VANISH,		//!< 消す
-	GAMEOVER,	//!< 終了
+	DECISION_RESULT, //!< リザルト決定
+	DRAM_RESULT,	 //!< リザルトドラムロール
+	FINISH,			 //!< ゲーム終わり
+	GAMESTART,		 //!< ゲームスタート
+	TITLEBUTTON,	 //!< タイトルボタン
+	VANISH,			 //!< ブロックが消える音
 	SEMAX,
 };
 
@@ -42,6 +45,9 @@ public:
 
 	// SEの停止
 	void Stop(SESOUND_ID id);
+
+	// BGMの音量調整
+	void ChangeBGMVolume(BGMSOUND_ID id, int volume);
 
 	
 private:
