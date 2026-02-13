@@ -47,20 +47,27 @@ public:
 	/*!
 	 *	@brief		削除
 	 */
-	void	Delete();
+	void	Delete(void);
 
 	/*!
 	 *	@brief		IDの取得
 	 * 
 	 *  @return		UIのID
 	 */
-	UI_ID	GetUI_ID();
+	UI_ID	GetUI_ID(void);
 
+
+	/*!
+	*	@brief      UIがDeleteされるタイマー関数
+	*/
+	void UIDeleteTimer(void);
 
 
 protected:
 	bool				m_ActiveFlag;	//!< アクティブフラグ
 	vivid::Vector2		m_Position;		//!< 位置
 	UI_ID				m_UI_ID;		//!< ID
+
+	int			m_UI_Delete_Timer;				//!< UIが消える時間
 
 };

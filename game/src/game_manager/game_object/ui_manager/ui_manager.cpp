@@ -34,6 +34,14 @@ void CUIManager::Update(void)
 
 		ui->Update();
 
+		if (ui->GetActive() == false)
+		{
+			ui->Finalize();
+			// it‚ÉV‚µ‚¢î•ñ‚ª“ü‚é
+			it = m_UIList.erase(it);
+			continue;
+		}
+
 		++it;
 	}
 }

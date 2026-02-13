@@ -4,7 +4,7 @@
 #include "../../../ui_manager/ui_manager.h"
 #include "../../../effect_manager/effect_manager.h"
 
-const int CGameMain::m_start_wait_time = 5.0f*60;
+const int CGameMain::m_start_wait_time = 5*60;
 
 CGameMain::CGameMain(void)
 	: m_GameState(GAME_STATE::DUMMY)
@@ -30,6 +30,8 @@ void CGameMain::Initialize(SCENE_ID scene_id)
 
 	m_State_Wait_Timer = m_start_wait_time;
 	m_GameState = GAME_STATE::START;
+
+	auto& gamestart = ui.Create(UI_ID::GAME_START, { 500,500 });
 }
 
 void CGameMain::Update()
@@ -84,16 +86,11 @@ void CGameMain::Finalize()
 
 void CGameMain::Start(void)
 {
-	auto& ui = CUIManager::GetInstance();
-	auto& gamestart	=ui.Create(UI_ID::GAME_START, { 500,500 });
+	
 
 
 	if (m_State_Wait_Timer-- <= 0)
 	{
-		/*gamestart->Delete();
-		ui.Delete(gamestart->GetUI_ID());*/
-
-		gamestart->Finalize();
 		m_GameState = GAME_STATE::PLAY;
 
 		printfDx("Play‚É‚È‚Á‚½‚æ\n");
@@ -106,12 +103,14 @@ void CGameMain::Start(void)
 void CGameMain::Play(void)
 {
 	auto& field = CFieldManager::GetInstance();
+	auto& ui = CUIManager::GetInstance();
 
 	field.Update();
 
 
 	if (field.GetFinishFlag())
 	{
+		ui.Create(UI_ID::FINISH, { 500,500 });
 		m_State_Wait_Timer = m_start_wait_time;
 		m_GameState = GAME_STATE::FINISH;
 
@@ -120,6 +119,7 @@ void CGameMain::Play(void)
 
 	if (vivid::keyboard::Trigger(vivid::keyboard::KEY_ID::K))
 	{
+		ui.Create(UI_ID::FINISH, { 500,500 });
 		m_GameState = GAME_STATE::FINISH;
 		m_State_Wait_Timer = m_start_wait_time;
 		printfDx("Finish‚É‚È‚Á‚½‚æ\n");
@@ -129,8 +129,8 @@ void CGameMain::Play(void)
 void CGameMain::Finish(void)
 {
 	auto& scene = CSceneManager::GetInstance();
-	auto& ui = CUIManager::GetInstance();
-	ui.Create(UI_ID::FINISH, { 500,500 });
+	
+	
 	
 	if (m_State_Wait_Timer-- <= 0)
 	{

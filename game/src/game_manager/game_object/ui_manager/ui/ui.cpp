@@ -2,8 +2,9 @@
 
 IUI::IUI(UI_ID id )
     : m_ActiveFlag(true)
-    ,m_UI_ID(id)
-    ,m_Position(vivid::Vector2::ZERO)
+    , m_UI_ID(id)
+    , m_Position(vivid::Vector2::ZERO)
+    , m_UI_Delete_Timer(0)
 {
 }
 
@@ -40,4 +41,16 @@ void IUI::Delete()
 UI_ID IUI::GetUI_ID()
 {
     return m_UI_ID;
+}
+
+void IUI::UIDeleteTimer(void)
+{
+    if (m_UI_Delete_Timer > 0)
+    {
+        m_UI_Delete_Timer--;
+    }
+    else
+    {
+        Delete();
+    }
 }

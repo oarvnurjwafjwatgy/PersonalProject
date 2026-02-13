@@ -42,6 +42,7 @@ void CGameManager::Update(void)
 	auto& scene = CSceneManager::GetInstance();
 	auto& input = CInputManager::GetInstance();
 	auto& effect = CEffectManager::GetInstance();
+	auto& ui = CUIManager::GetInstance();
 	
 
 	//シーンマネージャー更新
@@ -49,6 +50,9 @@ void CGameManager::Update(void)
 
 	// エフェクトマネージャー更新
 	effect.Update();
+
+	// UIマネージャー更新
+	ui.Update();
 
 	// inputの更新はなるべく後ろで呼ぶ
 	input.Update();
