@@ -22,7 +22,7 @@ void CComboCount::Draw(void)
 {
 	if (m_Count > 0)
 	{
-		vivid::DrawText(200, std::to_string(m_Count), m_Position);
+		vivid::DrawText(200, std::to_string(m_Count), m_Position,0xff000000);
 	}
 
 	vivid::DrawTexture("data\\combo.png", { (float)(vivid::WINDOW_WIDTH- vivid::GetTextureWidth("data\\combo.png")),800.0f });

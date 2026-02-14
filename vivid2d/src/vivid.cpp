@@ -1232,7 +1232,7 @@ SetSoundVolume(const std::string& file_name, int volume)
     if (sound == VIVID_DX_ERROR)
         return;
 
-    SetVolumeSoundMem(volume, sound);
+    ChangeVolumeSoundMem(volume, sound);
 }
 
 /*

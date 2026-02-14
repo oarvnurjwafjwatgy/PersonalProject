@@ -63,7 +63,7 @@ void CSoundManager::Stop(SESOUND_ID id)
 
 void CSoundManager::ChangeBGMVolume(BGMSOUND_ID id, int volume)
 {
-	vivid::SetSoundVolume(m_se_fill_name[(int)id], volume);
+	vivid::SetSoundVolume(m_bgm_fill_name[(int)id], volume);
 }
 
 CSoundManager::CSoundManager(void)

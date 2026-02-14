@@ -9,7 +9,7 @@
 auto& GameMainSound = CSoundManager::GetInstance();
 
 
-const int CGameMain::m_start_wait_time = 5*60;
+const int CGameMain::m_start_wait_time = 3*60;
 
 CGameMain::CGameMain(void)
 	: m_GameState(GAME_STATE::DUMMY)
@@ -36,9 +36,6 @@ void CGameMain::Initialize(SCENE_ID scene_id)
 	score.Initialize();
 
 	field.Create(vivid::Vector2((float)vivid::WINDOW_WIDTH / 2.0f - field.GetBlockSize() * field.GetBlockMaxWidth() / 2.0f, 200.0f), FIELD_ID::NORMAL);
-
-	vivid::Vector2 combogauge_pos = { 50,300 };
-	vivid::Vector2 combocount_pos = { 50,250 };
 
 	m_State_Wait_Timer = m_start_wait_time;
 	m_GameState = GAME_STATE::START;

@@ -18,7 +18,10 @@ CTitle::~CTitle(void)
 void CTitle::Initialize(SCENE_ID scene_id)
 {
     TitleSound.Load(BGMSOUND_ID::TITLE);
+    TitleSound.ChangeBGMVolume(BGMSOUND_ID::TITLE, 100);
     TitleSound.Play(BGMSOUND_ID::TITLE);
+
+   
 }
 
 void CTitle::Update()
@@ -26,9 +29,10 @@ void CTitle::Update()
 	auto& input = CInputManager::GetInstance();
 	auto& scene = CSceneManager::GetInstance();
 
+
     if (vivid::keyboard::Trigger(vivid::keyboard::KEY_ID::SPACE) || input.InputAnyKey(PLAYER_ID::PLAYER1))
     {
-        TitleSound.Play(SESOUND_ID::GAMESTART);
+        TitleSound.Play(SESOUND_ID::TITLEBUTTON);
 		scene.ChangeScene(SCENE_ID::GAME_MAIN);
     }
 }
@@ -53,4 +57,5 @@ void CTitle::Draw()
 void CTitle::Finalize()
 {
 	IScene::Finalize();
+    TitleSound.Stop(BGMSOUND_ID::TITLE);
 }

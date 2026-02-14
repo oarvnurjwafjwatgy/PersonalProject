@@ -46,7 +46,7 @@ void IField::Initialize(const vivid::Vector2& position, FIELD_ID field_id)
 	m_Position = position;
 
 	auto combo_gauge_ui = CUIManager::GetInstance().Create(UI_ID::COMBO_GAUGE, vivid::Vector2{30,600});
-	auto combo_count_ui = CUIManager::GetInstance().Create(UI_ID::COMBO_COUNT, vivid::Vector2{30,500});
+	auto combo_count_ui = CUIManager::GetInstance().Create(UI_ID::COMBO_COUNT, vivid::Vector2{1400,700});
 	auto score_text_ui = CUIManager::GetInstance().Create(UI_ID::SCORE_TEXT, vivid::Vector2{30,200});
 
 	m_ComboGaugeUI = std::dynamic_pointer_cast<CComboGauge>(combo_gauge_ui);
@@ -362,7 +362,19 @@ void IField::BlockVanish(void)
 				if (m_block_min_chains <= check_straight)
 				{
 					// コンボ開始
+					// 1. まず現在のスコアを覚えておく（加算前のスコア）
+					int oldScore = CScoreManager::GetInstance().GetScore();
+
+					// 2. スコア加算
 					CScoreManager::GetInstance().AddScore(check_straight, m_ComboCounter);
+
+					// 3. 今回「実際に増えた分」を計算
+					int addedScore = CScoreManager::GetInstance().GetScore() - oldScore;
+
+					// 4. UIに履歴を追加
+					if (!m_ScoreTextUI.expired()) {
+						m_ScoreTextUI.lock()->AddScoreLog(addedScore);
+					}
 					m_ComboDurationTimer = m_combo_max_duration_time;
 					m_ComboCounter++;
 					SetStateVanish((BLOCK_DIRECTION)i, x, y);
