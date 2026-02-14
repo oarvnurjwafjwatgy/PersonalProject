@@ -83,6 +83,7 @@ protected:
 	static const int m_block_start_row;			//!< 最初ブロックを表示する行
 	static const int m_combo_max_duration_time; //!< コンボ最大継続時間
 	static const int m_finish_max_time;			//!< 終了判定後の最大猶予時間
+	static const int m_cursor_move_frame;		//!< カーソルの長押しで１マス移動するまでのフレーム
 
 	/*!
 	 *	@brief		ブロックの色
@@ -233,6 +234,7 @@ protected:
 	int m_ComboCounter;											//!< コンボの回数を数える
 	int m_ComboDurationTimer;									//!< コンボ持続時間
 	int m_FinishTimer;											//!< 終了タイマー
+	int m_CursorMoveTimer;										//!< カーソルの長押し移動のタイマー
 
 	std::weak_ptr<CComboGauge>		m_ComboGaugeUI;				//!< ゲージ
 	std::weak_ptr<CComboCount>		m_ComboCountUI;				//!< コンボ数

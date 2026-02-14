@@ -24,6 +24,8 @@ void CComboCount::Draw(void)
 	{
 		vivid::DrawText(200, std::to_string(m_Count), m_Position);
 	}
+
+	vivid::DrawTexture("data\\combo.png", { (float)(vivid::WINDOW_WIDTH- vivid::GetTextureWidth("data\\combo.png")),800.0f });
 }
 
 void CComboCount::SetCount(int count)

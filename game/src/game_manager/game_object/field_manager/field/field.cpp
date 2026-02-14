@@ -10,6 +10,8 @@ const int IField::m_block_min_chains = 4;			//!< ブロックの最小消せる連結数
 const int IField::m_block_start_row = 5;			//!< ゲーム開始の初期表示列
 const int IField::m_combo_max_duration_time = 4*60;	//!< コンボ最大継続時間
 const int IField::m_finish_max_time = 30;			//!< 終了判定後の最大猶予時間
+const int IField::m_cursor_move_frame = 5;			//!< カーソルの長押しで１マス移動するまでのフレーム
+
 
 IField::IField(void)
 	:m_FieldID(FIELD_ID::DUMMY)
@@ -25,6 +27,7 @@ IField::IField(void)
 	, m_ShiftButtonFlag(false)
 	, m_ComboCounter(0)
 	, m_ComboDurationTimer(0.0f)
+	, m_CursorMoveTimer(0)
 {
 }
 
@@ -217,22 +220,54 @@ void IField::MoveCursor(void)
 
 	if (m_SelectedFlag)	return;
 
-	if((vivid::keyboard::Trigger(vivid::keyboard::KEY_ID::W)|| input.GetStickOnce(PLAYER_ID::PLAYER1,LR_ID::LEFT,DIRECTION::UP)) && m_CursorPosition.y> 0)
+	// 移動キー単押し条件
+	bool	input_left_t = input.GetStickOnce(PLAYER_ID::PLAYER1, LR_ID::LEFT, DIRECTION::LEFT) || vivid::keyboard::Trigger(vivid::keyboard::KEY_ID::A);
+	bool	input_right_t = input.GetStickOnce(PLAYER_ID::PLAYER1, LR_ID::LEFT, DIRECTION::RIGHT) || vivid::keyboard::Trigger(vivid::keyboard::KEY_ID::D);
+	bool	input_up_t = input.GetStickOnce(PLAYER_ID::PLAYER1, LR_ID::LEFT, DIRECTION::UP) || vivid::keyboard::Trigger(vivid::keyboard::KEY_ID::W);
+	bool	input_down_t = input.GetStickOnce(PLAYER_ID::PLAYER1, LR_ID::LEFT, DIRECTION::DOWN) || vivid::keyboard::Trigger(vivid::keyboard::KEY_ID::S);
+
+	// 移動タイマーフラグ
+	bool move_flag = m_CursorMoveTimer % m_cursor_move_frame == 0 && m_CursorMoveTimer > 10;
+
+	// 移動キー長押し条件
+	bool	input_left_b = move_flag && (input.GetStickValue(PLAYER_ID::PLAYER1, LR_ID::LEFT, XY_ID::X) < -0.5f || vivid::keyboard::Button(vivid::keyboard::KEY_ID::A));
+	bool	input_right_b = move_flag && (input.GetStickValue(PLAYER_ID::PLAYER1, LR_ID::LEFT, XY_ID::X) > 0.5f || vivid::keyboard::Button(vivid::keyboard::KEY_ID::D));
+	bool	input_up_b = move_flag && (input.GetStickValue(PLAYER_ID::PLAYER1, LR_ID::LEFT, XY_ID::Y) < -0.5f || vivid::keyboard::Button(vivid::keyboard::KEY_ID::W));
+	bool	input_down_b = move_flag && (input.GetStickValue(PLAYER_ID::PLAYER1, LR_ID::LEFT, XY_ID::Y) > 0.5f || vivid::keyboard::Button(vivid::keyboard::KEY_ID::S));
+
+	// 移動キー連続入力
+	if (input.GetStickValue(PLAYER_ID::PLAYER1, LR_ID::LEFT, XY_ID::X) < -0.5f
+		|| input.GetStickValue(PLAYER_ID::PLAYER1, LR_ID::LEFT, XY_ID::X) > 0.5f
+		|| input.GetStickValue(PLAYER_ID::PLAYER1, LR_ID::LEFT, XY_ID::Y) < -0.5f
+		|| input.GetStickValue(PLAYER_ID::PLAYER1, LR_ID::LEFT, XY_ID::Y) > 0.5f
+		|| vivid::keyboard::Button(vivid::keyboard::KEY_ID::A)
+		|| vivid::keyboard::Button(vivid::keyboard::KEY_ID::D)
+		|| vivid::keyboard::Button(vivid::keyboard::KEY_ID::W)
+		|| vivid::keyboard::Button(vivid::keyboard::KEY_ID::S))
+	{
+		m_CursorMoveTimer++;
+	}
+	else
+	{
+		m_CursorMoveTimer = 0;
+	}
+
+	if((input_up_t || input_up_b) && m_CursorPosition.y> 0)
 	{
 		m_CursorPosition.y--;
 	}
 	
-	if ((vivid::keyboard::Trigger(vivid::keyboard::KEY_ID::S) || input.GetStickOnce(PLAYER_ID::PLAYER1, LR_ID::LEFT, DIRECTION::DOWN))&& m_CursorPosition.y < m_block_max_height-1)
+	if ((input_down_t || input_down_b) && m_CursorPosition.y < m_block_max_height-1)
 	{
 		m_CursorPosition.y++;
 	}
 
-	if ((vivid::keyboard::Trigger(vivid::keyboard::KEY_ID::D) || input.GetStickOnce(PLAYER_ID::PLAYER1, LR_ID::LEFT, DIRECTION::RIGHT)) && m_CursorPosition.x < m_block_max_width-1)
+	if ((input_right_t || input_right_b) && m_CursorPosition.x < m_block_max_width-1)
 	{
 		m_CursorPosition.x++;
 	}
 
-	if ((vivid::keyboard::Trigger(vivid::keyboard::KEY_ID::A) || input.GetStickOnce(PLAYER_ID::PLAYER1, LR_ID::LEFT, DIRECTION::LEFT)) && m_CursorPosition.x > 0)
+	if ((input_left_t || input_left_b) && m_CursorPosition.x > 0)
 	{
 		m_CursorPosition.x--;
 	}
