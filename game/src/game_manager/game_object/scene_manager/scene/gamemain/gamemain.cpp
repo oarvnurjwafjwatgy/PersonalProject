@@ -14,6 +14,7 @@ const int CGameMain::m_start_wait_time = 3*60;
 CGameMain::CGameMain(void)
 	: m_GameState(GAME_STATE::DUMMY)
 	, m_State_Wait_Timer(0)
+	, FinishFlag(false)
 {
 }
 
@@ -28,8 +29,9 @@ void CGameMain::Initialize(SCENE_ID scene_id)
 	auto& score = CScoreManager::GetInstance();
 
 
-	GameMainSound.Load(BGMSOUND_ID::TITLE);
-	GameMainSound.Play(BGMSOUND_ID::TITLE);
+	GameMainSound.Load(BGMSOUND_ID::MAIN);
+	GameMainSound.ChangeBGMVolume(BGMSOUND_ID::MAIN, 100);
+	GameMainSound.Play(BGMSOUND_ID::MAIN);
 	GameMainSound.Play(SESOUND_ID::GAMESTART);
 
 	field.Initialize();
@@ -40,7 +42,7 @@ void CGameMain::Initialize(SCENE_ID scene_id)
 	m_State_Wait_Timer = m_start_wait_time;
 	m_GameState = GAME_STATE::START;
 
-	auto& gamestart = ui.Create(UI_ID::GAME_START, { 500,500 });
+	auto& gamestart = ui.Create(UI_ID::GAME_START, { 770,500 });
 }
 
 void CGameMain::Update()
@@ -76,12 +78,6 @@ void CGameMain::Draw()
 	field.Draw();
 	ui.Draw();
 	effect.Draw();
-	
-
-	vivid::DrawText(30, "ÉÅÉCÉìâÊñ ", vivid::Vector2::ZERO);
-
-	
-
 }
 
 void CGameMain::Finalize()
@@ -95,17 +91,10 @@ void CGameMain::Finalize()
 
 void CGameMain::Start(void)
 {
-	
-
-
 	if (m_State_Wait_Timer-- <= 0)
 	{
 		m_GameState = GAME_STATE::PLAY;
-
-		printfDx("PlayÇ…Ç»Ç¡ÇΩÇÊ\n");
 	}
-
-
 }
 
 
@@ -121,17 +110,16 @@ void CGameMain::Play(void)
 	{
 		ui.Create(UI_ID::FINISH, { 500,500 });
 		m_State_Wait_Timer = m_start_wait_time;
+		GameMainSound.Play(SESOUND_ID::FINISH);
 		m_GameState = GAME_STATE::FINISH;
-
-		printfDx("FinishÇ…Ç»Ç¡ÇΩÇÊ\n");
 	}
 
 	if (vivid::keyboard::Trigger(vivid::keyboard::KEY_ID::K))
 	{
 		ui.Create(UI_ID::FINISH, { 500,500 });
+
 		m_GameState = GAME_STATE::FINISH;
 		m_State_Wait_Timer = m_start_wait_time;
-		printfDx("FinishÇ…Ç»Ç¡ÇΩÇÊ\n");
 	}
 }
 
@@ -144,6 +132,7 @@ void CGameMain::Finish(void)
 	if (m_State_Wait_Timer-- <= 0)
 	{
 		scene.ChangeScene(SCENE_ID::RESULT);
+		GameMainSound.Stop(BGMSOUND_ID::MAIN);
 	}
 	
 	

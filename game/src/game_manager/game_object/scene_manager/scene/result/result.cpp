@@ -1,7 +1,10 @@
 #include "result.h"
 #include "../../../input_manager/input_manager.h"
 #include "../../../score_manager/score_manager.h"
+#include "../../../sound_manager/sound_manager.h"
 
+
+auto& ResultSound = CSoundManager::GetInstance();
 
 
 CResult::CResult(void)
@@ -13,6 +16,12 @@ void CResult::Initialize(SCENE_ID scene_id)
 {
 	auto& ui = CUIManager::GetInstance();
 
+	ResultSound.Load(BGMSOUND_ID::RESULT);
+	ResultSound.ChangeBGMVolume(BGMSOUND_ID::RESULT, 100);
+	ResultSound.Play(BGMSOUND_ID::RESULT);
+
+
+
 	auto score_text_ui = ui.Create(UI_ID::SCORE_TEXT, vivid::Vector2{ 300,200 });
 
 	m_ScoreTextUI = std::dynamic_pointer_cast<CScoreText>(score_text_ui);
@@ -23,10 +32,6 @@ void CResult::Initialize(SCENE_ID scene_id)
 
 	if (!m_ScoreTextUI.expired())
 		m_ScoreTextUI.lock()->SetCurrentScore(m_ResultScore);
-
-
-
-
 
 }
 
@@ -53,7 +58,7 @@ void CResult::Draw()
 void CResult::Finalize()
 {
 	auto& ui = CUIManager::GetInstance();
-
+	ResultSound.Stop(BGMSOUND_ID::RESULT);
 	ui.Finalize();
 }
 

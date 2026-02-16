@@ -7,6 +7,9 @@
 const char* CSoundManager::m_bgm_fill_name[] =
 {
 	"data\\Sound\\BGM\\Title.mp3",
+	"data\\Sound\\BGM\\Main.mp3",
+	"data\\Sound\\BGM\\Result.mp3",
+	
 
 };
 
@@ -18,6 +21,7 @@ const char* CSoundManager::m_se_fill_name[] =
 "data\\Sound\\SE\\GameStart.mp3",
 "data\\Sound\\SE\\TitleBuuton.mp3",
 "data\\Sound\\SE\\Vanish.mp3",
+
 
 };
 

@@ -32,6 +32,9 @@ public:
 	 */
 	void Draw(void) override;
 
+	/*!
+	 *  @brief      解放
+	 */
 	void Finalize(void) override;
 
 
@@ -40,5 +43,7 @@ private:
 
 	vivid::Vector2 m_Position;  //!< 位置
 
-
+	float m_Scale;      // 現在の拡大率
+	float m_Alpha;      // 現在の不透明度
+	int   m_FrameCount; // 演出開始からの経過フレーム
 };

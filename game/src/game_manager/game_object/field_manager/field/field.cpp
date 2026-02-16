@@ -2,6 +2,7 @@
 #include "../../score_manager/score_manager.h"
 #include "../../ui_manager/ui_manager.h"
 #include "../../effect_manager/effect_manager.h"
+#include "../../sound_manager/sound_manager.h"
 
 const int IField::m_block_size = 48;				//!< ブロックのサイズ
 const float IField::m_block_max_scale = 1.0f;		//!< ブロックの最大の拡大値
@@ -12,6 +13,8 @@ const int IField::m_combo_max_duration_time = 4*60;	//!< コンボ最大継続時間
 const int IField::m_finish_max_time = 30;			//!< 終了判定後の最大猶予時間
 const int IField::m_cursor_move_frame = 5;			//!< カーソルの長押しで１マス移動するまでのフレーム
 
+
+auto& FiledSound = CSoundManager::GetInstance();
 
 IField::IField(void)
 	:m_FieldID(FIELD_ID::DUMMY)
@@ -361,17 +364,19 @@ void IField::BlockVanish(void)
 
 				if (m_block_min_chains <= check_straight)
 				{
+					FiledSound.Play(SESOUND_ID::VANISH);
+
 					// コンボ開始
-					// 1. まず現在のスコアを覚えておく（加算前のスコア）
+					// 現在のスコアを覚えておく（加算前のスコア）
 					int oldScore = CScoreManager::GetInstance().GetScore();
 
-					// 2. スコア加算
+					// スコア加算
 					CScoreManager::GetInstance().AddScore(check_straight, m_ComboCounter);
 
-					// 3. 今回「実際に増えた分」を計算
+					// 今回「実際に増えた分」を計算
 					int addedScore = CScoreManager::GetInstance().GetScore() - oldScore;
 
-					// 4. UIに履歴を追加
+					//  UIに履歴を追加
 					if (!m_ScoreTextUI.expired()) {
 						m_ScoreTextUI.lock()->AddScoreLog(addedScore);
 					}
