@@ -4,15 +4,18 @@
 #include "../../effect_manager/effect_manager.h"
 #include "../../sound_manager/sound_manager.h"
 
-const int IField::m_block_size = 48;				//!< ブロックのサイズ
-const float IField::m_block_max_scale = 1.0f;		//!< ブロックの最大の拡大値
-const int IField::m_used_block_max_color = 5	;		//!< ブロックの色の種類の数
-const int IField::m_block_min_chains = 4;			//!< ブロックの最小消せる連結数
-const int IField::m_block_start_row = 5;			//!< ゲーム開始の初期表示列
-const int IField::m_combo_max_duration_time = 4*60;	//!< コンボ最大継続時間
-const int IField::m_finish_max_time = 30;			//!< 終了判定後の最大猶予時間
-const int IField::m_cursor_move_frame = 5;			//!< カーソルの長押しで１マス移動するまでのフレーム
-
+const int IField::m_block_size = 48;							//!< ブロックのサイズ
+const float IField::m_block_max_scale = 1.0f;					//!< ブロックの最大の拡大値
+const int IField::m_used_block_max_color = 5;					//!< ブロックの色の種類の数
+const int IField::m_block_min_chains = 4;						//!< ブロックの最小消せる連結数
+const int IField::m_block_start_row = 5;						//!< ゲーム開始の初期表示列
+const int IField::m_combo_max_duration_time = 4*60;				//!< コンボ最大継続時間
+const int IField::m_finish_max_time = 30;						//!< 終了判定後の最大猶予時間
+const int IField::m_cursor_move_frame = 5;						//!< カーソルの長押しで１マス移動するまでのフレーム
+const float IField::m_raise_speed_default = 0.2f;               //!< フレームごとのせり上がり量
+const float IField::m_stick_input_threshold = 0.5f;             //!< スティックを半分以上倒したら入力とみなす
+const int   IField::m_cursor_repeat_delay = 10;                 //!< 10フレーム以上押し続けたらリピート開始
+const vivid::Vector2 IField::m_bg_offset = { 3.0f, 4.0f };      //!< 背景画像の座標ズレ補正
 
 auto& FiledSound = CSoundManager::GetInstance();
 
@@ -98,7 +101,7 @@ void IField::Update(void)
 	if (!CheckTopRowFull())
 	{
 		// せり上がり速度を加算
-		m_RaiseOffset += 0.2f;
+		m_RaiseOffset += m_raise_speed_default;
 	}
 
 	// 1ブロック分せり上がったら、配列を更新
@@ -135,7 +138,7 @@ void IField::Draw(void)
 	vivid::Vector2 anchor = { (float)m_block_size / 2.0f,(float)m_block_size / 2.0f };
 	vivid::Vector2 scale = { m_block_max_scale,m_block_max_scale };
 
-	vivid::Vector2 field_back_graund = m_Position - vivid::Vector2(3.0f, 4.0f);
+	vivid::Vector2 field_back_graund = m_Position - m_bg_offset;
 
 	vivid::DrawTexture("data\\field.png", field_back_graund);
 
@@ -170,10 +173,6 @@ void IField::Draw(void)
 	vivid::Vector2 pos = m_Position + vivid::Vector2((float)m_CursorPosition.x*(float)m_block_size, (float)m_CursorPosition.y * (float)m_block_size);
 
 	vivid::DrawTexture("data\\block_choice_flame.png", pos);
-
-	/*vivid::DrawText(50, std::to_string(this->CheckStraight(DIRECTION::RIGHT, 0, 0, m_Field[0][0].color)),{0.0f,100.0f});*/
-	vivid::DrawText(50, std::to_string(m_CursorPosition.x) + " , " + std::to_string(m_CursorPosition.y), {0.0f,100.0f});
-
 #ifdef DEBUG
 	vivid::DrawText(50, std::to_string(CScoreManager::GetInstance().GetScore()), { 0,200 });
 	vivid::DrawText(50, std::to_string(m_ComboDurationTimer), { 0,400 });
@@ -207,12 +206,12 @@ int IField::GetBlockMaxWidthConstant(void)
 unsigned int IField::ConvertBlockColor(BLOCK_COLOR color)
 {
 	switch (color) {
-	case BLOCK_COLOR::RED:     return 0xFFFF3333; // 鮮やかな赤
-	case BLOCK_COLOR::GREEN:   return 0xFF33FF33; // 鮮やかな緑
-	case BLOCK_COLOR::BLUE:    return 0xFF3333FF; // 鮮やかな青
-	case BLOCK_COLOR::CYAN:    return 0xFF33FFFF; // 水色
-	case BLOCK_COLOR::YELLOW:  return 0xFFFFFF33; // 黄色
-	case BLOCK_COLOR::MAGENTA: return 0xFFFF33FF; // 紫・ピンク
+	case BLOCK_COLOR::RED:     return 0xffff3333; // 鮮やかな赤
+	case BLOCK_COLOR::GREEN:   return 0xff33ff33; // 鮮やかな緑
+	case BLOCK_COLOR::BLUE:    return 0xff3333ff; // 鮮やかな青
+	case BLOCK_COLOR::CYAN:    return 0xff33ffff; // 水色
+	case BLOCK_COLOR::YELLOW:  return 0xffffff33; // 黄色
+	case BLOCK_COLOR::MAGENTA: return 0xffff33ff; // 紫・ピンク
 	}
 }
 
@@ -230,19 +229,19 @@ void IField::MoveCursor(void)
 	bool	input_down_t = input.GetStickOnce(PLAYER_ID::PLAYER1, LR_ID::LEFT, DIRECTION::DOWN) || vivid::keyboard::Trigger(vivid::keyboard::KEY_ID::S);
 
 	// 移動タイマーフラグ
-	bool move_flag = m_CursorMoveTimer % m_cursor_move_frame == 0 && m_CursorMoveTimer > 10;
+	bool move_flag = m_CursorMoveTimer % m_cursor_move_frame == 0 && m_CursorMoveTimer > m_cursor_repeat_delay;
 
 	// 移動キー長押し条件
-	bool	input_left_b = move_flag && (input.GetStickValue(PLAYER_ID::PLAYER1, LR_ID::LEFT, XY_ID::X) < -0.5f || vivid::keyboard::Button(vivid::keyboard::KEY_ID::A));
-	bool	input_right_b = move_flag && (input.GetStickValue(PLAYER_ID::PLAYER1, LR_ID::LEFT, XY_ID::X) > 0.5f || vivid::keyboard::Button(vivid::keyboard::KEY_ID::D));
-	bool	input_up_b = move_flag && (input.GetStickValue(PLAYER_ID::PLAYER1, LR_ID::LEFT, XY_ID::Y) < -0.5f || vivid::keyboard::Button(vivid::keyboard::KEY_ID::W));
-	bool	input_down_b = move_flag && (input.GetStickValue(PLAYER_ID::PLAYER1, LR_ID::LEFT, XY_ID::Y) > 0.5f || vivid::keyboard::Button(vivid::keyboard::KEY_ID::S));
+	bool	input_left_b = move_flag && (input.GetStickValue(PLAYER_ID::PLAYER1, LR_ID::LEFT, XY_ID::X) < -m_stick_input_threshold || vivid::keyboard::Button(vivid::keyboard::KEY_ID::A));
+	bool	input_right_b = move_flag && (input.GetStickValue(PLAYER_ID::PLAYER1, LR_ID::LEFT, XY_ID::X) > m_stick_input_threshold || vivid::keyboard::Button(vivid::keyboard::KEY_ID::D));
+	bool	input_up_b = move_flag && (input.GetStickValue(PLAYER_ID::PLAYER1, LR_ID::LEFT, XY_ID::Y) < -m_stick_input_threshold || vivid::keyboard::Button(vivid::keyboard::KEY_ID::W));
+	bool	input_down_b = move_flag && (input.GetStickValue(PLAYER_ID::PLAYER1, LR_ID::LEFT, XY_ID::Y) > m_stick_input_threshold || vivid::keyboard::Button(vivid::keyboard::KEY_ID::S));
 
 	// 移動キー連続入力
-	if (input.GetStickValue(PLAYER_ID::PLAYER1, LR_ID::LEFT, XY_ID::X) < -0.5f
-		|| input.GetStickValue(PLAYER_ID::PLAYER1, LR_ID::LEFT, XY_ID::X) > 0.5f
-		|| input.GetStickValue(PLAYER_ID::PLAYER1, LR_ID::LEFT, XY_ID::Y) < -0.5f
-		|| input.GetStickValue(PLAYER_ID::PLAYER1, LR_ID::LEFT, XY_ID::Y) > 0.5f
+	if (input.GetStickValue(PLAYER_ID::PLAYER1, LR_ID::LEFT, XY_ID::X) < -m_stick_input_threshold
+		|| input.GetStickValue(PLAYER_ID::PLAYER1, LR_ID::LEFT, XY_ID::X) > m_stick_input_threshold
+		|| input.GetStickValue(PLAYER_ID::PLAYER1, LR_ID::LEFT, XY_ID::Y) < -m_stick_input_threshold
+		|| input.GetStickValue(PLAYER_ID::PLAYER1, LR_ID::LEFT, XY_ID::Y) > m_stick_input_threshold
 		|| vivid::keyboard::Button(vivid::keyboard::KEY_ID::A)
 		|| vivid::keyboard::Button(vivid::keyboard::KEY_ID::D)
 		|| vivid::keyboard::Button(vivid::keyboard::KEY_ID::W)

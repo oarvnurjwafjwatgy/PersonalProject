@@ -42,6 +42,6 @@ public:
 	bool GetActive(void);
 
 protected:
-	SCENE_ID	 m_SceneID;
-	bool		 m_ActiveFlag;
+	SCENE_ID	 m_SceneID;		//!< シーンID
+	bool		 m_ActiveFlag;  //!< アクティブフラグ
 };

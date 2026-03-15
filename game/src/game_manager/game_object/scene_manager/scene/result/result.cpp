@@ -6,35 +6,42 @@
 
 auto& ResultSound = CSoundManager::GetInstance();
 
+const int CResult::m_change_volume = 100;
+const vivid::Vector2 CResult::m_score_text = { 700,500 };
+const vivid::Vector2 CResult::m_result_text = { 600,400 };
+
 
 CResult::CResult(void)
 	: m_ResultScore(0)
 {
 }
 
+// 初期化
 void CResult::Initialize(SCENE_ID scene_id)
 {
+	
 	auto& ui = CUIManager::GetInstance();
 
 	ResultSound.Load(BGMSOUND_ID::RESULT);
-	ResultSound.ChangeBGMVolume(BGMSOUND_ID::RESULT, 100);
+	ResultSound.ChangeBGMVolume(BGMSOUND_ID::RESULT, m_change_volume);
 	ResultSound.Play(BGMSOUND_ID::RESULT);
 
 
 
-	auto score_text_ui = ui.Create(UI_ID::SCORE_TEXT, vivid::Vector2{ 300,200 });
+	auto score_text_ui = ui.Create(UI_ID::SCORE_TEXT, m_score_text);
 
 	m_ScoreTextUI = std::dynamic_pointer_cast<CScoreText>(score_text_ui);
 
 	m_ResultScore = CScoreManager::GetInstance().GetScore();
 
-	ui.Create(UI_ID::RESULT_TEXT, { 500,100 });
+	ui.Create(UI_ID::RESULT_TEXT, m_result_text);
 
 	if (!m_ScoreTextUI.expired())
 		m_ScoreTextUI.lock()->SetCurrentScore(m_ResultScore);
 
 }
 
+// 更新
 void CResult::Update()
 {
 	auto& scene = CSceneManager::GetInstance();
@@ -46,15 +53,13 @@ void CResult::Update()
 
 }
 
+// 描画
 void CResult::Draw()
 {
-	vivid::DrawText(30, "リザルト", vivid::Vector2::ZERO);
-
-	vivid::DrawTexture("data\\titleback.png", { 0.0f,0.0f });
-
-
+	vivid::DrawTexture("data\\title_back.png", vivid::Vector2::ZERO);
 }
 
+// 解放
 void CResult::Finalize()
 {
 	auto& ui = CUIManager::GetInstance();

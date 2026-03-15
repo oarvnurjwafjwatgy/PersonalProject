@@ -1,5 +1,3 @@
-
-
 #include "scene.h"
 #include "scene_id.h"
 
@@ -22,7 +20,6 @@ void IScene::Update(void)
 
 void IScene::Draw(void)
 {
-
 }
 
 void IScene::Finalize(void)

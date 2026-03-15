@@ -47,6 +47,10 @@ public:
 
 private:
 
+	static const int m_change_volume;			//!< BGMの調整
+	static const vivid::Vector2 m_score_text;	//!< スコアテキストの位置
+	static const vivid::Vector2 m_result_text;	//!< リザルトテキストの位置
+
 	int m_ResultScore;			//!< スコアの結果
 
 	std::weak_ptr<CScoreText>		m_ScoreTextUI;				//!< スコアテキストUI

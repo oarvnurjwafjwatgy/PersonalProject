@@ -41,4 +41,14 @@ public:
 
 private:
 
+	// 定数の宣言
+	static const int m_change_volume;					  //!< BGMの調整
+	static const vivid::Vector2 m_title_rogo_position;    //!< タイトルロゴの位置
+	static const vivid::Vector2 m_push_button_position;   //!< 決定ボタンの位置
+	static const float m_flash_speed;                     //!< 点滅の速さ
+	static const int   m_flash_base_alpha;                //!< 透明度のベース値
+	static const int   m_flash_amplitude;                 //!< 透明度の振れ幅
+	static const int m_bit_shift_bite;					  //!< 色情報のビットシフト量
+	static const unsigned int m_color_white;			  //!< ベースとなる色（真っ白）
+
 };

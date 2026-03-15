@@ -38,9 +38,6 @@ public:
 	 */
 	void Finalize() override;
 
-	
-
-
 private:
 
 	void Start(void);
@@ -49,7 +46,13 @@ private:
 
 	void Finish(void);
 
-	static const int m_start_wait_time;	//!< 始まるまでの時間
+	static const int m_change_volume;				//!< BGMの調整
+	static const int m_start_wait_time;				//!< 始まるまでの時間
+	static const int m_start_wait_time;				//!< 状態遷移の待ち時間（秒*60）
+	static const vivid::Vector2 m_ui_center_pos;    //!< 中央表示UI（START/FINISH）の位置
+	static const vivid::Vector2 m_combogauge_pos;	//!< コンボゲージの位置
+	static const vivid::Vector2 m_combocount_pos;	//!< コンボカウントの位置
+	static const float m_field_y_offset;			//!<  フィールドの表示高さ
 
 	enum class GAME_STATE
 	{
@@ -61,5 +64,6 @@ private:
 
 	GAME_STATE	m_GameState;		//!< ゲームの状態
 
-	int m_State_Wait_Timer;
+	int m_State_Wait_Timer;			//!< ステートが切り替わる時の待機時間
+
 };

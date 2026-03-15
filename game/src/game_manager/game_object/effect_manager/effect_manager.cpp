@@ -2,7 +2,6 @@
 #include "effect/effect.h"
 #include "effect/vanish/vanish.h"
 #include <memory>
-#include "effect/title_particle/title_particle.h"
 
 CEffectManager& CEffectManager::GetInstance(void)
 {
@@ -121,7 +120,6 @@ std::shared_ptr<IEffect> CEffectManager::CreateClass(EFFECT_ID id)
 	switch (id)
 	{
 	case EFFECT_ID::VANISH: effect = std::make_shared<CVanish>(); break;
-	case EFFECT_ID::TITLE_PARTICLE: effect = std::make_shared<CTitleParticle>(); break;
 	}
 	return effect;
 }

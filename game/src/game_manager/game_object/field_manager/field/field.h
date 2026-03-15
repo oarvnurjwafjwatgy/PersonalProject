@@ -218,6 +218,11 @@ protected:
 	 */
 	void FinishTimer(void);
 
+	static const float m_raise_speed_default;					//!< デフォルトのせり上がり速度
+	static const float m_stick_input_threshold;				    //!< スティックの入力判定閾値
+	static const int   m_cursor_repeat_delay;					//!< カーソル長押し移動が始まるまでのディレイ
+	static const vivid::Vector2 m_bg_offset;					//!< 背景描画位置の補正値
+
 	vivid::Vector2	m_Position;									//!< ブロックの左上の位置
 	BLOCK	m_Field[m_block_max_height][m_block_max_width];		//!< ブロックの二次元配列
 	BLOCK_STATE m_GameState;									//!< ブロックの状態

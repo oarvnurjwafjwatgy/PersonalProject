@@ -6,6 +6,15 @@
 
 auto& TitleSound = CSoundManager::GetInstance();
 
+const int   CTitle::m_change_volume = 100;
+const vivid::Vector2 CTitle::m_title_rogo_position = { 430.0f, 0.0f };
+const vivid::Vector2 CTitle::m_push_button_position = { 700.0f, 860.0f };
+const float CTitle::m_flash_speed = 0.07f;
+const int   CTitle::m_flash_base_alpha = 190;
+const int   CTitle::m_flash_amplitude = 65;
+const int   CTitle::m_bit_shift_bite = 24;
+const unsigned  int   CTitle::m_color_white = 0x00ffffff;
+
 
 CTitle::CTitle(void)
 {
@@ -18,7 +27,7 @@ CTitle::~CTitle(void)
 void CTitle::Initialize(SCENE_ID scene_id)
 {
     TitleSound.Load(BGMSOUND_ID::TITLE);
-    TitleSound.ChangeBGMVolume(BGMSOUND_ID::TITLE, 100);
+    TitleSound.ChangeBGMVolume(BGMSOUND_ID::TITLE, m_change_volume);
     TitleSound.Play(BGMSOUND_ID::TITLE);
 
    
@@ -39,19 +48,22 @@ void CTitle::Update()
 
 void CTitle::Draw()
 {
-    vivid::DrawTexture("data\\titleback.png", { 0, 0 });
-    vivid::DrawTexture("data\\TitleRogo.png", { 430, 0 }); // 
+    // 背景描画
+    vivid::DrawTexture("data\\title_back.png", vivid::Vector2::ZERO);
 
+    // ロゴ描画
+    vivid::DrawTexture("data\\title_rogo.png", m_title_rogo_position);
 
-    // 時間で 0.0 ～ 1.0 を行き来する値を作る
+    // 点滅計算
     static float flashTimer = 0.0f;
-    flashTimer += 0.07f; // 点滅スピード
+    flashTimer += m_flash_speed;
 
-    // 128～255の間でふわふわさせる（真っ暗にならないように）
-    unsigned int alpha = (unsigned int)(190 + sinf(flashTimer) * 65);
-    unsigned int color = (alpha << 24) | 0x00FFFFFF; // 白色のアルファ値だけ変える
+    // 透明度の計算
+    unsigned int alpha = (unsigned int)(m_flash_base_alpha + sinf(flashTimer) * m_flash_amplitude);
+    unsigned int color = (alpha << m_bit_shift_bite) | m_color_white;
 
-    vivid::DrawTexture("data\\PUSHBUTTON.png", { 700,860 },color);
+    // ボタン描画
+    vivid::DrawTexture("data\\push_button.png", m_push_button_position, color);
 }
 
 void CTitle::Finalize()
