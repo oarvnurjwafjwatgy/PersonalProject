@@ -256,25 +256,22 @@ void IField::MoveCursor(void)
 
 	if (input_up_t || input_up_b)
 	{
-		if (m_CursorPosition.y > 0)
+		m_CursorPosition.y--;
+		// 上端を超えたら一番下へ
+		if (m_CursorPosition.y < 0)
 		{
-			// 上のマスにブロックがある場合のみ移動可能
-			if (m_Field[m_CursorPosition.y - 1][m_CursorPosition.x].color != BLOCK_COLOR::EMPTY)
-			{
-				m_CursorPosition.y--;
-			}
+			m_CursorPosition.y = m_block_max_height - 1;
 		}
 	}
-	
+
+
 	if (input_down_t || input_down_b)
 	{
-		if (m_CursorPosition.y < m_block_max_height - 1)
+		m_CursorPosition.y++;
+		// 下端を超えたら一番上へ
+		if (m_CursorPosition.y >= m_block_max_height)
 		{
-			// 下のマスにブロックがある場合のみ移動可能
-			if (m_Field[m_CursorPosition.y + 1][m_CursorPosition.x].color != BLOCK_COLOR::EMPTY)
-			{
-				m_CursorPosition.y++;
-			}
+			m_CursorPosition.y = 0;
 		}
 	}
 
