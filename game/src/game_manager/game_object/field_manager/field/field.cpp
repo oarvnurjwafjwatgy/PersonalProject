@@ -254,24 +254,46 @@ void IField::MoveCursor(void)
 		m_CursorMoveTimer = 0;
 	}
 
-	if((input_up_t || input_up_b) && m_CursorPosition.y> 0)
+	if (input_up_t || input_up_b)
 	{
-		m_CursorPosition.y--;
+		if (m_CursorPosition.y > 0)
+		{
+			// 上のマスにブロックがある場合のみ移動可能
+			if (m_Field[m_CursorPosition.y - 1][m_CursorPosition.x].color != BLOCK_COLOR::EMPTY)
+			{
+				m_CursorPosition.y--;
+			}
+		}
 	}
 	
-	if ((input_down_t || input_down_b) && m_CursorPosition.y < m_block_max_height-1)
+	if (input_down_t || input_down_b)
 	{
-		m_CursorPosition.y++;
+		if (m_CursorPosition.y < m_block_max_height - 1)
+		{
+			// 下のマスにブロックがある場合のみ移動可能
+			if (m_Field[m_CursorPosition.y + 1][m_CursorPosition.x].color != BLOCK_COLOR::EMPTY)
+			{
+				m_CursorPosition.y++;
+			}
+		}
 	}
 
-	if ((input_right_t || input_right_b) && m_CursorPosition.x < m_block_max_width-1)
+	if (input_right_t || input_right_b)
 	{
 		m_CursorPosition.x++;
+		if (m_CursorPosition.x >= m_block_max_width)
+		{
+			m_CursorPosition.x = 0;
+		}
 	}
 
-	if ((input_left_t || input_left_b) && m_CursorPosition.x > 0)
+	if (input_left_t || input_left_b)
 	{
 		m_CursorPosition.x--;
+		if (m_CursorPosition.x < 0)
+		{
+			m_CursorPosition.x = m_block_max_width - 1;
+		}
 	}
 }
 
