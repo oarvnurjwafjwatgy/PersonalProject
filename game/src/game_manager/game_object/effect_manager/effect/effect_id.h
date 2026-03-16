@@ -1,13 +1,12 @@
 #pragma once 
 
-
 /*!
- *  @brief      エフェクトのID
+ *  @brief      ゲーム内で発生するエフェクトの識別ID
  */
 
 enum class EFFECT_ID
 {
-	VANISH, //!< ブロックが消えるエフェクト
-	TITLE_PARTICLE,	//!< タイトルでのエフェクト
-	DUMMY,  //!< ダミー
+	VANISH,				//!< ブロックが消えるエフェクト
+	TITLE_PARTICLE,		//!< タイトルでのエフェクト
+	DUMMY,				//!< ダミー
 };

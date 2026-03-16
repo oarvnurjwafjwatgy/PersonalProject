@@ -59,8 +59,8 @@ void CGameMain::Update()
 	switch (m_GameState)
 	{
 	case CGameMain::GAME_STATE::START: Start();		break;
-	case CGameMain::GAME_STATE::PLAY: Play(); break;
-	case CGameMain::GAME_STATE::FINISH: Finish(); break;
+	case CGameMain::GAME_STATE::PLAY: Play();		break;
+	case CGameMain::GAME_STATE::FINISH: Finish();	break;
 	}
 }
 

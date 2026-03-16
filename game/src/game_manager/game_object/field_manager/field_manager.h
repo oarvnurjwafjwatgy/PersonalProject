@@ -1,14 +1,14 @@
-	//フィールド管理
-
 	#pragma once
-
 	#include "vivid.h"
 	#include <list>
 	#include "field/field_id.h"
 	#include <memory>
 
-	class IField;
+/*!
+ *	@brief		フィールド管理
+ */
 
+	class IField;
 
 	class CFieldManager
 	{
@@ -67,7 +67,6 @@
 		 */
 		int GetBlockMaxWidth(void) const;
 
-
 		/*!
 		 *  @brief      ブロックが消える最低値の取得
 		 *  @return      ブロックが消える最低値
@@ -115,9 +114,9 @@
 		CFieldManager& operator= (const CFieldManager&) = delete;
 
 	
-		using FIELD_LIST = std::list<std::shared_ptr<IField>>;	// 名前空間の省略を行う
+		using FIELD_LIST = std::list<std::shared_ptr<IField>>;	//!< 名前空間の省略を行う
 		FIELD_LIST m_FieldList;									//!<  フィールドオブジェクトを入れるリスト(カーソル、ブロック等)
-		int m_BlockSize;											//!< ブロックのサイズ
+		int m_BlockSize;										//!< ブロックのサイズ
 		int m_BlockMinChains;									//!< ブロックが消える最低値
 		bool m_FinishFlag;										//!< 終了フラグ
 	};

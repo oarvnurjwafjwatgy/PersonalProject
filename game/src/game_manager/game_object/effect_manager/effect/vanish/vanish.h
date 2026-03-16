@@ -2,7 +2,9 @@
 #include "vivid.h"
 #include "../effect.h"
 
-
+/*!
+ *	@brief		ブロックが消えた際のエフェクト
+ */
 
 class CVanish :public IEffect
 {
@@ -33,7 +35,6 @@ public:
 	void Draw(void) override;
 
 private:
-
 	static const float m_speed;		//!< 速さ
 	static const float m_max_fade;	//!< エフェクトのフェードしていく最大時間
 	static const int m_max_color_table;		//!< カラーテーブル
@@ -47,4 +48,5 @@ private:
 
 	std::vector<Particle> m_Particles; // 複数の粒子を格納するリスト
 	float m_AlphaValue;                // 透明度管理用 (0.0f ～ 1.0f)
+
 };

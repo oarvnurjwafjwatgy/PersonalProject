@@ -6,23 +6,22 @@
 
 const char* CSoundManager::m_bgm_fill_name[] =
 {
-	"data\\Sound\\BGM\\Title.mp3",
-	"data\\Sound\\BGM\\Main.mp3",
-	"data\\Sound\\BGM\\Result.mp3",
-	
-
+	"data\\Sound\\BGM\\title.mp3",
+	"data\\Sound\\BGM\\main.mp3",
+	"data\\Sound\\BGM\\result.mp3",
 };
 
 const char* CSoundManager::m_se_fill_name[] =
 {
 "data\\Sound\\SE\\decision_result.mp3",
 "data\\Sound\\SE\\dram_result.mp3",
-"data\\Sound\\SE\\Finish.mp3",
-"data\\Sound\\SE\\GameStart.mp3",
-"data\\Sound\\SE\\TitleBuuton.mp3",
-"data\\Sound\\SE\\Vanish.mp3",
-
-
+"data\\Sound\\SE\\finish.mp3",
+"data\\Sound\\SE\\game_start.mp3",
+"data\\Sound\\SE\\title_button.mp3",
+"data\\Sound\\SE\\vanish.mp3",
+"data\\Sound\\SE\\fall.mp3",
+"data\\Sound\\SE\\cursor_move.mp3",
+"data\\Sound\\SE\\block_change.mp3",
 };
 
 

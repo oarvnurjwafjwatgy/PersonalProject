@@ -2,6 +2,11 @@
 #include "vivid.h"
 #include "../ui.h"
 
+
+/*!
+ *	@brief		ゲーム中に表示されるコンボカウントのUIクラス
+ */
+
 class CComboCount :public IUI
 {
 public:
@@ -37,9 +42,7 @@ public:
 	void SetCount(int count);
 
 private:
-
 	int m_Count;  //!< コンボ数
 	vivid::Vector2 m_Position;  //!< 位置
-
 
 };

@@ -7,6 +7,10 @@
 #include <list>
 #include <vector>
 
+/*!
+ *	@brief		シーン管理
+ */
+
 class IScene;
 
 class CSceneManager
@@ -14,7 +18,6 @@ class CSceneManager
 public:
 	/*!
 	 *	@brief		インスタンスの取得
-	 * 
 	 *	@return		インスタンス
 	 */
 	static CSceneManager& GetInstance(void);
@@ -38,10 +41,16 @@ public:
 	 *	@brief		解放
 	 */
 	void Finalize(void);
-
 	
+	/*!
+	 *	@brief		シーンを管理するリストの型定義
+	 */
 	using SCENE_LIST = std::vector<std::shared_ptr<IScene>>;
 
+	/*!
+	 *  @brief		保持しているシーンリストの取得
+	 *	@return		シーンリスト（共有ポインタのベクター）
+	 */
 	const SCENE_LIST& GetList() const { return m_SceneList; }
 
 	/*!
@@ -88,14 +97,10 @@ private:
 	 */
 	void SceneChange(void);
 
-
 	SCENE_ID				m_CurrentSceneID;		//!< 現在のシーン
 	SCENE_ID				m_NextSceneID;			//!< 次のシーン
-
 	SCENE_LIST				m_SceneList; //!< シーンクラス
 
 	bool m_ChangeScene;
-
-
 
 };

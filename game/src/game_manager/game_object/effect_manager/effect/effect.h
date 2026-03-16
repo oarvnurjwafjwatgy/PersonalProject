@@ -1,24 +1,25 @@
 #pragma once
-#pragma once
-
 #include "vivid.h"
 #include "effect_id.h"
 #include <memory>
 #include <vector>
 
+/*!
+ *	@brief		エフェクト基底クラス
+ */
 
 class IEffect : public std::enable_shared_from_this<IEffect>
 {
 public:
-	
 	/*!
 	 *	@brief		コンストラクタ
 	 */
 	IEffect(vivid::Vector2 position,vivid::Vector2 velocity,unsigned int color);
 
-
-
-	IEffect();
+	/*!
+	 *	@brief		コンストラクタ
+	 */
+	IEffect(void);
 
 	/*!
 	 *	@brief		デストラクタ
@@ -70,12 +71,12 @@ public:
 	void SetColor(unsigned int color);
 
 protected:
-	bool				m_ActiveFlag;	//!< アクティブフラグ
-	vivid::Vector2		m_Position;		//!< 位置
+	bool				m_ActiveFlag;		//!< アクティブフラグ
+	vivid::Vector2		m_Position;			//!< 位置
 	EFFECT_ID			m_Effect_ID;		//!< ID
-	vivid::Vector2		m_Velocity;		//!< 速さ
-	unsigned			m_Color;		//!< 色
-	float				m_Alpha;		// α値
+	vivid::Vector2		m_Velocity;			//!< 速さ
+	unsigned			m_Color;			//!< 色
+	float				m_Alpha;			//!< α値
 
 
 

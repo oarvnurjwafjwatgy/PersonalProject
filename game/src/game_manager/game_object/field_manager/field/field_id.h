@@ -1,8 +1,7 @@
 #pragma once 
 
-
 /*!
- *  @brief      フィールドのID
+ *  @brief      ゲーム内のフィールドを認識するためのID
  */
 
 enum class FIELD_ID

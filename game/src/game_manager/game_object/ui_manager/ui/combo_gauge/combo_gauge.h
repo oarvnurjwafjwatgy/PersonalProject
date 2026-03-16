@@ -2,6 +2,11 @@
 #include "vivid.h"
 #include "../ui.h"
 
+
+/*!
+ *	@brief		ゲーム中に表示されるコンボゲージのUIクラス
+ */
+
 class CComboGauge :public IUI
 {
 public:
@@ -30,7 +35,6 @@ public:
 	 */
 	void Draw(void) override;
 
-
 	/*!
 	 *  @brief      現在の値の設定
 	 */
@@ -50,7 +54,5 @@ private:
 	vivid::Vector2 m_BarPosition;			//!< バーの位置
 	vivid::Vector2 m_BarFlamePosition;		//!< バーの枠の位置
 	unsigned int m_BarColor;
-
-
 
 };

@@ -22,10 +22,8 @@ void CGameStart::Initialize(const vivid::Vector2& position)
 
 void CGameStart::Update(void)
 {
-
     m_FrameCount++;
 
-    // --- FF5風 迫りくる演出ロジック ---
     // 最初の60フレーム（1秒）で迫ってくる
     if (m_FrameCount <= 60) {
         // スケールを 5.0 から 1.0 へ近づける
@@ -43,7 +41,6 @@ void CGameStart::Update(void)
 void CGameStart::Draw(void)
 {
 	// vivid2DのDrawTextureに「スケール」と「色（アルファ）」を指定
-    // 第5引数付近に anchor(中心)を渡すと、中心から拡大されるので綺麗です
     vivid::Rect rect = { 0, 0, (int)vivid::GetTextureWidth("data\\GAMESTART.png"), (int)vivid::GetTextureHeight("data\\GAMESTART.png") };
     vivid::Vector2 anchor = { rect.right / 2.0f, rect.bottom / 2.0f }; // 画像の中心
     vivid::Vector2 scale = { m_Scale, m_Scale };

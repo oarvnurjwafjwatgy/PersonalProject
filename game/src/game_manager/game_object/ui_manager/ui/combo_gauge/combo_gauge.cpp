@@ -1,10 +1,10 @@
 #include "combo_gauge.h"
 
- const int CComboGauge::m_combo_max_gauge = 100;		//!< コンボゲージ最大値
- const int CComboGauge::m_bar_width = 306;		//!< バーの幅
- const int CComboGauge::m_bar_height = 42;		//!< バーの高さ
- const int CComboGauge::m_bar_flame_width = 306;		//!< バーの枠の幅
- const int CComboGauge::m_bar_flame_height = 42;		//!< バーの枠の高さ
+ const int CComboGauge::m_combo_max_gauge = 100;						//!< コンボゲージ最大値
+ const int CComboGauge::m_bar_width = 306;								//!< バーの幅
+ const int CComboGauge::m_bar_height = 42;								//!< バーの高さ
+ const int CComboGauge::m_bar_flame_width = 306;						//!< バーの枠の幅
+ const int CComboGauge::m_bar_flame_height = 42;						//!< バーの枠の高さ
  const vivid::Rect CComboGauge::m_bar_rect = {0,0,0,m_bar_height};		//!< バーの初期化
  const unsigned int CComboGauge::m_bar_gauge_color = 0xffffffff;		//!< ゲージの初期の色
 
@@ -30,7 +30,6 @@ void CComboGauge::Update(void)
 
 void CComboGauge::Draw(void)
 {
-
 	vivid::DrawTexture("data\\bar.png", m_BarPosition,m_BarColor,m_Rect);
 }
 

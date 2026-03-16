@@ -262,6 +262,8 @@ void IField::MoveCursor(void)
 		{
 			m_CursorPosition.y = m_block_max_height - 1;
 		}
+
+		FiledSound.Play(SESOUND_ID::CURSORMOVE);
 	}
 
 
@@ -273,6 +275,8 @@ void IField::MoveCursor(void)
 		{
 			m_CursorPosition.y = 0;
 		}
+
+		FiledSound.Play(SESOUND_ID::CURSORMOVE);
 	}
 
 	if (input_right_t || input_right_b)
@@ -282,6 +286,8 @@ void IField::MoveCursor(void)
 		{
 			m_CursorPosition.x = 0;
 		}
+
+		FiledSound.Play(SESOUND_ID::CURSORMOVE);
 	}
 
 	if (input_left_t || input_left_b)
@@ -291,7 +297,12 @@ void IField::MoveCursor(void)
 		{
 			m_CursorPosition.x = m_block_max_width - 1;
 		}
+
+		FiledSound.Play(SESOUND_ID::CURSORMOVE);
 	}
+
+
+	
 }
 
 void IField::ShiftBlock(void)
@@ -318,7 +329,6 @@ void IField::ShiftBlock(void)
 		m_Field[m_CursorPosition.y][m_CursorPosition.x] = m_Field[m_CursorPosition.y - 1][m_CursorPosition.x];
 		m_Field[m_CursorPosition.y - 1][m_CursorPosition.x] = tmp;
 
-		
 		m_CursorPosition.y--;
 	}
 
@@ -346,6 +356,8 @@ void IField::ShiftBlock(void)
 		m_CursorPosition.x--;
 	}
 
+
+	
 }
 
 void IField::CheckFall(void)
@@ -361,6 +373,7 @@ void IField::CheckFall(void)
 				m_Field[y + 1][x].color = m_Field[y][x].color;
 				m_Field[y][x].color = BLOCK_COLOR::EMPTY;
 				
+				FiledSound.Play(SESOUND_ID::FALL);
 			}
 		}
 	}
@@ -386,17 +399,17 @@ void IField::BlockVanish(void)
 
 					// コンボ開始
 					// 現在のスコアを覚えておく（加算前のスコア）
-					int oldScore = CScoreManager::GetInstance().GetScore();
+					int old_score = CScoreManager::GetInstance().GetScore();
 
 					// スコア加算
 					CScoreManager::GetInstance().AddScore(check_straight, m_ComboCounter);
 
 					// 今回「実際に増えた分」を計算
-					int addedScore = CScoreManager::GetInstance().GetScore() - oldScore;
+					int added_score = CScoreManager::GetInstance().GetScore() - old_score;
 
 					//  UIに履歴を追加
 					if (!m_ScoreTextUI.expired()) {
-						m_ScoreTextUI.lock()->AddScoreLog(addedScore);
+						m_ScoreTextUI.lock()->AddScoreLog(added_score);
 					}
 					m_ComboDurationTimer = m_combo_max_duration_time;
 					m_ComboCounter++;

@@ -1,8 +1,10 @@
 #pragma once
-
-#pragma once
 #include "vivid.h"
 #include "../ui.h"
+
+/*!
+ *	@brief			リザルト画面で表示されるスコアテキストのUIクラス
+ */
 
 class CResult_text :public IUI
 {
@@ -32,13 +34,12 @@ public:
 	 */
 	void Draw(void) override;
 
+	/*!
+	 *  @brief      解放
+	 */
 	void Finalize(void) override;
 
-
-
 private:
-
-	vivid::Vector2 m_Position;  //!< 位置
-
+	vivid::Vector2 m_Position;  //!< リザルトテキストの位置
 
 };

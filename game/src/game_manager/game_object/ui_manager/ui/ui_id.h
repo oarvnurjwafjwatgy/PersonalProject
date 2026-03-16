@@ -1,6 +1,8 @@
-//!< UIID
-
 #pragma once
+
+/*!
+ *	@brief		ƒQ[ƒ€’†‚É•\Ž¦‚³‚ê‚éUI‚ÌŽ¯•ÊID
+ */
 
 enum class UI_ID
 {

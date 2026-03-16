@@ -1,10 +1,13 @@
-//UI管理
 #pragma once
-
 #include "vivid.h"
 #include "effect/effect_id.h"
 #include <list>
 #include <memory>
+
+
+/*!
+ *	@brief		エフェクト管理
+ */
 
 class IEffect;
 
@@ -96,6 +99,6 @@ private:
 	CEffectManager& operator= (const CEffectManager& ) = delete;
 
 
-	using EFFECT_LIST = std::list<std::shared_ptr<IEffect>>;	// 名前空間の省略を行う
-	EFFECT_LIST m_EffetList;									//!<  フィールドオブジェクトを入れるリスト(カーソル、ブロック等)
+	using EFFECT_LIST = std::list<std::shared_ptr<IEffect>>;	//!< 名前空間の省略を行う
+	EFFECT_LIST m_EffetList;									//!< フィールドオブジェクトを入れるリスト(カーソル、ブロック等)
 };

@@ -1,10 +1,12 @@
-//UI管理
 #pragma once
-
 #include "vivid.h"
 #include "ui/ui_id.h"
 #include <list>
 #include <memory>
+
+/*!
+ *	@brief		UI管理
+ */
 
 class IUI;
 
@@ -51,16 +53,13 @@ public:
 	 */
 	void	Delete(UI_ID id);
 
-
 private:
-
 	/*!
 	 *  @brief      UIのクラスを制作
 	 * 
 	 *  @param[in] id UIのID
 	 */
 	std::shared_ptr<IUI>  CreateClass(UI_ID id);
-
 
 	/*!
 	 *  @brief      コンストラクタ
@@ -72,7 +71,6 @@ private:
 	 */
 	CUIManager(const CUIManager& ) = delete;
 
-
 	/*!
 	 *  @brief      デストラクタ
 	 */
@@ -83,7 +81,6 @@ private:
 	 */
 	CUIManager& operator= (const CUIManager& ) = delete;
 
-
-	using UI_LIST = std::list<std::shared_ptr<IUI>>;	// 名前空間の省略を行う
-	UI_LIST m_UIList;									//!<  フィールドオブジェクトを入れるリスト(カーソル、ブロック等)
+	using UI_LIST = std::list<std::shared_ptr<IUI>>;	//!< 名前空間の省略を行う
+	UI_LIST m_UIList;									//!< フィールドオブジェクトを入れるリスト(カーソル、ブロック等)
 };

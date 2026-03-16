@@ -1,5 +1,8 @@
-//ゲーム管理
 #pragma once
+
+/*!
+ *	@brief		ゲーム管理
+ */
 
 class CGameManager
 {
@@ -32,7 +35,6 @@ public:
 	void Finalize(void);
 
 private:
-
 	/*!
 	 *  @brief      コンストラクタ
 	 */
@@ -42,7 +44,6 @@ private:
 	 *  @brief      コピーコンストラクタ
 	 */
 	CGameManager(const CGameManager& rhs) = delete;
-
 
 	/*!
 	 *  @brief      デストラクタ

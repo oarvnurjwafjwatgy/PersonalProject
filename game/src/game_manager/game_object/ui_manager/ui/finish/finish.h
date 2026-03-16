@@ -1,8 +1,11 @@
 #pragma once
-
-#pragma once
 #include "vivid.h"
 #include "../ui.h"
+
+
+/*!
+ *	@brief		ゲーム中に表示されるフィニッシュの文字のUIクラス
+ */
 
 class CFinish :public IUI
 {
@@ -32,13 +35,12 @@ public:
 	 */
 	void Draw(void) override;
 
+	/*!
+	 *  @brief      解放
+	 */
 	void Finalize(void) override;
 
-
-
 private:
-
-	vivid::Vector2 m_Position;  //!< 位置
-
+	vivid::Vector2 m_Position;  //!< 「FINISH」という文字の位置
 
 };

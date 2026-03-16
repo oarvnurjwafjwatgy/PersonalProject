@@ -1,10 +1,11 @@
 #include "score_text.h"
+#include "../../../sound_manager/sound_manager.h"
 
 const int CScoreText::m_number_digit_width = 88;
 const int CScoreText::m_number_digit_height = 128;
 const unsigned int CScoreText::m_number_color = 0xffffffff;
 const float CScoreText::m_display_max_time = 2.0f;
-
+const float CScoreText::m_digit_interval = 0.4f; // 0.4秒ごとに1桁確定
 
 
 CScoreText::CScoreText(void)
@@ -44,10 +45,7 @@ void CScoreText::Update()
 		score_calc /= 10;
 		m_Rect[i].left = digit * m_number_digit_width;
 		m_Rect[i].right = m_Rect[i].left + m_number_digit_width;
-
-		
 	}
-
 
 	float dt = vivid::GetDeltaTime();
 
@@ -66,11 +64,56 @@ void CScoreText::Update()
 		}
 	}
 
+	if (m_IsResultMode) {
+        m_ResultTimer += vivid::GetDeltaTime();
+        // 現在何桁目まで確定すべきか計算
+        int newConfirmed = (int)(m_ResultTimer / m_digit_interval);
+        
+		// 新しい桁が確定したかチェック
+		if (newConfirmed > m_ConfirmedDigits) {
+
+			// 全ての桁（最後の桁）が決まった瞬間だけ判定
+			if (newConfirmed >= m_digit_max) {
+
+				
+				CSoundManager::GetInstance().Stop(SESOUND_ID::DRAM_RESULT);
+
+				
+				CSoundManager::GetInstance().Play(SESOUND_ID::DECISION_RESULT);
+				m_IsResultMode = false;
+			}
+		}
+		m_ConfirmedDigits = newConfirmed;
+
+        m_ConfirmedDigits = newConfirmed;
+    }
+
+     score_calc = m_CurrentScore;
+
+    for(int i = m_digit_max - 1; i >= 0; i--)
+    {
+        // 右からの位置（0が一番右の桁）
+        int distanceFromRight = (m_digit_max - 1) - i;
+
+        int digit;
+        if (m_IsResultMode && distanceFromRight >= m_ConfirmedDigits) {
+            // まだ確定していない桁を動かす
+            digit = rand() % 10;
+        } else {
+            // 確定した桁は正しい数字を表示
+            // スコアを10で割りながら一桁ずつ抽出（既存のロジック）
+            int temp_score = m_CurrentScore;
+            for(int j = 0; j < distanceFromRight; j++) temp_score /= 10;
+            digit = temp_score % 10;
+        }
+
+        m_Rect[i].left = digit * m_number_digit_width;
+        m_Rect[i].right = m_Rect[i].left + m_number_digit_width;
+    }
 }
 
 void CScoreText::Draw()
 {
-
 	for (int i = 0; i < m_digit_max; i++)
 	{
 		vivid::DrawTexture("data\\number.png", m_Position + vivid::Vector2((float)(m_number_digit_width * i), 0.0f),m_Color,m_Rect[i]);
@@ -121,5 +164,24 @@ void CScoreText::AddScoreLog(int score)
 	newLog.alpha = 1.0f;             // 最初はくっきり表示
 
 	m_ScoreLogs.push_back(newLog);   // リストの末尾に追加
+}
+
+void CScoreText::StartResultAnimation()
+{
+	CSoundManager::GetInstance().Play(SESOUND_ID::DRAM_RESULT, true);
+	m_IsResultMode = true;
+	m_ResultTimer = 0.0f;
+	m_ConfirmedDigits = 0;
+}
+
+bool CScoreText::IsAnimationFinished(void)
+{
+	// リザルトモードが終了(false)しており、かつ全桁が確定しているか
+	if (!m_IsResultMode && m_ConfirmedDigits >= m_digit_max)
+	{
+		return true;
+	}
+
+	return false;
 }
 

@@ -9,6 +9,14 @@ auto& ResultSound = CSoundManager::GetInstance();
 const int CResult::m_change_volume = 100;
 const vivid::Vector2 CResult::m_score_text = { 700,500 };
 const vivid::Vector2 CResult::m_result_text = { 600,400 };
+const vivid::Vector2 CResult::m_push_button_position = { 700.0f, 860.0f };
+const float CResult::m_flash_speed = 0.07f;
+const int   CResult::m_flash_base_alpha = 190;
+const int   CResult::m_flash_amplitude = 65;
+const int   CResult::m_bit_shift_bite = 24;
+const unsigned  int   CResult::m_color_white = 0x00ffffff;
+
+
 
 
 CResult::CResult(void)
@@ -36,8 +44,11 @@ void CResult::Initialize(SCENE_ID scene_id)
 
 	ui.Create(UI_ID::RESULT_TEXT, m_result_text);
 
-	if (!m_ScoreTextUI.expired())
-		m_ScoreTextUI.lock()->SetCurrentScore(m_ResultScore);
+	if (!m_ScoreTextUI.expired()) {
+		auto scoreUI = m_ScoreTextUI.lock();
+		scoreUI->SetCurrentScore(m_ResultScore);
+		scoreUI->StartResultAnimation();
+	}
 
 }
 
@@ -47,16 +58,45 @@ void CResult::Update()
 	auto& scene = CSceneManager::GetInstance();
 	auto& input = CInputManager::GetInstance();
 
-	if (vivid::keyboard::Trigger(vivid::keyboard::KEY_ID::SPACE) || input.GetKey(PLAYER_ID::PLAYER1,BUTTON_ID::A,GET_KEY_MODE::TRIGGER))
-		scene.ChangeScene(SCENE_ID::TITLE);
+	// アニメーションが終わっているかチェック
+	bool finish_flag = false;
+	if (!m_ScoreTextUI.expired()) {
+		finish_flag = m_ScoreTextUI.lock()->IsAnimationFinished();
+	}
 
-
+	if (finish_flag)
+	{
+		if (finish_flag) {
+			// ボタン入力でシーン遷移
+			if (vivid::keyboard::Trigger(vivid::keyboard::KEY_ID::SPACE) ||
+				input.GetKey(PLAYER_ID::PLAYER1, BUTTON_ID::A, GET_KEY_MODE::TRIGGER))
+			
+			{
+				ResultSound.Play(SESOUND_ID::BUTTON);
+				scene.ChangeScene(SCENE_ID::TITLE);
+			}
+		}
+	}
 }
 
 // 描画
 void CResult::Draw()
 {
 	vivid::DrawTexture("data\\title_back.png", vivid::Vector2::ZERO);
+
+	// アニメーション終了後のみボタンを表示
+	if (!m_ScoreTextUI.expired() && m_ScoreTextUI.lock()->IsAnimationFinished()) {
+
+		// 点滅計算
+		static float flashTimer = 0.0f;
+		flashTimer += m_flash_speed;
+
+		// 透明度の計算
+		unsigned int alpha = (unsigned int)(m_flash_base_alpha + sinf(flashTimer) * m_flash_amplitude);
+		unsigned int color = (alpha << m_bit_shift_bite) | m_color_white;
+
+		vivid::DrawTexture("data\\push_button_title.png", m_push_button_position, color);
+	}
 }
 
 // 解放

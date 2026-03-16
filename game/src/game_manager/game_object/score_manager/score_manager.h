@@ -1,5 +1,8 @@
-//スコア管理
 #pragma once
+
+/*!
+ *	@brief		スコア管理
+ */
 
 class CScoreManager
 {
@@ -7,7 +10,7 @@ public:
 	/*!
 	 *  @brief      インスタンスの取得
 	 * 
-	  *	@return		インスタンス
+	 *	@return		インスタンス
 	 */
 	static CScoreManager& GetInstance(void);
 
@@ -40,7 +43,6 @@ public:
 	void AddScore(int chains,int combo);
 
 private:
-
 	/*!
 	 *  @brief      コンストラクタ
 	 */
@@ -67,8 +69,6 @@ private:
 	static const float m_one_tenth;		//!< 10分の1
 	static const int m_max_score;		//!< 最大のスコア
 
-
 	int m_Score;					//!< 現在のスコア
 
-	
 };

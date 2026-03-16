@@ -48,7 +48,6 @@ void CGameManager::Update(void)
 	auto& input = CInputManager::GetInstance();
 	auto& effect = CEffectManager::GetInstance();
 	auto& ui = CUIManager::GetInstance();
-	
 
 	//シーンマネージャー更新
 	scene.Update();
@@ -61,7 +60,6 @@ void CGameManager::Update(void)
 
 	// inputの更新はなるべく後ろで呼ぶ
 	input.Update();
-
 }
 
 void CGameManager::Draw(void)
@@ -74,8 +72,6 @@ void CGameManager::Draw(void)
 
 	// UIマネージャー描画
 	ui.Draw();
-
-	
 }
 
 void CGameManager::Finalize(void)
@@ -84,7 +80,6 @@ void CGameManager::Finalize(void)
 	auto& ui = CUIManager::GetInstance();
 	auto& input = CInputManager::GetInstance();	
 	auto& effect = CEffectManager::GetInstance();
-
 
 	//シーンマネージャー解放
 	scene.Finalize();

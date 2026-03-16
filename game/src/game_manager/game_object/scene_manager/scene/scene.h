@@ -2,6 +2,9 @@
 #include "scene_id.h"
 #include "../scene_manager.h"
 
+/*!
+ *	@brief		シーンの基底クラス
+ */
 
 class IScene
 {
@@ -44,4 +47,5 @@ public:
 protected:
 	SCENE_ID	 m_SceneID;		//!< シーンID
 	bool		 m_ActiveFlag;  //!< アクティブフラグ
+
 };

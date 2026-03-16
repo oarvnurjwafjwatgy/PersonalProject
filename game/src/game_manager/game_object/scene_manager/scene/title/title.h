@@ -1,13 +1,14 @@
 #pragma once
-
 #include "vivid.h"
 #include "../scene.h"
 
+/*!
+ *	@brief		ゲーム内のタイトルシーンクラス
+ */
 
 class CTitle : public IScene
 {
 public:
-
 	/*
 	 *	@brief		コンストラクタ
 	 */
@@ -37,7 +38,6 @@ public:
 	 *	@brief		解放
 	 */
 	void Finalize() override;
-
 
 private:
 

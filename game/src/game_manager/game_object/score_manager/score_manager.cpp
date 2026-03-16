@@ -25,7 +25,6 @@ void CScoreManager::Update(void)
 {
 }
 
-
 void CScoreManager::Finalize(void)
 {
 }
@@ -43,11 +42,4 @@ void CScoreManager::AddScore( int chains, int combo)
 	float combo_bonus = (float)combo * m_one_tenth;
 	
 	m_Score += m_base_score * chains * (chain_bonus + m_base_multiplier + combo_bonus);
-	
-	// // Å‘å‚É‚È‚ç‚È‚¢‚æ‚¤‚É§ŒÀ
-	//if (m_Score > m_base_score)
-	//{
-	//	m_Score = m_max_score;
-	//}
-
 }

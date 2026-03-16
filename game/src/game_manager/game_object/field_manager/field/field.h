@@ -1,7 +1,4 @@
-// 盤面の基底クラス
-
 #pragma once
-
 #include "vivid.h"
 #include "field_id.h"
 #include "../field_manager.h"
@@ -11,6 +8,10 @@
 #include "../../input_manager/input_manager.h"
 #include "../../ui_manager/ui/combo_count/combo_count.h"
 #include "../../ui_manager/ui/score_text/score_text.h"
+
+/*!
+ *  @brief      フィールドの基底クラス
+ */
 
 class IField
 {
@@ -68,10 +69,6 @@ public:
 	 */
 	static int GetBlockMaxWidthConstant(void);
 
-
-
-	
-
 protected:
 
 	static const int m_block_max_height = 16;	//!< ブロックの最大詰める高さ
@@ -102,6 +99,11 @@ protected:
 		MAX,
 	};
 
+	/*!
+	 *	@brief		BLOCK_COLORを実際のカラーコードに変換する
+	 *	@param[in]	color 変換前の色ID
+	 *	@return		カラー値
+	 */
 	unsigned int ConvertBlockColor(BLOCK_COLOR color);
 
 	/*!
@@ -115,6 +117,10 @@ protected:
 		VANISH, //!< 消えるか
 	};
 
+	/*!
+	 *  @enum BLOCK_DIRECTION
+	 *  @brief 連結チェックに使用する方向ベクトル
+	 */
 	enum class BLOCK_DIRECTION
 	{
 		DOWN,
@@ -122,7 +128,6 @@ protected:
 
 		MAX,
 	};
-
 
 	/*!
 	 *	@brief		ブロック一個に対する情報
@@ -135,7 +140,6 @@ protected:
 		bool check_flag;	//!< ブロック連結の確認フラグ
 	};
 
-
 	/*!
 	 *	@brief		カーソルの位置
 	 */
@@ -143,7 +147,6 @@ protected:
 	{
 		int x, y;
 	};
-
 
 	/*!
 	 *	@brief		カーソルの移動

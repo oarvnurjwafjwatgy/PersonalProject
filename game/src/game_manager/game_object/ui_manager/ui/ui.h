@@ -1,10 +1,12 @@
 #pragma once
-
 #include "vivid.h"
 #include "ui_id.h"
 #include <memory>
 #include <vector>
 
+/*!
+ *	@brief		UIの基底クラス
+ */
 
 class IUI : public std::enable_shared_from_this<IUI>
 {
@@ -56,18 +58,15 @@ public:
 	 */
 	UI_ID	GetUI_ID(void);
 
-
 	/*!
 	*	@brief      UIがDeleteされるタイマー関数
 	*/
 	void UIDeleteTimer(void);
 
-
 protected:
 	bool				m_ActiveFlag;	//!< アクティブフラグ
 	vivid::Vector2		m_Position;		//!< 位置
 	UI_ID				m_UI_ID;		//!< ID
-
-	int			m_UI_Delete_Timer;				//!< UIが消える時間
+	int			m_UI_Delete_Timer;		//!< UIが消える時間
 
 };

@@ -29,8 +29,6 @@ void CTitle::Initialize(SCENE_ID scene_id)
     TitleSound.Load(BGMSOUND_ID::TITLE);
     TitleSound.ChangeBGMVolume(BGMSOUND_ID::TITLE, m_change_volume);
     TitleSound.Play(BGMSOUND_ID::TITLE);
-
-   
 }
 
 void CTitle::Update()
@@ -38,10 +36,9 @@ void CTitle::Update()
 	auto& input = CInputManager::GetInstance();
 	auto& scene = CSceneManager::GetInstance();
 
-
     if (vivid::keyboard::Trigger(vivid::keyboard::KEY_ID::SPACE) || input.InputAnyKey(PLAYER_ID::PLAYER1))
     {
-        TitleSound.Play(SESOUND_ID::TITLEBUTTON);
+        TitleSound.Play(SESOUND_ID::BUTTON);
 		scene.ChangeScene(SCENE_ID::GAME_MAIN);
     }
 }
@@ -63,7 +60,7 @@ void CTitle::Draw()
     unsigned int color = (alpha << m_bit_shift_bite) | m_color_white;
 
     // ƒ{ƒ^ƒ“•`‰æ
-    vivid::DrawTexture("data\\push_button.png", m_push_button_position, color);
+    vivid::DrawTexture("data\\push_button_gamemain.png", m_push_button_position, color);
 }
 
 void CTitle::Finalize()
