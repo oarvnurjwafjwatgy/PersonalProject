@@ -76,10 +76,10 @@ void CScoreText::Update()
 			if (newConfirmed >= m_digit_max) {
 
 				
-				CSoundManager::GetInstance().Stop(SESOUND_ID::DRAM_RESULT);
+				CSoundManager::GetInstance().Stop(SE_ID::DRAM_RESULT);
 
 				
-				CSoundManager::GetInstance().Play(SESOUND_ID::DECISION_RESULT);
+				CSoundManager::GetInstance().Play(SE_ID::DECISION_RESULT);
 				m_IsResultMode = false;
 			}
 		}
@@ -168,7 +168,7 @@ void CScoreText::AddScoreLog(int score)
 
 void CScoreText::StartResultAnimation()
 {
-	CSoundManager::GetInstance().Play(SESOUND_ID::DRAM_RESULT, true);
+	CSoundManager::GetInstance().Play(SE_ID::DRAM_RESULT);
 	m_IsResultMode = true;
 	m_ResultTimer = 0.0f;
 	m_ConfirmedDigits = 0;

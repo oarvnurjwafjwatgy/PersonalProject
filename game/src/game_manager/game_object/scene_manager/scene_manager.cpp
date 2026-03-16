@@ -14,18 +14,8 @@ CSceneManager& CSceneManager::GetInstance(void)
 
 void CSceneManager::Initialize(void)
 {
-	//リストが空か
-	//if (m_SceneList.empty()) return; // empty() でもOK
-
+	// 始めにタイトルシーンを生成する
 	CreateScene(SCENE_ID::TITLE);
-
-	SCENE_LIST::iterator it = m_SceneList.begin();
-	while (it != m_SceneList.end())
-	{
-		(*it)->Initialize(m_CurrentSceneID); // ← Initialize() を呼び出す
-
-		++it;
-	}
 }
 
 void CSceneManager::Update(void)
@@ -127,7 +117,7 @@ std::shared_ptr<IScene> CSceneManager::CreateScene(SCENE_ID id)
 	}
 	m_SceneList.emplace_back(scene);
 
-	scene->Initialize(id);
+	scene->Initialize();
 
 	return scene;
 }

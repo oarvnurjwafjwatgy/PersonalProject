@@ -5,7 +5,6 @@
 
 
 auto& ResultSound = CSoundManager::GetInstance();
-
 const int CResult::m_change_volume = 100;
 const vivid::Vector2 CResult::m_score_text = { 700,500 };
 const vivid::Vector2 CResult::m_result_text = { 600,400 };
@@ -17,39 +16,35 @@ const int   CResult::m_bit_shift_bite = 24;
 const unsigned  int   CResult::m_color_white = 0x00ffffff;
 
 
-
-
 CResult::CResult(void)
 	: m_ResultScore(0)
 {
 }
 
 // 初期化
-void CResult::Initialize(SCENE_ID scene_id)
+void CResult::Initialize()
 {
-	
+	IScene::Initialize();
+
 	auto& ui = CUIManager::GetInstance();
 
-	ResultSound.Load(BGMSOUND_ID::RESULT);
-	ResultSound.ChangeBGMVolume(BGMSOUND_ID::RESULT, m_change_volume);
-	ResultSound.Play(BGMSOUND_ID::RESULT);
+	ResultSound.Load(BGM_ID::RESULT);
+	ResultSound.ChangeBGMVolume(BGM_ID::RESULT, m_change_volume);
+	ResultSound.Play(BGM_ID::RESULT);
 
-
-
-	auto score_text_ui = ui.Create(UI_ID::SCORE_TEXT, m_score_text);
+	auto score_text_ui = ui.Create(m_score_text,UI_ID::SCORE_TEXT);
 
 	m_ScoreTextUI = std::dynamic_pointer_cast<CScoreText>(score_text_ui);
 
 	m_ResultScore = CScoreManager::GetInstance().GetScore();
 
-	ui.Create(UI_ID::RESULT_TEXT, m_result_text);
+	ui.Create(m_result_text, UI_ID::RESULT_TEXT);
 
 	if (!m_ScoreTextUI.expired()) {
 		auto scoreUI = m_ScoreTextUI.lock();
 		scoreUI->SetCurrentScore(m_ResultScore);
 		scoreUI->StartResultAnimation();
 	}
-
 }
 
 // 更新
@@ -64,18 +59,13 @@ void CResult::Update()
 		finish_flag = m_ScoreTextUI.lock()->IsAnimationFinished();
 	}
 
-	if (finish_flag)
+	// ボタン入力でシーン遷移
+	if ((vivid::keyboard::Trigger(vivid::keyboard::KEY_ID::SPACE) ||
+		input.GetKey(PLAYER_ID::PLAYER1, BUTTON_ID::A, GET_KEY_MODE::TRIGGER)) && finish_flag)
+
 	{
-		if (finish_flag) {
-			// ボタン入力でシーン遷移
-			if (vivid::keyboard::Trigger(vivid::keyboard::KEY_ID::SPACE) ||
-				input.GetKey(PLAYER_ID::PLAYER1, BUTTON_ID::A, GET_KEY_MODE::TRIGGER))
-			
-			{
-				ResultSound.Play(SESOUND_ID::BUTTON);
-				scene.ChangeScene(SCENE_ID::TITLE);
-			}
-		}
+		ResultSound.Play(SE_ID::BUTTON);
+		scene.ChangeScene(SCENE_ID::TITLE);
 	}
 }
 
@@ -103,7 +93,7 @@ void CResult::Draw()
 void CResult::Finalize()
 {
 	auto& ui = CUIManager::GetInstance();
-	ResultSound.Stop(BGMSOUND_ID::RESULT);
+	ResultSound.Stop(BGM_ID::RESULT);
 	ui.Finalize();
 }
 

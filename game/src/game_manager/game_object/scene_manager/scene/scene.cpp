@@ -9,9 +9,8 @@ IScene::~IScene(void)
 {
 }
 
-void IScene::Initialize(SCENE_ID scene_id)
+void IScene::Initialize()
 {
-	m_SceneID = scene_id;
 }
 
 void IScene::Update(void)

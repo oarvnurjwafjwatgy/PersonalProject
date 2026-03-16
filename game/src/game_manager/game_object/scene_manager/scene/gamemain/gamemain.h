@@ -24,7 +24,7 @@ public:
 	 *	@brief		初期化
 	 *  @param[in]　scene_id シーンID
 	 */
-	void Initialize(SCENE_ID scene_id) override;
+	void Initialize() override;
 
 	/*
 	 *	@brief		更新

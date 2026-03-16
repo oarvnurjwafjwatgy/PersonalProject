@@ -20,9 +20,10 @@ IEffect::~IEffect(void)
 {
 }
 
-void IEffect::Initialize(const vivid::Vector2& position)
+void IEffect::Initialize(const vivid::Vector2& position, EFFECT_ID id)
 {
 	m_Position = position;
+	m_Effect_ID = id;
 }
 
 void IEffect::Update(void)
@@ -53,6 +54,7 @@ bool IEffect::GetActive(void)
 
 void IEffect::Delete()
 {
+	m_ActiveFlag = false;
 }
 
 EFFECT_ID IEffect::GetEffect_ID()

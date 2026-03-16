@@ -80,7 +80,7 @@ void CUIManager::Finalize(void)
 	m_UIList.clear();
 }
 
-std::shared_ptr<IUI> CUIManager::Create(UI_ID ui_id, const vivid::Vector2& position)
+std::shared_ptr<IUI> CUIManager::Create(const vivid::Vector2& position,UI_ID ui_id)
 {
 	std::shared_ptr<IUI> ui = CreateClass(ui_id);
 

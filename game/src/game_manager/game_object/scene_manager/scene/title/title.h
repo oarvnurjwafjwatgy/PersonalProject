@@ -22,7 +22,7 @@ public:
 	/*
 	 *	@brief		‰Šú‰»
 	 */
-	void Initialize(SCENE_ID scene_id) override;
+	void Initialize() override;
 
 	/*
 	 *	@brief		XV

@@ -1,11 +1,10 @@
 #include "vanish.h"
 
 const float CVanish::m_speed = 10.0f;
-const float CVanish::m_max_fade = 0.1f;
+const float CVanish::m_fade_value = 0.1f;
 
 CVanish::CVanish(void)
-	:m_Velocity(vivid::Vector2::ZERO)
-	, m_AlphaValue(1.0f)
+	:m_AlphaValue(1.0f)
 {
 }
 
@@ -13,9 +12,9 @@ CVanish::~CVanish(void)
 {
 }
 
-void CVanish::Initialize(const vivid::Vector2& position)
+void CVanish::Initialize(const vivid::Vector2& position, EFFECT_ID id)
 {
-	m_Position = position;
+	IEffect::Initialize(position,id);
 
 	m_Particles.clear();
 
@@ -43,7 +42,7 @@ void CVanish::Update(void)
 	}
 
 	// “§–¾“x‚ðŒ¸‚ç‚·
-	m_AlphaValue -= m_max_fade;
+	m_AlphaValue -= m_fade_value;
 
 	if (m_AlphaValue <= 0.0f) {
 		m_AlphaValue = 0.0f;

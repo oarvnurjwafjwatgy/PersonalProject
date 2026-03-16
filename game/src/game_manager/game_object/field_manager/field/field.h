@@ -70,7 +70,6 @@ public:
 	static int GetBlockMaxWidthConstant(void);
 
 protected:
-
 	static const int m_block_max_height = 16;	//!< ブロックの最大詰める高さ
 	static const int m_block_max_width = 8;		//!< ブロックの最大詰める幅
 	static const int m_block_size;				//!< ブロックは正方形なので大きさ固定
@@ -78,7 +77,7 @@ protected:
 	static const int m_used_block_max_color;	//!< ブロックの色の種類
 	static const int m_block_min_chains;		//!< 何個連結していたら消えるのかの数
 	static const int m_block_start_row;			//!< 最初ブロックを表示する行
-	static const int m_combo_max_duration_time; //!< コンボ最大継続時間
+	static const float m_combo_max_duration_time; //!< コンボ最大継続時間
 	static const int m_finish_max_time;			//!< 終了判定後の最大猶予時間
 	static const int m_cursor_move_frame;		//!< カーソルの長押しで１マス移動するまでのフレーム
 
@@ -177,7 +176,6 @@ protected:
 	 */
 	int CheckStraight(BLOCK_DIRECTION dir,int x,int y, BLOCK_COLOR color);
 
-
 	/*!
 	 *	@brief		チェンジフラグが立っているブロックのステートを[Vanish]にする
 	 *  @pram[in]	dir	探索する向き
@@ -185,7 +183,6 @@ protected:
 	 */
 	void SetStateVanish(BLOCK_DIRECTION dir, int x, int y);
 
-	
 	/*!
 	 *	@brief		ブロック連結の確認フラグ(check_flag)のリセット
 	 */
@@ -225,6 +222,9 @@ protected:
 	static const float m_stick_input_threshold;				    //!< スティックの入力判定閾値
 	static const int   m_cursor_repeat_delay;					//!< カーソル長押し移動が始まるまでのディレイ
 	static const vivid::Vector2 m_bg_offset;					//!< 背景描画位置の補正値
+	static const vivid::Vector2 m_combo_gauge_ui_pos;			//!< コンボゲージUIの生成位置
+	static const vivid::Vector2 m_combo_count_ui_pos;			//!< コンボカウントUIの生成位置
+	static const vivid::Vector2 m_score_text_ui_pos;			//!< スコア表示UIの生成位置
 
 	vivid::Vector2	m_Position;									//!< ブロックの左上の位置
 	BLOCK	m_Field[m_block_max_height][m_block_max_width];		//!< ブロックの二次元配列
@@ -240,7 +240,7 @@ protected:
 	int m_RowIndex;												//!< 色が付き始める行のインデックス
 	bool m_ShiftButtonFlag;										//!< 入れ替えボタンが押されているか
 	int m_ComboCounter;											//!< コンボの回数を数える
-	int m_ComboDurationTimer;									//!< コンボ持続時間
+	float m_ComboDurationTimer;									//!< コンボ持続時間
 	int m_FinishTimer;											//!< 終了タイマー
 	int m_CursorMoveTimer;										//!< カーソルの長押し移動のタイマー
 

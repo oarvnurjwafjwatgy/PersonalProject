@@ -39,7 +39,6 @@ public:
 	 */
 	void Finalize(void);
 
-
 	/*!
 	 *  @brief      エフェクト生成
 	 *
@@ -55,9 +54,7 @@ public:
 	 *  @param[in] position エフェクトの位置
 	 *  @param[in] position エフェクトの色
 	 */
-	std::shared_ptr<IEffect> Create(EFFECT_ID effect_id, const vivid::Vector2& position, unsigned int color);
-
-
+	std::shared_ptr<IEffect> Create(const vivid::Vector2& position, EFFECT_ID effect_id, unsigned int color);
 
 	/*!
 	 *  @brief      UIの削除
@@ -66,16 +63,13 @@ public:
 	 */
 	void	Delete(EFFECT_ID id);
 
-
 private:
-
 	/*!
 	 *  @brief      UIのクラスを制作
 	 * 
 	 *  @param[in] id UIのID
 	 */
 	std::shared_ptr<IEffect>  CreateClass(EFFECT_ID id);
-
 
 	/*!
 	 *  @brief      コンストラクタ
@@ -87,7 +81,6 @@ private:
 	 */
 	CEffectManager(const CEffectManager& ) = delete;
 
-
 	/*!
 	 *  @brief      デストラクタ
 	 */
@@ -98,7 +91,7 @@ private:
 	 */
 	CEffectManager& operator= (const CEffectManager& ) = delete;
 
-
 	using EFFECT_LIST = std::list<std::shared_ptr<IEffect>>;	//!< 名前空間の省略を行う
 	EFFECT_LIST m_EffetList;									//!< フィールドオブジェクトを入れるリスト(カーソル、ブロック等)
+
 };

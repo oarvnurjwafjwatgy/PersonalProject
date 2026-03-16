@@ -31,40 +31,40 @@ CSoundManager& CSoundManager::GetInstance(void)
 	return instance;
 }
 
-void CSoundManager::Load(BGMSOUND_ID id)
+void CSoundManager::Load(BGM_ID id)
 {
 	vivid::LoadSound(m_bgm_fill_name[(int)id]);
 }
 
 void CSoundManager::Load()
 {
-	for (int i = 0; i < (int)SESOUND_ID::SEMAX; i++)
+	for (int i = 0; i < (int)SE_ID::SEMAX; i++)
 	{
 		vivid::LoadSound(m_se_fill_name[i]);
 	}
 }
 
-void CSoundManager::Play(BGMSOUND_ID id, bool loop)
+void CSoundManager::Play(BGM_ID id)
 {
-	vivid::PlaySound(m_bgm_fill_name[(int)id],loop);
+	vivid::PlaySound(m_bgm_fill_name[(int)id],true);
 }
 
-void CSoundManager::Stop(BGMSOUND_ID id)
+void CSoundManager::Stop(BGM_ID id)
 {
 	vivid::StopSound(m_bgm_fill_name[(int)id]);
 }
 
-void CSoundManager::Play(SESOUND_ID id, bool loop)
+void CSoundManager::Play(SE_ID id)
 {
-	vivid::PlaySound(m_se_fill_name[(int)id], loop);
+	vivid::PlaySound(m_se_fill_name[(int)id], false);
 }
 
-void CSoundManager::Stop(SESOUND_ID id)
+void CSoundManager::Stop(SE_ID id)
 {
 	vivid::StopSound(m_se_fill_name[(int)id]);
 }
 
-void CSoundManager::ChangeBGMVolume(BGMSOUND_ID id, int volume)
+void CSoundManager::ChangeBGMVolume(BGM_ID id, int volume)
 {
 	vivid::SetSoundVolume(m_bgm_fill_name[(int)id], volume);
 }

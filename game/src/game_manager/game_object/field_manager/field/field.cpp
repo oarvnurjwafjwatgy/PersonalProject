@@ -4,18 +4,21 @@
 #include "../../effect_manager/effect_manager.h"
 #include "../../sound_manager/sound_manager.h"
 
-const int IField::m_block_size = 48;							//!< ブロックのサイズ
-const float IField::m_block_max_scale = 1.0f;					//!< ブロックの最大の拡大値
-const int IField::m_used_block_max_color = 5;					//!< ブロックの色の種類の数
-const int IField::m_block_min_chains = 4;						//!< ブロックの最小消せる連結数
-const int IField::m_block_start_row = 5;						//!< ゲーム開始の初期表示列
-const int IField::m_combo_max_duration_time = 4*60;				//!< コンボ最大継続時間
-const int IField::m_finish_max_time = 30;						//!< 終了判定後の最大猶予時間
-const int IField::m_cursor_move_frame = 5;						//!< カーソルの長押しで１マス移動するまでのフレーム
-const float IField::m_raise_speed_default = 0.2f;               //!< フレームごとのせり上がり量
-const float IField::m_stick_input_threshold = 0.5f;             //!< スティックを半分以上倒したら入力とみなす
-const int   IField::m_cursor_repeat_delay = 10;                 //!< 10フレーム以上押し続けたらリピート開始
-const vivid::Vector2 IField::m_bg_offset = { 3.0f, 4.0f };      //!< 背景画像の座標ズレ補正
+const int IField::m_block_size = 48;										//!< ブロックのサイズ
+const float IField::m_block_max_scale = 1.0f;								//!< ブロックの最大の拡大値
+const int IField::m_used_block_max_color = 5;								//!< ブロックの色の種類の数
+const int IField::m_block_min_chains = 4;									//!< ブロックの最小消せる連結数
+const int IField::m_block_start_row = 5;									//!< ゲーム開始の初期表示列
+const float IField::m_combo_max_duration_time = 4.0f*60.0f;					//!< コンボ最大継続時間
+const int IField::m_finish_max_time = 30;									//!< 終了判定後の最大猶予時間
+const int IField::m_cursor_move_frame = 5;									//!< カーソルの長押しで１マス移動するまでのフレーム
+const float IField::m_raise_speed_default = 0.2f;							//!< フレームごとのせり上がり量
+const float IField::m_stick_input_threshold = 0.5f;							//!< スティックを半分以上倒したら入力とみなす
+const int   IField::m_cursor_repeat_delay = 10;								//!< 10フレーム以上押し続けたらリピート開始
+const vivid::Vector2 IField::m_bg_offset = { 3.0f, 4.0f };					//!< 背景画像の座標ズレ補正
+const vivid::Vector2 IField::m_combo_gauge_ui_pos = { 30.0f, 600.0f };		//!< コンボゲージUIの生成位置
+const vivid::Vector2 IField::m_combo_count_ui_pos = { 1400.0f, 700.0f };    //!< コンボカウントUIの生成位置
+const vivid::Vector2 IField::m_score_text_ui_pos = { 30.0f, 200.0f };		//!< スコア表示UIの生成位置
 
 auto& FiledSound = CSoundManager::GetInstance();
 
@@ -45,15 +48,15 @@ void IField::Initialize(const vivid::Vector2& position, FIELD_ID field_id)
 {
 	auto& field = CFieldManager::GetInstance();
 	
-	
 	field.SetBlockMinChains(m_block_min_chains);
 	field.SetFinishFlag(false);
 
 	m_Position = position;
+	m_FieldID = field_id;
 
-	auto combo_gauge_ui = CUIManager::GetInstance().Create(UI_ID::COMBO_GAUGE, vivid::Vector2{30,600});
-	auto combo_count_ui = CUIManager::GetInstance().Create(UI_ID::COMBO_COUNT, vivid::Vector2{1400,700});
-	auto score_text_ui = CUIManager::GetInstance().Create(UI_ID::SCORE_TEXT, vivid::Vector2{30,200});
+	auto combo_gauge_ui = CUIManager::GetInstance().Create(m_combo_gauge_ui_pos, UI_ID::COMBO_GAUGE);
+	auto combo_count_ui = CUIManager::GetInstance().Create(m_combo_count_ui_pos, UI_ID::COMBO_COUNT);
+	auto score_text_ui = CUIManager::GetInstance().Create(m_score_text_ui_pos,UI_ID::SCORE_TEXT);
 
 	m_ComboGaugeUI = std::dynamic_pointer_cast<CComboGauge>(combo_gauge_ui);
 	m_ComboCountUI = std::dynamic_pointer_cast<CComboCount>(combo_count_ui);
@@ -61,9 +64,6 @@ void IField::Initialize(const vivid::Vector2& position, FIELD_ID field_id)
 
 
 	m_RowIndex = m_block_max_height - m_block_start_row;
-
-	m_ComboDurationTimer = 0.0f;
-	m_ComboDurationTimer = 0;
 
 	// 盤面(フィールド)の初期化を行う
 	for (int y = 0; y < m_block_max_height; y++)
@@ -95,7 +95,6 @@ void IField::Initialize(const vivid::Vector2& position, FIELD_ID field_id)
 
 void IField::Update(void)
 {
-	auto& field = CFieldManager::GetInstance();
 	auto& score = CScoreManager::GetInstance();
 
 	if (!CheckTopRowFull())
@@ -111,9 +110,8 @@ void IField::Update(void)
 		m_RaiseOffset = 0.0f; // リセット
 	}
 
-
 	if (!m_ComboGaugeUI.expired())
-		m_ComboGaugeUI.lock()->SetValue(m_combo_max_duration_time, m_ComboDurationTimer);
+		m_ComboGaugeUI.lock()->SetValue((int)m_combo_max_duration_time, (int)m_ComboDurationTimer);
 
 	if (!m_ComboCountUI.expired())
 		m_ComboCountUI.lock()->SetCount(m_ComboCounter);
@@ -154,7 +152,7 @@ void IField::Draw(void)
 			// 最初の地点(左)からsizeを足して上げると読み込み範囲が決まる(右側)
 			rect.right = rect.left + m_block_size;
 
-			vivid::DrawTexture("data\\block.png", m_Position + vivid::Vector2(j * m_block_size, i * m_block_size), 0xffffffff, rect, anchor, scale);
+			vivid::DrawTexture("data\\block.png", m_Position + vivid::Vector2((float)(j * m_block_size), (float)(i * m_block_size)), 0xffffffff, rect, anchor, scale);
 		}
 	}
 
@@ -173,7 +171,7 @@ void IField::Draw(void)
 	vivid::Vector2 pos = m_Position + vivid::Vector2((float)m_CursorPosition.x*(float)m_block_size, (float)m_CursorPosition.y * (float)m_block_size);
 
 	vivid::DrawTexture("data\\block_choice_flame.png", pos);
-#ifdef DEBUG
+#ifdef VIVID_DEBUG
 	vivid::DrawText(50, std::to_string(CScoreManager::GetInstance().GetScore()), { 0,200 });
 	vivid::DrawText(50, std::to_string(m_ComboDurationTimer), { 0,400 });
 #endif // DEBUG	
@@ -213,6 +211,7 @@ unsigned int IField::ConvertBlockColor(BLOCK_COLOR color)
 	case BLOCK_COLOR::YELLOW:  return 0xffffff33; // 黄色
 	case BLOCK_COLOR::MAGENTA: return 0xffff33ff; // 紫・ピンク
 	}
+	return 0xffffffff;
 }
 
 
@@ -263,7 +262,7 @@ void IField::MoveCursor(void)
 			m_CursorPosition.y = m_block_max_height - 1;
 		}
 
-		FiledSound.Play(SESOUND_ID::CURSORMOVE);
+		FiledSound.Play(SE_ID::CURSORMOVE);
 	}
 
 
@@ -276,7 +275,7 @@ void IField::MoveCursor(void)
 			m_CursorPosition.y = 0;
 		}
 
-		FiledSound.Play(SESOUND_ID::CURSORMOVE);
+		FiledSound.Play(SE_ID::CURSORMOVE);
 	}
 
 	if (input_right_t || input_right_b)
@@ -287,7 +286,7 @@ void IField::MoveCursor(void)
 			m_CursorPosition.x = 0;
 		}
 
-		FiledSound.Play(SESOUND_ID::CURSORMOVE);
+		FiledSound.Play(SE_ID::CURSORMOVE);
 	}
 
 	if (input_left_t || input_left_b)
@@ -298,7 +297,7 @@ void IField::MoveCursor(void)
 			m_CursorPosition.x = m_block_max_width - 1;
 		}
 
-		FiledSound.Play(SESOUND_ID::CURSORMOVE);
+		FiledSound.Play(SE_ID::CURSORMOVE);
 	}
 
 
@@ -373,7 +372,7 @@ void IField::CheckFall(void)
 				m_Field[y + 1][x].color = m_Field[y][x].color;
 				m_Field[y][x].color = BLOCK_COLOR::EMPTY;
 				
-				FiledSound.Play(SESOUND_ID::FALL);
+				FiledSound.Play(SE_ID::FALL);
 			}
 		}
 	}
@@ -395,7 +394,7 @@ void IField::BlockVanish(void)
 
 				if (m_block_min_chains <= check_straight)
 				{
-					FiledSound.Play(SESOUND_ID::VANISH);
+					FiledSound.Play(SE_ID::VANISH);
 
 					// コンボ開始
 					// 現在のスコアを覚えておく（加算前のスコア）
@@ -492,7 +491,7 @@ void IField::Vanishing(void)
 				vivid::Vector2 centerPos = blockPos + vivid::Vector2(m_block_size / 2.0f, m_block_size / 2.0f);
 
 				unsigned int colorCode = ConvertBlockColor(m_Field[y][x].color);
-				CEffectManager::GetInstance().Create(EFFECT_ID::VANISH, centerPos, colorCode);
+				CEffectManager::GetInstance().Create(centerPos, EFFECT_ID::VANISH,  colorCode);
 
 				// ブロックを消す処理
 				m_Field[y][x].color = BLOCK_COLOR::EMPTY;
@@ -518,9 +517,6 @@ void IField::CreateNextLine(void)
 
 void IField::PushUpField(void)
 {
-	bool JustOnceFlag = false;
-
-	
 	// 全ての行を1段上にコピー（0行目は消滅する）
 	for (int y = 0; y < m_block_max_height - 1; y++)
 	{
@@ -542,7 +538,6 @@ void IField::PushUpField(void)
 		m_CursorPosition.y --;
 	}
 
-	
 	// ブロックがおける最大行じゃなければ次に控える行を新しく生成
 	if (!CheckTopRowFull())
 	{
@@ -557,9 +552,9 @@ bool IField::CheckTopRowFull(void)
 		// 0行目に一つでも空じゃないブロックがあれば true
 		if (m_Field[0][x].color != BLOCK_COLOR::EMPTY)
 		{
-			return true;
 			m_RaiseOffset = 0;
 			m_RaiseSpeed = 0;
+			return true;
 		}
 	}
 	return false;
@@ -571,11 +566,11 @@ void IField::ComboDurationTimer(void)
 	if (m_ComboCounter <= 0) return;
 
 	// 継続し終わってるから処理をやめる
-	if (m_ComboDurationTimer < 0) return;
+	if (m_ComboDurationTimer < 0.0f) return;
 
 	m_ComboDurationTimer -= vivid::GetDeltaTime();
 
-	if (m_ComboDurationTimer <= 0)
+	if (m_ComboDurationTimer <= 0.0f)
 	{
 		// 時間切れ
 		m_ComboCounter = 0;

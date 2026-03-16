@@ -44,7 +44,7 @@ public:
 	 *  @param[in] id UI‚ÌID
 	 *  @param[in] position UI‚ÌˆÊ’u
 	 */
-	std::shared_ptr<IUI>  Create( UI_ID ui_id, const vivid::Vector2& position);
+	std::shared_ptr<IUI>  Create(const vivid::Vector2& position, UI_ID ui_id);
 
 	/*!
 	 *  @brief      UI‚Ìíœ

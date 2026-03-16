@@ -24,17 +24,19 @@ CGameMain::~CGameMain(void)
 {
 }
 
-void CGameMain::Initialize(SCENE_ID scene_id)
+void CGameMain::Initialize()
 {
+	IScene::Initialize();
+
 	auto& field = CFieldManager::GetInstance();
 	auto& ui = CUIManager::GetInstance();
 	auto& score = CScoreManager::GetInstance();
 
 	// サウンドの再生とロード
-	GameMainSound.Load(BGMSOUND_ID::MAIN);
-	GameMainSound.ChangeBGMVolume(BGMSOUND_ID::MAIN, m_change_volume);
-	GameMainSound.Play(BGMSOUND_ID::MAIN);
-	GameMainSound.Play(SESOUND_ID::GAMESTART);
+	GameMainSound.Load(BGM_ID::MAIN);
+	GameMainSound.ChangeBGMVolume(BGM_ID::MAIN, m_change_volume);
+	GameMainSound.Play(BGM_ID::MAIN);
+	GameMainSound.Play(SE_ID::GAMESTART);
 
 	// 各マネージャーの初期化
 	field.Initialize();
@@ -47,14 +49,12 @@ void CGameMain::Initialize(SCENE_ID scene_id)
 	m_State_Wait_Timer = m_start_wait_time;
 	m_GameState = GAME_STATE::START;
 
-	// 「GAME START」のUIを表示
-	auto& gamestart = ui.Create(UI_ID::GAME_START, m_ui_center_pos);
+	// 「GAMESTART」の生成
+	ui.Create(m_ui_center_pos, UI_ID::GAME_START);
 }
 
 void CGameMain::Update()
 {
-	auto& scene = CSceneManager::GetInstance();
-
 	// 現在のゲーム状態（開始前/プレイ中/終了演出）に応じて処理を分岐
 	switch (m_GameState)
 	{
@@ -107,19 +107,22 @@ void CGameMain::Play(void)
 	// ゲーム終了判定（クリア条件達成、またはデバッグキーK押下）
 	if (field.GetFinishFlag())
 	{
-		ui.Create(UI_ID::FINISH, m_ui_center_pos);
+		ui.Create(m_ui_center_pos, UI_ID::FINISH);
 		m_State_Wait_Timer = m_start_wait_time;
-		GameMainSound.Play(SESOUND_ID::FINISH);
+		GameMainSound.Play(SE_ID::FINISH);
 		m_GameState = GAME_STATE::FINISH;
 	}
 
+#ifdef VIVID_DEBUG
 	if (vivid::keyboard::Trigger(vivid::keyboard::KEY_ID::K))
 	{
-		ui.Create(UI_ID::FINISH, m_ui_center_pos);
+		ui.Create(m_ui_center_pos, UI_ID::FINISH);
 
 		m_GameState = GAME_STATE::FINISH;
 		m_State_Wait_Timer = m_start_wait_time;
 	}
+#endif // DEBUG
+
 }
 
 void CGameMain::Finish(void)
@@ -130,6 +133,6 @@ void CGameMain::Finish(void)
 	if (m_State_Wait_Timer-- <= 0)
 	{
 		scene.ChangeScene(SCENE_ID::RESULT);
-		GameMainSound.Stop(BGMSOUND_ID::MAIN);
+		GameMainSound.Stop(BGM_ID::MAIN);
 	}
 }

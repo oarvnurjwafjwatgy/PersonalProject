@@ -22,7 +22,7 @@ public:
 	/*!
 	 *  @brief      初期化
 	 */
-	void Initialize(const vivid::Vector2& position) override;
+	void Initialize(const vivid::Vector2& position, EFFECT_ID id) override;
 
 	/*!
 	 *  @brief      更新
@@ -35,13 +35,11 @@ public:
 	void Draw(void) override;
 
 private:
-	static const float m_speed;		//!< 速さ
-	static const float m_max_fade;	//!< エフェクトのフェードしていく最大時間
-	static const int m_max_color_table;		//!< カラーテーブル
-	
-	vivid::Vector2 m_Velocity;		//!< 加速度
+	static const float m_speed;			//!< 速さ
+	static const float m_fade_value;	//!< エフェクトのフェードしていく最大時間
 
-	struct Particle {
+	struct Particle 
+	{
 		vivid::Vector2 position;
 		vivid::Vector2 velocity;
 	};

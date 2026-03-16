@@ -28,8 +28,10 @@ public:
 
 	/*!
 	 *	@brief		初期化
+	 *  @param[in] position 生成位置  
+	 *  @param[in] id       エフェクトID
 	 */
-	virtual void  Initialize(const vivid::Vector2& position);
+	virtual void  Initialize(const vivid::Vector2& position, EFFECT_ID id);
 
 	/*!
 	 *	@brief		更新

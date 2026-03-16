@@ -11,7 +11,7 @@
  *  @enum       BGMサウンドID
  *  @brief      BGMの種類を管理するID
  */
-enum class BGMSOUND_ID
+enum class BGM_ID
 {
 	TITLE,		//!< タイトル画面
 	MAIN,		//!< メイン画面
@@ -23,7 +23,7 @@ enum class BGMSOUND_ID
  *  @enum       SEサウンドID
  *  @brief      SEの種類を管理するID
  */
-enum class SESOUND_ID
+enum class SE_ID
 {
 	DECISION_RESULT, //!< リザルト決定
 	DRAM_RESULT,	 //!< リザルトドラムロール
@@ -49,7 +49,7 @@ public:
 	 *  @brief		  BGMの読み込み
 	 *	@param[in] id BGMのID
 	 */
-	void Load(BGMSOUND_ID id);
+	void Load(BGM_ID id);
 
 	/*!
 	 *  @brief		SEの読み込み
@@ -60,32 +60,32 @@ public:
 	 *  @brief		BGMの再生
 	 *  @param[in, optional] loop ループ再生するかどうか (デフォルトはtrue)
 	 */
-	void Play(BGMSOUND_ID id, bool loop = true);
+	void Play(BGM_ID id);
 
 	/*!
 	 *  @brief		BGMの停止
 	 *	@param[in] id BGMのID
 	 */
-	void Stop(BGMSOUND_ID id);
+	void Stop(BGM_ID id);
 
 	/*!
 	 *  @brief		SEの再生
 	 *	@param[in, optional] loop ループ再生するかどうか (デフォルトはtrue)
 	 */
-	void Play(SESOUND_ID id, bool loop = false);
+	void Play(SE_ID id);
 
 	/*!
 	 *  @brief		SEの停止
 	 *	@param[in] id SEのID
 	 */
-	void Stop(SESOUND_ID id);
+	void Stop(SE_ID id);
 
 	/*!
 	 *  @brief		BGMの音量変更
 	 *	@param[in] id BGMのID
 	 *	@param[in] volume どのくらいに変更するか
 	 */
-	void ChangeBGMVolume(BGMSOUND_ID id, int volume);
+	void ChangeBGMVolume(BGM_ID id, int volume);
 
 private:
 	/*!
@@ -108,7 +108,7 @@ private:
 	 */
 	CSoundManager& operator =(const CSoundManager& rhs);
 
-	static const char* m_bgm_fill_name[(int)BGMSOUND_ID::BGMMAX];	//!< BGMのファイルパスを格納したテーブル
-	static const char* m_se_fill_name[(int)SESOUND_ID::SEMAX];		//!< SEのファイルパスを格納したテーブル
+	static const char* m_bgm_fill_name[(int)BGM_ID::BGMMAX];	//!< BGMのファイルパスを格納したテーブル
+	static const char* m_se_fill_name[(int)SE_ID::SEMAX];		//!< SEのファイルパスを格納したテーブル
 
 };

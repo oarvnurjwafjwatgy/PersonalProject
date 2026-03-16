@@ -3,6 +3,7 @@
 #include "effect/vanish/vanish.h"
 #include <memory>
 
+
 CEffectManager& CEffectManager::GetInstance(void)
 {
 	static CEffectManager instance;
@@ -28,6 +29,16 @@ void CEffectManager::Update(void)
 		std::shared_ptr<IEffect> effect = *it;
 
 		effect->Update();
+
+		// アクティブフラグがfalseの時、リストから削除
+		if (!effect->GetActive())
+		{
+			(*it)->Finalize();
+
+			it = m_EffetList.erase(it);
+
+			continue;
+		}
 
 		++it;
 	}
@@ -67,19 +78,7 @@ void CEffectManager::Finalize(void)
 	m_EffetList.clear();
 }
 
-std::shared_ptr<IEffect> CEffectManager::Create(EFFECT_ID effect_id, const vivid::Vector2& position)
-{
-	std::shared_ptr<IEffect> effect = CreateClass(effect_id);
-
-	if (!effect) return nullptr;
-
-	effect->Initialize(position);
-	m_EffetList.emplace_back(effect);
-
-	return effect;
-}
-
-std::shared_ptr<IEffect> CEffectManager::Create(EFFECT_ID effect_id, const vivid::Vector2& position, unsigned int color)
+std::shared_ptr<IEffect> CEffectManager::Create(const vivid::Vector2& position, EFFECT_ID effect_id, unsigned int color = 0xffffffff)
 {
 	std::shared_ptr<IEffect> effect = CreateClass(effect_id);
 
@@ -87,7 +86,7 @@ std::shared_ptr<IEffect> CEffectManager::Create(EFFECT_ID effect_id, const vivid
 
 	// 初期化の前に色をセットする
 	effect->SetColor(color);
-	effect->Initialize(position);
+	effect->Initialize(position,effect_id);
 
 	m_EffetList.emplace_back(effect);
 

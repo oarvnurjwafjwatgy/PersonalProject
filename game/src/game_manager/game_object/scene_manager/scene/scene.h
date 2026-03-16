@@ -2,6 +2,7 @@
 #include "scene_id.h"
 #include "../scene_manager.h"
 
+
 /*!
  *	@brief		シーンの基底クラス
  */
@@ -22,7 +23,7 @@ public:
 	/*!
 	 *	@brief		初期化
 	 */
-	virtual void  Initialize(SCENE_ID scene_id);
+	virtual void  Initialize();
 
 	/*!
 	 *	@brief		更新
@@ -45,7 +46,6 @@ public:
 	bool GetActive(void);
 
 protected:
-	SCENE_ID	 m_SceneID;		//!< シーンID
 	bool		 m_ActiveFlag;  //!< アクティブフラグ
 
 };
