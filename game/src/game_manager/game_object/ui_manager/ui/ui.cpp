@@ -12,8 +12,9 @@ IUI::~IUI(void)
 {
 }
 
-void IUI::Initialize(const vivid::Vector2& position )
+void IUI::Initialize(const vivid::Vector2& position)
 {
+    m_Position = position;
 }
 
 void IUI::Update(void)

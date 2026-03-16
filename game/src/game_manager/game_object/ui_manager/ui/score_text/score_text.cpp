@@ -21,31 +21,17 @@ CScoreText::~CScoreText(void)
 
 void CScoreText::Initialize(const vivid::Vector2& position)
 {
-
 	m_Position = position;
 
 	for (int i = 0; i < m_digit_max; i++)
 	{
 		m_Rect[i] = { 0,0,m_number_digit_width,m_number_digit_height };
 	}
-
 }
 
 void CScoreText::Update()
 {
 	int score_calc = m_CurrentScore;
-
-
-	for(int  i = m_digit_max-1; i >= 0; i--)
-	{
-		// 一桁ずつ取り出す
-		int digit = score_calc % 10;
-
-		//次の一桁のために１の位を切り捨て
-		score_calc /= 10;
-		m_Rect[i].left = digit * m_number_digit_width;
-		m_Rect[i].right = m_Rect[i].left + m_number_digit_width;
-	}
 
 	float dt = vivid::GetDeltaTime();
 
@@ -70,22 +56,19 @@ void CScoreText::Update()
         int newConfirmed = (int)(m_ResultTimer / m_digit_interval);
         
 		// 新しい桁が確定したかチェック
-		if (newConfirmed > m_ConfirmedDigits) {
+		if (newConfirmed > m_ConfirmedDigits) 
+		{
 
 			// 全ての桁（最後の桁）が決まった瞬間だけ判定
-			if (newConfirmed >= m_digit_max) {
-
-				
+			if (newConfirmed >= m_digit_max)
+			{
 				CSoundManager::GetInstance().Stop(SE_ID::DRAM_RESULT);
-
-				
 				CSoundManager::GetInstance().Play(SE_ID::DECISION_RESULT);
 				m_IsResultMode = false;
 			}
 		}
-		m_ConfirmedDigits = newConfirmed;
 
-        m_ConfirmedDigits = newConfirmed;
+		m_ConfirmedDigits = newConfirmed;
     }
 
      score_calc = m_CurrentScore;
@@ -96,10 +79,13 @@ void CScoreText::Update()
         int distanceFromRight = (m_digit_max - 1) - i;
 
         int digit;
-        if (m_IsResultMode && distanceFromRight >= m_ConfirmedDigits) {
+        if (m_IsResultMode && distanceFromRight >= m_ConfirmedDigits) 
+		{
             // まだ確定していない桁を動かす
             digit = rand() % 10;
-        } else {
+        } 
+		else 
+		{
             // 確定した桁は正しい数字を表示
             // スコアを10で割りながら一桁ずつ抽出（既存のロジック）
             int temp_score = m_CurrentScore;
@@ -120,7 +106,8 @@ void CScoreText::Draw()
 	}
 
 	// スコア履歴の描画
-	for (int i = 0; i < m_ScoreLogs.size(); ++i) {
+	for (int i = 0; i < m_ScoreLogs.size(); ++i)
+	{
 		// 数値を文字列にする
 		std::string text = "+" + std::to_string(m_ScoreLogs[i].value);
 

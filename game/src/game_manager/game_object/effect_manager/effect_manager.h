@@ -91,7 +91,7 @@ private:
 	 */
 	CEffectManager& operator= (const CEffectManager& ) = delete;
 
-	using EFFECT_LIST = std::list<std::shared_ptr<IEffect>>;	//!< 名前空間の省略を行う
+	using EFFECT_LIST = std::list<std::shared_ptr<IEffect>>;	//!< 管理しているエフェクトのリスト型定義
 	EFFECT_LIST m_EffetList;									//!< フィールドオブジェクトを入れるリスト(カーソル、ブロック等)
 
 };

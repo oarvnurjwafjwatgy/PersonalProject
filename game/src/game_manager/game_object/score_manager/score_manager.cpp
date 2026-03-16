@@ -41,5 +41,5 @@ void CScoreManager::AddScore( int chains, int combo)
 	float chain_bonus = (float)(chains - field.GetBlockMinChains()) * m_half;
 	float combo_bonus = (float)combo * m_one_tenth;
 	
-	m_Score += m_base_score * chains * (chain_bonus + m_base_multiplier + combo_bonus);
+	m_Score += (int)((float)m_base_score * (float)chains * (chain_bonus + m_base_multiplier + combo_bonus));
 }
