@@ -4,6 +4,7 @@
 #include "../../effect_manager/effect_manager.h"
 #include "../../sound_manager/sound_manager.h"
 
+
 const int IField::m_block_size = 48;										//!< ƒuƒƒbƒN‚ÌƒTƒCƒY
 const float IField::m_block_max_scale = 1.0f;								//!< ƒuƒƒbƒN‚ÌÅ‘å‚ÌŠg‘å’l
 const int IField::m_used_block_max_color = 5;								//!< ƒuƒƒbƒN‚ÌF‚ÌŽí—Þ‚Ì”
@@ -20,7 +21,7 @@ const vivid::Vector2 IField::m_combo_gauge_ui_pos = { 30.0f, 600.0f };		//!< ƒRƒ
 const vivid::Vector2 IField::m_combo_count_ui_pos = { 1400.0f, 700.0f };    //!< ƒRƒ“ƒ{ƒJƒEƒ“ƒgUI‚Ì¶¬ˆÊ’u
 const vivid::Vector2 IField::m_score_text_ui_pos = { 30.0f, 200.0f };		//!< ƒXƒRƒA•\Ž¦UI‚Ì¶¬ˆÊ’u
 
-auto& FiledSound = CSoundManager::GetInstance();
+auto& FieldSound = CSoundManager::GetInstance();
 
 IField::IField(void)
 	:m_FieldID(FIELD_ID::DUMMY)
@@ -111,20 +112,24 @@ void IField::Update(void)
 	}
 
 	if (!m_ComboGaugeUI.expired())
+	{
 		m_ComboGaugeUI.lock()->SetValue(m_combo_max_duration_time,m_ComboDurationTimer);
+	}
 
 	if (!m_ComboCountUI.expired())
+	{
 		m_ComboCountUI.lock()->SetCount(m_ComboCounter);
+	}
 
 	if (!m_ScoreTextUI.expired())
+	{
 		m_ScoreTextUI.lock()->SetCurrentScore(score.GetScore());
+	}
 	
-
 	MoveCursor();
 	ShiftBlock();
 	BlockVanish();
 	Vanishing();
-
 	CheckFall();
 	ComboDurationTimer();
 	FinishTimer();
@@ -214,7 +219,6 @@ unsigned int IField::ConvertBlockColor(BLOCK_COLOR color)
 	return 0xffffffff;
 }
 
-
 void IField::MoveCursor(void)
 {
 	auto& input = CInputManager::GetInstance();
@@ -262,9 +266,8 @@ void IField::MoveCursor(void)
 			m_CursorPosition.y = m_block_max_height - 1;
 		}
 
-		FiledSound.Play(SE_ID::CURSORMOVE);
+		FieldSound.Play(SE_ID::CURSORMOVE);
 	}
-
 
 	if (input_down_t || input_down_b)
 	{
@@ -275,7 +278,7 @@ void IField::MoveCursor(void)
 			m_CursorPosition.y = 0;
 		}
 
-		FiledSound.Play(SE_ID::CURSORMOVE);
+		FieldSound.Play(SE_ID::CURSORMOVE);
 	}
 
 	if (input_right_t || input_right_b)
@@ -286,7 +289,7 @@ void IField::MoveCursor(void)
 			m_CursorPosition.x = 0;
 		}
 
-		FiledSound.Play(SE_ID::CURSORMOVE);
+		FieldSound.Play(SE_ID::CURSORMOVE);
 	}
 
 	if (input_left_t || input_left_b)
@@ -297,11 +300,8 @@ void IField::MoveCursor(void)
 			m_CursorPosition.x = m_block_max_width - 1;
 		}
 
-		FiledSound.Play(SE_ID::CURSORMOVE);
+		FieldSound.Play(SE_ID::CURSORMOVE);
 	}
-
-
-	
 }
 
 void IField::ShiftBlock(void)
@@ -317,7 +317,6 @@ void IField::ShiftBlock(void)
 	{
 		m_SelectedFlag = false;
 	}
-
 
 	if (!m_SelectedFlag)		return;
 
@@ -354,9 +353,6 @@ void IField::ShiftBlock(void)
 
 		m_CursorPosition.x--;
 	}
-
-
-	
 }
 
 void IField::CheckFall(void)
@@ -366,13 +362,14 @@ void IField::CheckFall(void)
 		for (int x = 0; x < m_block_max_width; x++)
 		{
 			if (m_Field[y][x].state != BLOCK_STATE::WAIT)  continue;
+			if (m_Field[y][x].color == BLOCK_COLOR::EMPTY)  continue;
 
 			if (m_Field[y + 1][x].color == BLOCK_COLOR::EMPTY)
 			{
 				m_Field[y + 1][x].color = m_Field[y][x].color;
 				m_Field[y][x].color = BLOCK_COLOR::EMPTY;
 				
-				FiledSound.Play(SE_ID::FALL);
+				FieldSound.Play(SE_ID::FALL);
 			}
 		}
 	}
@@ -394,7 +391,7 @@ void IField::BlockVanish(void)
 
 				if (m_block_min_chains <= check_straight)
 				{
-					FiledSound.Play(SE_ID::VANISH);
+					FieldSound.Play(SE_ID::VANISH);
 
 					// ƒRƒ“ƒ{ŠJŽn
 					// Œ»Ý‚ÌƒXƒRƒA‚ðŠo‚¦‚Ä‚¨‚­i‰ÁŽZ‘O‚ÌƒXƒRƒAj
@@ -438,7 +435,6 @@ int IField::CheckStraight(BLOCK_DIRECTION dir, int x, int y,  BLOCK_COLOR color)
 
 	// Ä‹Aˆ—‚Å˜A‚È‚Á‚Ä‚¢‚éŽž‚Í+1‚³‚ê‘±‚¯‚éAŒ‹‰Ê“I‚É˜AŒ‹‚µ‚Ä‚¢‚éƒuƒƒbƒN‚Ì”‚ª•Ô‚³‚ê‚é
 	return CheckStraight(dir, nx, ny, ncolor) + 1;
-	 
 }
 
 void IField::SetStateVanish(BLOCK_DIRECTION dir, int x, int y)
@@ -473,8 +469,6 @@ void IField::ResetCheckFlag(void)
 
 void IField::Vanishing(void)
 {
-
-
 	for (int y = 0; y < m_block_max_height; y++)
 	{
 		for (int x = 0; x < m_block_max_width; x++)
@@ -511,8 +505,6 @@ void IField::CreateNextLine(void)
 		m_NextLine[x].scale = 1.3f;
 		m_NextLine[x].check_flag = false;
 	}
-
-
 }
 
 void IField::PushUpField(void)
