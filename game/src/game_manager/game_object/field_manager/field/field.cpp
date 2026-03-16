@@ -9,7 +9,7 @@ const float IField::m_block_max_scale = 1.0f;								//!< ブロックの最大の拡大値
 const int IField::m_used_block_max_color = 5;								//!< ブロックの色の種類の数
 const int IField::m_block_min_chains = 4;									//!< ブロックの最小消せる連結数
 const int IField::m_block_start_row = 5;									//!< ゲーム開始の初期表示列
-const float IField::m_combo_max_duration_time = 4.0f*60.0f;					//!< コンボ最大継続時間
+const float IField::m_combo_max_duration_time = 4.0f;						//!< コンボ最大継続時間
 const int IField::m_finish_max_time = 30;									//!< 終了判定後の最大猶予時間
 const int IField::m_cursor_move_frame = 5;									//!< カーソルの長押しで１マス移動するまでのフレーム
 const float IField::m_raise_speed_default = 0.2f;							//!< フレームごとのせり上がり量
@@ -111,7 +111,7 @@ void IField::Update(void)
 	}
 
 	if (!m_ComboGaugeUI.expired())
-		m_ComboGaugeUI.lock()->SetValue((int)m_combo_max_duration_time, (int)m_ComboDurationTimer);
+		m_ComboGaugeUI.lock()->SetValue(m_combo_max_duration_time,m_ComboDurationTimer);
 
 	if (!m_ComboCountUI.expired())
 		m_ComboCountUI.lock()->SetCount(m_ComboCounter);

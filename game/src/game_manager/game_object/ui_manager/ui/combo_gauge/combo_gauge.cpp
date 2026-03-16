@@ -33,7 +33,7 @@ void CComboGauge::Draw(void)
 	vivid::DrawTexture("data\\bar.png", m_BarPosition,m_BarColor,m_Rect);
 }
 
-void CComboGauge::SetValue(int max_value, int value)
+void CComboGauge::SetValue(float max_value, float value)
 {
-	m_Rect.right = (int)(((float)value / (float)max_value) * (float)m_bar_width);
+	m_Rect.right = (int)((value / max_value) * (float)m_bar_width);
 }

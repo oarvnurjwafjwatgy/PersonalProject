@@ -38,7 +38,7 @@ public:
 	/*!
 	 *  @brief      Œ»İ‚Ì’l‚Ìİ’è
 	 */
-	void SetValue(int max_value, int value);
+	void SetValue(float max_value, float value);
 
 private:
 	 
